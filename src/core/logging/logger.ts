@@ -1,4 +1,5 @@
 import pino from "pino";
+
 import { appConfig } from "@/config/app";
 
 export const logger = pino({

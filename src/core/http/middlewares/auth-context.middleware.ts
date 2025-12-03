@@ -1,10 +1,21 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-export function authContextMiddleware(
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  (res.locals as any).user = null;
+export interface AuthContext {
+  userId?: string;
+  roles?: string[];
+  permissions?: string[];
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      auth?: AuthContext;
+    }
+  }
+}
+
+export function authContextMiddleware(req: Request, _res: Response, next: NextFunction) {
+  req.auth = undefined;
+
   next();
 }

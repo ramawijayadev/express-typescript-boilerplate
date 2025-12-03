@@ -1,8 +1,9 @@
 import express from "express";
-import { logger } from "@/core/logging/logger";
+
+import { errorHandler } from "@/core/http/error-handler";
 import { registerMiddlewares } from "@/core/http/middlewares";
 import { registerRoutes } from "@/core/http/router";
-import { errorHandler } from "@/core/http/error-handler";
+import { logger } from "@/core/logging/logger";
 
 export function createApp() {
   const app = express();

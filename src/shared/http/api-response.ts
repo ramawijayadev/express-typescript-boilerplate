@@ -1,4 +1,4 @@
-import { Response } from "express";
+import type { Response } from "express";
 
 export function ok<T>(res: Response, data: T) {
   return res.status(200).json({

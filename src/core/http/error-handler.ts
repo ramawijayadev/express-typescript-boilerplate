@@ -1,13 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { AppError } from "@/shared/errors/AppError";
 import { logger } from "@/core/logging/logger";
+import { AppError } from "@/shared/errors/AppError";
 
-export function errorHandler(
-  err: unknown,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-) {
+import type { NextFunction, Request, Response } from "express";
+
+export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
   if (err instanceof AppError) {
     logger.warn(
       {

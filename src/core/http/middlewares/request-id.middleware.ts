@@ -1,15 +1,20 @@
-import { NextFunction, Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 
-export function requestIdMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  const requestId = uuidv4();
+import type { NextFunction, Request, Response } from "express";
 
-  (res.locals as any).requestId = requestId;
-  (req as any).requestId = requestId;
+declare global {
+  namespace Express {
+    interface Request {
+      requestId?: string;
+    }
+  }
+}
+
+export function requestIdMiddleware(req: Request, _res: Response, next: NextFunction) {
+  const headerId = req.headers["x-request-id"];
+  const requestId = typeof headerId === "string" && headerId.length > 0 ? headerId : randomUUID();
+
+  req.requestId = requestId;
 
   next();
 }

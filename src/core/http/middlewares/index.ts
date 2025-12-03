@@ -1,15 +1,16 @@
-import type { Express } from "express";
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import hpp from "hpp";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import hpp from "hpp";
 
+import { authContextMiddleware } from "./auth-context.middleware";
 import { requestIdMiddleware } from "./request-id.middleware";
 import { requestLoggerMiddleware } from "./request-logger.middleware";
 import { securityMiddleware } from "./security.middleware";
-import { authContextMiddleware } from "./auth-context.middleware";
+
+import type { Express } from "express";
 
 export function registerMiddlewares(app: Express) {
   // HTTP hardening
