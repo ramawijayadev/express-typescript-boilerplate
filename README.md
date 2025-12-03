@@ -1,6 +1,6 @@
 # Express TypeScript Boilerplate
 
-Starterkit backend untuk membangun REST API dengan struktur yang rapi dan siap dikembangkan ke skala lebih besar.
+Boilerplate untuk membangun REST API dengan struktur yang rapi dan siap dikembangkan ke skala lebih besar.
 
 Tech utama:
 
@@ -17,7 +17,7 @@ Tech utama:
 ## 1. Struktur Project (Singkat)
 
 ```txt
-backend-starterkit/
+express-typescript-starterkit/
   package.json
   tsconfig.json
   tsconfig.build.json
@@ -166,8 +166,10 @@ k6 run tests/perf/k6-smoke.js
 
 Dokumen pendukung (disarankan taruh di `/docs`):
 
-- `ARCHITECTURE.md` – penjelasan arsitektur & layering
-- `CONVENTIONS.md` – naming, struktur, pattern, testing
-- `DEPENDENCIES.md` – daftar dependency & peran masing-masing
+- `overview.html` – overview dokumentasi
+- `architecture.html` – penjelasan arsitektur & layering
+- `convention.html` – naming, struktur, pattern, testing
+- `depedency.html` – daftar dependency & peran masing-masing
+- `feature.html` – dokumentasi feature dasar
 
 Starterkit ini dimaksudkan sebagai baseline. Module di `modules/platform` bisa dipakai ulang di banyak project, sedangkan `modules/business` berisi logic spesifik domain/aplikasi.
