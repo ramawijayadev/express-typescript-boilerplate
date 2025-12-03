@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dependency Handbook</title>
+  <style>
+    /* DESIGN SYSTEM: Matches Architecture & Convention Handbook */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --accent-color: #2563eb;
+      /* Konsisten Blue Tech */
+      --border-color: #e5e7eb;
+      --code-bg: #f3f4f6;
+      --code-text: #db2777;
+      --section-bg: #f9fafb;
+
+      /* Badge Colors */
+      --badge-core: #0f172a;
+      /* Slate 900 */
+      --badge-rec: #2563eb;
+      /* Blue 600 */
+      --badge-opt: #64748b;
+      /* Slate 500 */
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-main);
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      background-color: var(--bg-color);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-top: 3.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--text-main);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+    }
+
+    strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    ul,
+    ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Special Box for Intro */
+    .intro-box {
+      border-left: 4px solid var(--accent-color);
+      background-color: var(--section-bg);
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* CODE BLOCKS */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: 500;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      color: inherit;
+      border: none;
+    }
+
+    /* DEPENDENCY ITEM STYLING */
+    .dep-item {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: #fff;
+      transition: transform 0.1s;
+    }
+
+    .dep-item:hover {
+      border-color: var(--accent-color);
+    }
+
+    .dep-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.5rem;
+    }
+
+    .dep-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    .dep-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      color: white;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-core {
+      background-color: var(--badge-core);
+    }
+
+    .tag-rec {
+      background-color: var(--badge-rec);
+    }
+
+    .tag-opt {
+      background-color: var(--badge-opt);
+    }
+
+    /* TOC */
+    .toc {
+      background-color: var(--section-bg);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 4rem;
+    }
+
+    .toc h3 {
+      margin-top: 0;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+      column-count: 2;
+      column-gap: 2rem;
+    }
+
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: var(--accent-color);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--text-main);
+      text-decoration: underline;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        color: #000;
+      }
+
+      h2 {
+        break-before: auto;
+        page-break-after: avoid;
+        border-bottom: 1px solid #000;
+      }
+
+      .toc {
+        display: none;
+      }
+
+      .dep-item {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+      }
+
+      .badge {
+        border: 1px solid #000;
+        color: #000;
+        background: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Dependency Handbook</h1>
+    <div class="subtitle">Standardized Package & Tooling Guide</div>
+  </header>
+
+  <div class="intro-box">
+    <p style="margin:0;">
+      <strong>Tujuan Dokumen:</strong> Mendefinisikan stack teknologi standar (Node.js, Express, PostgreSQL, Prisma,
+      Redis) untuk memastikan konsistensi, performa, dan kemudahan maintenance di seluruh project.
+    </p>
+  </div>
+
+  <nav class="toc">
+    <h3>Daftar Isi</h3>
+    <ul>
+      <li><a href="#legend">0. Legend</a></li>
+      <li><a href="#baseline">1. Tech Baseline</a></li>
+      <li><a href="#runtime">2. Core Runtime & HTTP</a></li>
+      <li><a href="#security">3. Security & Hardening</a></li>
+      <li><a href="#auth">4. Auth & Crypto</a></li>
+      <li><a href="#db">5. Database & Migrations</a></li>
+      <li><a href="#cache">6. Cache & Queue</a></li>
+      <li><a href="#logging">7. Logging & Obs</a></li>
+      <li><a href="#mail">8. Mailing System</a></li>
+      <li><a href="#realtime">9. Real-time</a></li>
+      <li><a href="#docs">10. API Documentation</a></li>
+      <li><a href="#test">11. Testing</a></li>
+      <li><a href="#ts">12. TypeScript Tooling</a></li>
+      <li><a href="#lint">13. Linting & Formatting</a></li>
+      <li><a href="#install">14. Instalasi Awal</a></li>
+      <li><a href="#external">15. External Tools</a></li>
+    </ul>
+  </nav>
+
+  <section id="legend">
+    <h2>0. Legend</h2>
+    <ul>
+      <li><span class="badge tag-core">CORE</span> <strong>Wajib.</strong> Aplikasi tidak akan berjalan atau melanggar
+        standar arsitektur tanpa ini.</li>
+      <li><span class="badge tag-rec">RECOMMENDED</span> <strong>Sangat Disarankan.</strong> Standar "Production Ready".
+        Boleh diganti jika ada alasan sangat kuat.</li>
+      <li><span class="badge tag-opt">OPTIONAL</span> <strong>Opsional.</strong> Gunakan hanya jika fitur tersebut
+        dibutuhkan.</li>
+    </ul>
+  </section>
+
+  <section id="baseline">
+    <h2>1. Tech Baseline & Prinsip</h2>
+    <p>Kami memilih teknologi yang <strong>stable, typed, dan mainstream</strong> untuk memudahkan onboarding.</p>
+    <ul>
+      <li>Package Manager: <strong>pnpm</strong> (Wajib, untuk kecepatan dan efisiensi disk).</li>
+      <li>Runtime: <strong>Node.js</strong> (LTS Version).</li>
+      <li>Framework: <strong>Express</strong> (Standard industry).</li>
+      <li>Language: <strong>TypeScript</strong> (Strict mode).</li>
+      <li>Database: <strong>PostgreSQL</strong> dengan <strong>Prisma ORM</strong>.</li>
+      <li>Testing: <strong>Vitest</strong> (Pengganti Jest yang lebih cepat).</li>
+    </ul>
+  </section>
+
+  <section id="runtime">
+    <h2>2. Core Runtime & HTTP</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">express</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Web framework minimalis untuk routing dan middleware.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">zod</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Schema validation. Wajib digunakan untuk validasi env var dan request body/params.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">dotenv</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Load environment variables dari file <code>.env</code>.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">axios</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">HTTP Client berbasis Promise untuk request ke API eksternal.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">uuid</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Generator ID unik (UUID v4) untuk keperluan non-database (misal: Request ID).</p>
+    </div>
+  </section>
+
+  <section id="security">
+    <h2>3. Security & HTTP Hardening</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">helmet</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Mengamankan aplikasi dengan mengatur berbagai HTTP header (HSTS, XSS Filter, dll).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">cors</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Middleware untuk mengaktifkan Cross-Origin Resource Sharing.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">express-rate-limit</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Mencegah serangan brute-force/DDoS sederhana dengan membatasi request per IP.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">hpp</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Proteksi terhadap serangan HTTP Parameter Pollution.</p>
+    </div>
+  </section>
+
+  <section id="auth">
+    <h2>4. Auth & Crypto</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">jsonwebtoken</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Standar industri untuk stateless authentication (Access Token & Refresh Token).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">argon2</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Algoritma hashing password pemenang kompetisi, lebih aman dan resisten GPU dibanding bcrypt.
+      </p>
+    </div>
+  </section>
+
+  <section id="db">
+    <h2>5. Database & Migrations</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">@prisma/client</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Auto-generated & type-safe query builder untuk Node.js.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">prisma</span> <span class="badge tag-core">CORE</span> (Dev)
+      </div>
+      <p class="dep-desc">CLI tool untuk deklarasi schema, migration management, dan generate client.</p>
+    </div>
+  </section>
+
+  <section id="cache">
+    <h2>6. Cache & Queue</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">ioredis</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Client Redis yang robust dan support cluster, digunakan untuk caching dan session.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">bullmq</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Message Queue berbasis Redis. Wajib digunakan untuk proses berat/async (e.g. kirim email,
+        generate PDF).</p>
+    </div>
+  </section>
+
+  <section id="logging">
+    <h2>7. Logging & Observability</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">pino</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Logger low-overhead dengan output JSON (Wajib untuk production tracing).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">pino-pretty</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
+      </div>
+      <p class="dep-desc">Memformat log JSON menjadi teks berwarna yang mudah dibaca saat development.</p>
+    </div>
+  </section>
+
+  <section id="mail">
+    <h2>8. Mailing System</h2>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">nodemailer</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Module standar untuk pengiriman email via SMTP.</p>
+    </div>
+  </section>
+
+  <section id="realtime">
+    <h2>9. Real-time Communication</h2>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">socket.io</span> <span class="badge tag-opt">OPTIONAL</span>
+      </div>
+      <p class="dep-desc">Engine WebSocket dengan fitur fallback dan room management. Gunakan jika butuh fitur live
+        chat/notif.</p>
+    </div>
+  </section>
+
+  <section id="docs">
+    <h2>10. API Documentation</h2>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">swagger-ui-express</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Menyajikan antarmuka visual Swagger/OpenAPI di endpoint <code>/docs</code>.</p>
+    </div>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">swagger-jsdoc</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Generate spesifikasi OpenAPI secara otomatis dari komentar JSDoc di kode.</p>
+    </div>
+  </section>
+
+  <section id="test">
+    <h2>11. Testing</h2>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">vitest</span> <span class="badge tag-core">CORE</span> (Dev)
+      </div>
+      <p class="dep-desc">Test runner generasi baru (Vite-native). Lebih cepat dari Jest, konfigurasi minimal.</p>
+    </div>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">supertest</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
+      </div>
+      <p class="dep-desc">HTTP assertion library untuk Integration Test dan E2E Test.</p>
+    </div>
+  </section>
+
+  <section id="ts">
+    <h2>12. TypeScript & Build Tooling</h2>
+    <p>Semua dependency di bawah ini adalah <strong>devDependencies</strong>:</p>
+    <ul>
+      <li><code>typescript</code>: Compiler utama.</li>
+      <li><code>tsx</code>: Menjalankan file TypeScript langsung (pengganti <code>ts-node</code> yang lebih cepat).</li>
+      <li><code>rimraf</code>: Utilitas hapus folder (<code>rm -rf</code>) yang cross-platform (Windows/Linux aman).
+      </li>
+      <li>Type definitions: <code>@types/node</code>, <code>@types/express</code>, dll.</li>
+    </ul>
+  </section>
+
+  <section id="lint">
+    <h2>13. Linting, Formatting & DX</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">eslint</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Static analysis untuk menemukan masalah kode (bug, unused var).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">prettier</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Code formatter otomatis. Menghilangkan debat masalah spasi vs tab.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">husky & lint-staged</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Git hooks untuk menjalankan lint/test otomatis sebelum commit.</p>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>14. Instalasi Awal</h2>
+    <p>Salin perintah di bawah untuk menginstall seluruh standar stack dalam satu kali jalan:</p>
+
+    <h3>Production Dependencies</h3>
+    <pre><code>pnpm add express zod dotenv axios uuid \
+helmet cors express-rate-limit hpp cookie-parser \
+jsonwebtoken argon2 \
+@prisma/client ioredis bullmq \
+pino pino-pretty \
+nodemailer \
+socket.io \
+swagger-ui-express swagger-jsdoc</code></pre>
+
+    <h3>Development Dependencies</h3>
+    <pre><code>pnpm add -D typescript tsx rimraf \
+prisma vitest supertest \
+eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin \
+eslint-config-prettier prettier \
+husky lint-staged cross-env concurrently \
+@types/node @types/express @types/cors @types/cookie-parser \
+@types/swagger-jsdoc @types/swagger-ui-express @types/uuid</code></pre>
+  </section>
+
+  <section id="external">
+    <h2>15. External Tools (Non-NPM)</h2>
+    <p>Tools berikut tidak diinstall via package.json, namun wajib ada di environment (Local/CI):</p>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">Docker & Docker Compose</span>
+      </div>
+      <p class="dep-desc">Menjalankan dependency infrastruktur (PostgreSQL, Redis) secara terisolasi tanpa mengotori OS
+        host.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">k6</span>
+      </div>
+      <p class="dep-desc">Load testing tool (ditulis dalam Go/JS). Digunakan untuk stress test API (lihat folder
+        <code>tests/perf</code>).</p>
+    </div>
+  </section>
+
+  <footer
+    style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
+    <p>Dependency Handbook &mdash; Internal Developer Reference</p>
+  </footer>
+
+</body>
+
+</html>

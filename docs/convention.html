@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convention Handbook</title>
+  <style>
+    /* DESIGN SYSTEM: Matches Architecture Handbook */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --accent-color: #2563eb;
+      --border-color: #e5e7eb;
+      --code-bg: #f3f4f6;
+      --code-text: #db2777;
+      --section-bg: #f9fafb;
+
+      /* Convention Status Colors */
+      --status-must: #dc2626;
+      /* Merah - Wajib */
+      --status-should: #d97706;
+      /* Orange - Saran */
+      --status-opt: #059669;
+      /* Hijau - Opsional */
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-main);
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      background-color: var(--bg-color);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-top: 3.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--text-main);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+    }
+
+    strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    ul,
+    ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Special Box for Intro */
+    .intro-box {
+      border-left: 4px solid var(--accent-color);
+      background-color: var(--section-bg);
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* CODE BLOCKS */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: 500;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      color: inherit;
+      border: none;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      color: white;
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+      transform: translateY(-2px);
+    }
+
+    .bg-wajib {
+      background-color: var(--status-must);
+    }
+
+    .bg-saran {
+      background-color: var(--status-should);
+    }
+
+    .bg-opsi {
+      background-color: var(--status-opt);
+    }
+
+    /* TOC matches Architecture.html */
+    .toc {
+      background-color: var(--section-bg);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 4rem;
+    }
+
+    .toc h3 {
+      margin-top: 0;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: var(--accent-color);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--text-main);
+      text-decoration: underline;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        color: #000;
+      }
+
+      h2 {
+        break-before: auto;
+        page-break-after: avoid;
+        border-bottom: 1px solid #000;
+      }
+
+      .toc {
+        display: none;
+      }
+
+      .badge {
+        border: 1px solid #000;
+        color: #000;
+        background: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Convention Handbook</h1>
+    <div class="subtitle">Code Conventions & Project Standards</div>
+  </header>
+
+  <div class="intro-box">
+    <p style="margin:0;">
+      <strong>Tujuan Dokumen:</strong> Membuat codebase konsisten, mudah ditebak, dan menjadi referensi wajib bagi semua
+      developer (TypeScript + Express).
+    </p>
+  </div>
+
+  <nav class="toc">
+    <h3>Index</h3>
+    <ul>
+      <li><a href="#legend">0. Legend</a></li>
+      <li><a href="#structure">1. Struktur Project</a></li>
+      <li><a href="#naming">2. Naming System</a></li>
+      <li><a href="#module">3. Module Structure</a></li>
+      <li><a href="#suffix">4. Suffix & Roles</a></li>
+      <li><a href="#indexusage">5. Index.ts Usage</a></li>
+      <li><a href="#http">6. HTTP API & Routing</a></li>
+      <li><a href="#dto">7. DTO, Schema, Model</a></li>
+      <li><a href="#error">8. Error Handling</a></li>
+      <li><a href="#dependency">9. Dependency Rules</a></li>
+      <li><a href="#import">10. Import Style</a></li>
+      <li><a href="#logging">11. Logging</a></li>
+      <li><a href="#context">12. Context Objects</a></li>
+      <li><a href="#testing">13. Testing Conventions</a></li>
+    </ul>
+  </nav>
+
+  <section id="legend">
+    <h2>0. Legend</h2>
+    <ul>
+      <li><span class="badge bg-wajib">WAJIB</span> Harus diikuti di semua code baru.</li>
+      <li><span class="badge bg-saran">DIREKOMENDASIKAN</span> Sebaiknya diikuti, kecuali ada alasan kuat.</li>
+      <li><span class="badge bg-opsi">OPSIONAL</span> Boleh dipakai jika relevan.</li>
+    </ul>
+  </section>
+
+  <section id="structure">
+    <h2>1. Struktur Project & Folder Utama</h2>
+
+    <h3>1.1. Root structure <span class="badge bg-wajib">WAJIB</span></h3>
+    <pre><code>backend-starterkit/
+  package.json
+  tsconfig.json
+  .eslintrc.cjs
+  .env.example
+  /logs/              # output log harian (gitignored)
+  /migrations/        # migration database
+  /scripts/           # script helper build/deploy
+  /docs/              # handbook, styleguide
+  /src/               # source code aplikasi</code></pre>
+
+    <h3>1.2. Struktur utama di src/ <span class="badge bg-wajib">WAJIB</span></h3>
+    <pre><code>src/
+  /app          # bootstrap & lifecycle
+  /config       # konfigurasi statis & mapping env
+  /core         # platform & infra (http, db, logging)
+  /shared       # util & tipe umum (non-domain)
+  /modules      # feature-based modules
+  /jobs         # background job workers
+  /cli          # internal CLI
+  /tests        # global test (integration/e2e)</code></pre>
+
+    <h3>1.3. Folder modul di modules/ <span class="badge bg-wajib">WAJIB</span></h3>
+    <pre><code>src/modules/
+  /platform     # core feature: auth, users, files
+  /patterns     # reusable: comments, tags
+  /business     # domain spesifik per project</code></pre>
+  </section>
+
+  <section id="naming">
+    <h2>2. Naming System: Folder, File, Identifier</h2>
+
+    <h3>2.1. Folder & file <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan <strong>kebab-case</strong>.</p>
+    <pre><code>src/modules/platform/audit-log/audit-log.service.ts
+src/core/http/middlewares/request-logger.middleware.ts</code></pre>
+    <p>❌ <strong>Dilarang:</strong> Campuran <code>users.service.ts</code> dan <code>userService.ts</code>, atau nama
+      generik <code>helper.ts</code> tanpa konteks.</p>
+
+    <h3>2.2. Identifier di dalam code <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li><code>camelCase</code> → variable, function, method</li>
+      <li><code>PascalCase</code> → class, type, interface, enum</li>
+      <li><code>SCREAMING_SNAKE_CASE</code> → constant global</li>
+    </ul>
+  </section>
+
+  <section id="module">
+    <h2>3. Module Structure & File Roles</h2>
+
+    <h3>3.1. 1 folder = 1 module <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Tidak boleh ada module "ngambang" hanya berupa <code>index.ts</code>.</p>
+
+    <h3>3.2. HTTP module: file wajib <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li><code>*.routes.ts</code>: Definisi route Express</li>
+      <li><code>*.controller.ts</code>: Adapter HTTP</li>
+      <li><code>*.service.ts</code>: Business logic</li>
+      <li><code>*.repository.ts</code>: Data access</li>
+      <li><code>*.schemas.ts</code>: Validation schema</li>
+      <li><code>*.types.ts</code>: TS types / DTO</li>
+    </ul>
+
+    <h3>3.3. Urutan file dalam folder <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <p>Untuk konsistensi visual di sidebar editor:</p>
+    <ol>
+      <li>types</li>
+      <li>constants</li>
+      <li>schemas</li>
+      <li>repository</li>
+      <li>service</li>
+      <li>routes</li>
+      <li>controller</li>
+    </ol>
+  </section>
+
+  <section id="suffix">
+    <h2>4. Suffix & Role-based Naming</h2>
+
+    <h3>4.1. Suffix file module <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Setiap file harus memiliki suffix sesuai perannya: <code>.routes.ts</code>, <code>.controller.ts</code>,
+      <code>.service.ts</code>, <code>.repository.ts</code>, <code>.schemas.ts</code>, <code>.types.ts</code>,
+      <code>.config.ts</code>.</p>
+
+    <h3>4.2. Suffix core/infra <span class="badge bg-wajib">WAJIB</span></h3>
+    <p><code>.middleware.ts</code>, <code>.job.ts</code>, <code>.cli.ts</code>, <code>.transport.ts</code>,
+      <code>.formatter.ts</code>, <code>.adapter.ts</code>.</p>
+  </section>
+
+  <section id="indexusage">
+    <h2>5. index.ts Usage</h2>
+
+    <h3>5.1. Kapan boleh pakai? <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <p>Hanya jika folder berperan sebagai <strong>Facade / Public API</strong> (misal: <code>src/config/index.ts</code>
+      atau <code>src/core/logging/index.ts</code>).</p>
+
+    <h3>5.2. Kapan TIDAK boleh pakai? <span class="badge bg-wajib">WAJIB</span></h3>
+    <p><strong>Folder module feature</strong> (<code>src/modules/**</code>) tidak boleh pakai <code>index.ts</code>
+      barrel export. Import harus eksplisit ke file tujuan untuk menghindari circular dependency dan kebingungan
+      navigasi.</p>
+  </section>
+
+  <section id="http">
+    <h2>6. HTTP API & Routing</h2>
+
+    <h3>6.1. Base path <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Semua endpoint publik: <code>/api/v1/...</code></p>
+
+    <h3>6.2. Resource Naming <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan <strong>plural noun</strong>, hindari verb di path.</p>
+    <ul>
+      <li>✅ <code>POST /users</code> (Create user)</li>
+      <li>❌ <code>POST /create-user</code></li>
+    </ul>
+
+    <h3>6.3. Standar CRUD <span class="badge bg-wajib">WAJIB</span></h3>
+    <pre><code>GET    /resource       (List)
+GET    /resource/:id   (Detail)
+POST   /resource       (Create)
+PUT    /resource/:id   (Full Update)
+DELETE /resource/:id   (Delete)</code></pre>
+  </section>
+
+  <section id="dto">
+    <h2>7. DTO, Schema, & Model Naming</h2>
+
+    <h3>7.1. Domain vs DTO <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <ul>
+      <li><strong>Entity:</strong> <code>User</code> (Domain object)</li>
+      <li><strong>Input:</strong> <code>CreateUserInput</code>, <code>ListUsersFilter</code></li>
+      <li><strong>Response:</strong> <code>UserResponse</code>, <code>UserListItem</code></li>
+    </ul>
+
+    <h3>7.2. Schema naming <span class="badge bg-wajib">WAJIB</span></h3>
+    <p><code>createUserSchema</code>, <code>updateUserSchema</code>. Hindari nama generik seperti <code>UserDto</code>
+      tanpa konteks.</p>
+  </section>
+
+  <section id="error">
+    <h2>8. Error Handling</h2>
+
+    <h3>8.1. Base Error <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan class <code>AppError</code> dengan properti: <code>code</code>, <code>message</code>,
+      <code>status</code>.</p>
+
+    <h3>8.2. Layer Responsibility <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li><strong>Service:</strong> <code>throw new AppError(...)</code>. Tidak boleh sentuh <code>res</code>.</li>
+      <li><strong>Controller:</strong> Biarkan error naik (jangan catch sendiri kecuali untuk transformasi spesifik).
+      </li>
+      <li><strong>Global Handler:</strong> Menangkap error, logging, dan formatting JSON response standar.</li>
+    </ul>
+  </section>
+
+  <section id="dependency">
+    <h2>9. Dependency Rules</h2>
+
+    <h3>9.1. Arah Dependency <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li><code>core</code> ➔ ❌ modules</li>
+      <li><code>shared</code> ➔ ❌ modules</li>
+      <li><code>modules</code> ➔ ✅ core, shared, config</li>
+    </ul>
+
+    <h3>9.2. Cross-module <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <p>Jika Module A butuh Module B, import <strong>Service</strong>-nya, jangan Repository-nya.</p>
+  </section>
+
+  <section id="import">
+    <h2>10. Import Style</h2>
+
+    <h3>10.1. Path Alias <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan <code>@/</code> untuk import absolute.</p>
+    <pre><code>import { logger } from '@/core/logging/logger';
+import { usersRouter } from '@/modules/platform/users/users.routes';</code></pre>
+
+    <h3>10.2. Export Style <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan <strong>Named Export</strong>. Hindari <code>export default</code>.</p>
+  </section>
+
+  <section id="logging">
+    <h2>11. Logging Conventions</h2>
+
+    <h3>11.1. Single Logger <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan logger dari <code>@/core/logging/logger</code>. Jangan pakai <code>console.log</code>.</p>
+
+    <h3>11.2. Log Levels <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li><code>debug</code>: Dev only.</li>
+      <li><code>info</code>: Event penting normal (Login, Order Created).</li>
+      <li><code>warn</code>: Tidak normal tapi tidak fatal (Retry, Fallback).</li>
+      <li><code>error</code>: Kegagalan sistem/logic (Exception).</li>
+    </ul>
+
+    <h3>11.3. Request Logging <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Wajib log: <code>requestId</code>, <code>method</code>, <code>path</code>, <code>status</code>,
+      <code>durationMs</code>.</p>
+  </section>
+
+  <section id="context">
+    <h2>12. Context Objects</h2>
+    <p><span class="badge bg-saran">DIREKOMENDASIKAN</span> Gunakan suffix <code>.context.ts</code> hanya untuk definisi
+      object konteks (e.g., <code>RequestContext</code>). Jangan gunakan untuk helper function biasa.</p>
+  </section>
+
+  <section id="testing">
+    <h2>13. Testing Conventions</h2>
+    <p>Bagian ini mengatur <strong>penempatan test</strong>, <strong>penamaan file</strong>, dan <strong>pemisahan level
+        test</strong>.</p>
+
+    <h3>13.1. Prinsip umum <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li>Test harus mengikuti <strong>struktur feature-based</strong>:
+        <ul>
+          <li>Test yang menguji <strong>1 feature/module</strong> → diletakkan di folder module tersebut.</li>
+          <li>Test yang menguji <strong>banyak feature sekaligus (E2E)</strong> → diletakkan di
+            <code>src/tests/e2e</code>.</li>
+        </ul>
+      </li>
+      <li>Semua file test menggunakan ekstensi: <code>*.spec.ts</code></li>
+    </ul>
+
+    <h3>13.2. Penempatan test per feature <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Untuk setiap module di <code>src/modules/...</code>, test diletakkan di subfolder <code>__tests__</code>:</p>
+    <pre><code>src/modules/users/
+  users.routes.ts
+  users.service.ts
+  ...
+  __tests__/
+    users.service.unit.spec.ts
+    users.repository.unit.spec.ts
+    users.routes.integration.spec.ts</code></pre>
+    <ul>
+      <li>1 module → 1 folder <code>__tests__</code> di dalam folder module tersebut.</li>
+      <li>Test file <strong>tidak</strong> diletakkan di luar module jika hanya menguji 1 module.</li>
+    </ul>
+
+    <h3>13.3. Level test & penamaan file <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <p>Level test dibedakan lewat <strong>suffix nama file</strong>:</p>
+    <ul>
+      <li><strong>Unit test:</strong> <code>*.unit.spec.ts</code><br>Contoh: <code>users.service.unit.spec.ts</code>
+      </li>
+      <li><strong>Integration test:</strong> <code>*.integration.spec.ts</code><br>Contoh:
+        <code>users.routes.integration.spec.ts</code></li>
+      <li><strong>E2E (lintas feature):</strong> <code>*.e2e.spec.ts</code><br>Contoh: <code>auth.e2e.spec.ts</code>
+      </li>
+    </ul>
+    <p><em>Jika bedanya tidak terlalu penting di awal, boleh mulai dari <code>*.spec.ts</code> saja.</em></p>
+
+    <h3>13.4. Folder src/tests <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <p>Folder <code>src/tests</code> digunakan <strong>hanya untuk test lintas feature / global</strong>, bukan
+      per-module.</p>
+    <pre><code>src/tests/
+  e2e/
+    auth.e2e.spec.ts
+    full-app.e2e.spec.ts</code></pre>
+
+    <h3>13.5. Tools & framework test <span class="badge bg-opsi">OPSIONAL</span></h3>
+    <ul>
+      <li><strong>Unit & Integration:</strong> Jest / Vitest.</li>
+      <li><strong>E2E HTTP:</strong> Supertest / Axios + Jest/Vitest.</li>
+    </ul>
+
+    <h3>13.6. Performance / Load Testing <span class="badge bg-opsi">OPSIONAL</span></h3>
+    <p>Selain functional test, repository ini dapat menyertakan performance test menggunakan <strong>k6</strong>.</p>
+    <p><strong>Penempatan:</strong></p>
+    <pre><code>tests/
+  e2e/
+    app.e2e.spec.ts
+  perf/
+    k6-smoke.js
+    k6-stress.js
+    k6-soak.js</code></pre>
+    <p><strong>Konvensi:</strong></p>
+    <ul>
+      <li>Folder <code>tests/perf</code> menyimpan script k6 (JavaScript).</li>
+      <li>Script ini <strong>bukan</strong> bagian dari codebase utama TypeScript dan tidak dijalankan via Vitest.</li>
+      <li>Nama file mencerminkan jenis beban:
+        <ul>
+          <li><code>k6-smoke.js</code>: Validasi basic availability.</li>
+          <li><code>k6-stress.js</code>: Naikkan beban sampai limit.</li>
+          <li><code>k6-soak.js</code>: Beban stabil durasi lama.</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <footer
+    style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
+    <p>Convention Handbook Code Conventions &mdash; Internal Use Only</p>
+  </footer>
+
+</body>
+
+</html>

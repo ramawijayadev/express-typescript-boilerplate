@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Feature Handbook</title>
+  <style>
+    /* DESIGN SYSTEM: Matches Architecture, Convention, & Dependency Handbook */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --accent-color: #2563eb;
+      --border-color: #e5e7eb;
+      --code-bg: #f3f4f6;
+      --code-text: #db2777;
+      --section-bg: #f9fafb;
+
+      /* Tier Colors */
+      --tier-1-bg: #fee2e2;
+      --tier-1-text: #991b1b;
+      /* Red */
+      --tier-2-bg: #ffedd5;
+      --tier-2-text: #9a3412;
+      /* Orange */
+      --tier-3-bg: #dcfce7;
+      --tier-3-text: #166534;
+      /* Green */
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-main);
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      background-color: var(--bg-color);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-top: 3.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--text-main);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h4 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+    }
+
+    strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    ul,
+    ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Special Box for Intro */
+    .intro-box {
+      border-left: 4px solid var(--accent-color);
+      background-color: var(--section-bg);
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* CODE BLOCKS */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: 500;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      color: inherit;
+      border: none;
+    }
+
+    /* TIER BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tier-1 {
+      background-color: var(--tier-1-bg);
+      color: var(--tier-1-text);
+    }
+
+    .tier-2 {
+      background-color: var(--tier-2-bg);
+      color: var(--tier-2-text);
+    }
+
+    .tier-3 {
+      background-color: var(--tier-3-bg);
+      color: var(--tier-3-text);
+    }
+
+    /* MODULE BLOCK */
+    .module-block {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      background-color: #fff;
+    }
+
+    .module-block h3 {
+      margin-top: 0;
+    }
+
+    /* CHECKLIST STYLE */
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .checklist li::before {
+      content: '⬜';
+      /* Unicode box */
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 1.1em;
+      opacity: 0.4;
+    }
+
+    /* TOC */
+    .toc {
+      background-color: var(--section-bg);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 4rem;
+    }
+
+    .toc h3 {
+      margin-top: 0;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+      column-count: 2;
+      column-gap: 2rem;
+    }
+
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: var(--accent-color);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--text-main);
+      text-decoration: underline;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        color: #000;
+      }
+
+      h2 {
+        break-before: auto;
+        page-break-after: avoid;
+        border-bottom: 1px solid #000;
+      }
+
+      .toc {
+        display: none;
+      }
+
+      .module-block {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Core Feature Handbook</h1>
+    <div class="subtitle">Implementation Handbook & Checklist</div>
+  </header>
+
+  <div class="intro-box">
+    <p style="margin:0;">
+      Dokumen ini mendefinisikan <strong>Core Feature</strong> yang disediakan oleh starterkit backend. Tujuannya adalah
+      memisahkan fitur fundamental (Wajib) dari fitur tambahan, serta menjadi pedoman implementasi module yang reusable.
+    </p>
+  </div>
+
+  <nav class="toc">
+    <h3>Index</h3>
+    <ul>
+      <li><a href="#purpose">1. Purpose & Scope</a></li>
+      <li><a href="#tiering">2. Tiering Overview</a></li>
+      <li><a href="#tier1">3. Tier 1 – Wajib</a></li>
+      <li><a href="#tier2">4. Tier 2 – Sangat Disarankan</a></li>
+      <li><a href="#tier3">5. Tier 3 – Opsional / Advanced</a></li>
+      <li><a href="#convention">6. Konvensi Umum</a></li>
+      <li><a href="#checklist">7. Checklist Implementasi</a></li>
+    </ul>
+  </nav>
+
+  <section id="purpose">
+    <h2>1. Purpose & Scope</h2>
+    <p>Dokumen ini menjadi "blueprint" fungsionalitas aplikasi.</p>
+    <ul>
+      <li><strong>Standardisasi:</strong> Menentukan feature generik yang harus selalu ada.</li>
+      <li><strong>Reusability:</strong> Panduan agar modul inti bisa dipakai ulang di project lain.</li>
+      <li><strong>Prioritas:</strong> Memisahkan prioritas pengerjaan (Must Have vs Nice to Have).</li>
+    </ul>
+    <p><strong>Scope:</strong> Fokus pada kontrak modul, struktur data (Entity), dan tanggung jawab utama. Asumsi
+      implementasi menggunakan arsitektur Controller → Service → Repository.</p>
+  </section>
+
+  <section id="tiering">
+    <h2>2. Tiering Overview</h2>
+
+    <div style="margin-bottom: 1rem;">
+      <span class="badge tier-1">Tier 1: Must Have</span>
+      <p style="margin-top: 0.5rem;">Bagian inti dari platform. Aplikasi tidak dianggap "siap" tanpa ini.</p>
+      <ul>
+        <li>Auth, User & Role, Generic CRUD, File Infra, Notification, Audit Log.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <span class="badge tier-2">Tier 2: Recommended</span>
+      <p style="margin-top: 0.5rem;">Sering dibutuhkan di aplikasi modern, idealnya tersedia tapi bisa dinonaktifkan.
+      </p>
+      <ul>
+        <li>Settings, Organization/Team, Activity Feed.</li>
+      </ul>
+    </div>
+
+    <div>
+      <span class="badge tier-3">Tier 3: Optional</span>
+      <p style="margin-top: 0.5rem;">Pattern siap pakai untuk kebutuhan spesifik/kompleks.</p>
+      <ul>
+        <li>Workflow Status, Comment System, Tagging.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="tier1">
+    <h2>3. Tier 1 – Wajib <span class="badge tier-1">Core</span></h2>
+
+    <div class="module-block">
+      <h3>3.1. Auth Module</h3>
+      <p>Mekanisme standar autentikasi dan manajemen credential.</p>
+      <h4>Komponen Inti</h4>
+      <ul>
+        <li><strong>Entity:</strong> <code>UserCredential</code> (passwordHash, salt, lastLoginAt).</li>
+        <li><strong>Security:</strong> Access Token (JWT Short-lived) & Refresh Token (Long-lived).</li>
+        <li><strong>Flows:</strong> Register, Login, Logout, Forgot Password, Reset Password.</li>
+      </ul>
+      <h4>Kualitas Minimal</h4>
+      <ul>
+        <li>Hashing menggunakan <strong>Argon2</strong>.</li>
+        <li>Rate limiting pada endpoint Login.</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <h3>3.2. User & Role Module</h3>
+      <p>Representasi identitas dan kontrol akses.</p>
+      <h4>Komponen Inti</h4>
+      <ul>
+        <li><strong>Entity:</strong> <code>User</code> (id, email, name, status).</li>
+        <li><strong>Role:</strong> RBAC Sederhana (e.g., <code>admin</code>, <code>user</code>).</li>
+        <li><strong>Mapping:</strong> Relasi Many-to-Many <code>UserRole</code>.</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <h3>3.3. Generic CRUD Pattern</h3>
+      <p>Standarisasi operasi data, pagination, dan format response.</p>
+      <h4>Konvensi Endpoint</h4>
+      <ul>
+        <li><code>GET /resource</code> (List + Pagination)</li>
+        <li><code>GET /resource/:id</code> (Detail)</li>
+        <li><code>POST /resource</code> (Create)</li>
+        <li><code>PUT /resource/:id</code> (Update)</li>
+        <li><code>DELETE /resource/:id</code> (Delete)</li>
+      </ul>
+      <h4>Response Format Standard</h4>
+      <pre><code>// Success Response
+{
+  "success": true,
+  "data": [ ... ],
+  "meta": { "page": 1, "total": 100 }
+}
+
+// Error Response
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Email is required"
+  }
+}</code></pre>
+    </div>
+
+    <div class="module-block">
+      <h3>3.4. File / Attachment Infrastructure</h3>
+      <p>Standar upload dan penyimpanan metadata file.</p>
+      <h4>Komponen Inti</h4>
+      <ul>
+        <li><strong>Entity:</strong> <code>File</code> (originalName, mimeType, size, url).</li>
+        <li><strong>Storage Abstraction:</strong> Interface yang mendukung Local Driver (Dev) dan S3/Object Storage
+          (Prod).</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <h3>3.5. Notification Infrastructure</h3>
+      <p>Kerangka dasar pengiriman notifikasi (Email first).</p>
+      <h4>Komponen Inti</h4>
+      <ul>
+        <li><strong>Service:</strong> <code>sendEmail(to, templateId, variables)</code>.</li>
+        <li><strong>Templates:</strong> Reset Password, Email Verification, Welcome User.</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <h3>3.6. Audit Log Infrastructure</h3>
+      <p>Mencatat jejak keamanan dan governance sistem.</p>
+      <h4>Komponen Inti</h4>
+      <ul>
+        <li><strong>Entity:</strong> <code>AuditLog</code> (actorId, action, targetType, targetId, metadata, ip).</li>
+        <li><strong>Trigger:</strong> Otomatis mencatat saat Login (sukses/gagal) dan mutasi data sensitif.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="tier2">
+    <h2>4. Tier 2 – Sangat Disarankan <span class="badge tier-2">Rec</span></h2>
+
+    <div class="module-block">
+      <h3>4.1. Settings & Configuration Module</h3>
+      <p>Memisahkan konfigurasi dinamis dari hardcoded code.</p>
+      <ul>
+        <li><strong>SystemSetting:</strong> Key-value store global (misal: Maintenance Mode toggle).</li>
+        <li><strong>UserPreference:</strong> Setting per user (misal: Theme, Notif Preference).</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <h3>4.2. Organization / Team Module</h3>
+      <p>Mendukung model multi-tenant (SaaS/B2B).</p>
+      <ul>
+        <li><strong>Organization:</strong> Entity grup perusahaan.</li>
+        <li><strong>Membership:</strong> Relasi User ke Organization dengan role spesifik (Owner, Member).</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <h3>4.3. Activity / Timeline Module</h3>
+      <p>Feed aktivitas yang ramah manusia (beda dengan audit log teknis).</p>
+      <ul>
+        <li><strong>Feed:</strong> "User A mengomentari Order #123", "Status berubah jadi Done".</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="tier3">
+    <h2>5. Tier 3 – Opsional / Advanced <span class="badge tier-3">Opt</span></h2>
+
+    <div class="module-block">
+      <h3>5.1. Generic Status / Workflow</h3>
+      <p>Pola untuk entity dengan state machine yang kompleks (Draft → Review → Approved → Published).</p>
+    </div>
+
+    <div class="module-block">
+      <h3>5.2. Comment / Discussion</h3>
+      <p>Sistem komentar yang bisa ditempel ke entity apa saja (Polymorphic association).</p>
+    </div>
+
+    <div class="module-block">
+      <h3>5.3. Tag / Label System</h3>
+      <p>Sistem grouping fleksibel menggunakan tagging.</p>
+    </div>
+  </section>
+
+  <section id="convention">
+    <h2>6. Konvensi Umum</h2>
+    <p>Aturan main saat membuat feature module baru:</p>
+    <h4>6.1. Penamaan</h4>
+    <p>Module name lowercase (<code>auth</code>, <code>users</code>). Endpoint URL selalu plural
+      (<code>/api/v1/users</code>).</p>
+
+    <h4>6.2. Pola Layering</h4>
+    <p>Alur data wajib searah: Routes → Controller → Service → Repository.</p>
+
+    <h4>6.3. Kontrak API</h4>
+    <p>Gunakan Error Code terstandar (misal: <code>AUTH_INVALID_CREDENTIALS</code>, <code>PERMISSION_DENIED</code>) agar
+      frontend mudah memproses error.</p>
+  </section>
+
+  <section id="checklist">
+    <h2>7. Checklist Implementasi</h2>
+    <p>Gunakan daftar ini untuk memvalidasi kelengkapan fitur starterkit sebelum release.</p>
+
+    <h3>Tier 1 – Wajib</h3>
+    <ul class="checklist">
+      <li><strong>Auth:</strong> Login, Logout, Reset Password, Secure Token (JWT).</li>
+      <li><strong>User:</strong> Entity User & Role, CRUD Admin, Middleware Auth.</li>
+      <li><strong>CRUD:</strong> Base Service Pattern, Pagination, Standard JSON Response.</li>
+      <li><strong>File:</strong> Upload endpoint, Validation (size/mime), Storage logic.</li>
+      <li><strong>Notif:</strong> Email service wrapper, Template dasar.</li>
+      <li><strong>Audit:</strong> Entity Log, Hooks pada critical event.</li>
+    </ul>
+
+    <h3>Tier 2 – Recommended</h3>
+    <ul class="checklist">
+      <li><strong>Settings:</strong> System config CRUD.</li>
+      <li><strong>Org/Team:</strong> Team creation & membership logic.</li>
+      <li><strong>Activity:</strong> Public activity feed implementation.</li>
+    </ul>
+
+    <h3>Tier 3 – Optional</h3>
+    <ul class="checklist">
+      <li><strong>Workflow:</strong> State transition logic.</li>
+      <li><strong>Comments:</strong> Polymorphic comment system.</li>
+      <li><strong>Tags:</strong> Tagging logic.</li>
+    </ul>
+  </section>
+
+  <footer
+    style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
+    <p>Core Feature Handbook &mdash; Internal Developer Reference</p>
+  </footer>
+
+</body>
+
+</html>

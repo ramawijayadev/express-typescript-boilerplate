@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Architecture Handbook</title>
+	<style>
+		/* DESIGN SYSTEM: Clean, Technical, Minimalist. */
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+		:root {
+			--bg-color: #ffffff;
+			--text-main: #111827;
+			--text-muted: #4b5563;
+			--accent-color: #2563eb;
+			--border-color: #e5e7eb;
+			--code-bg: #f3f4f6;
+			--code-text: #be185d;
+			--section-bg: #f9fafb;
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		body {
+			font-family: 'Inter', sans-serif;
+			line-height: 1.6;
+			color: var(--text-main);
+			max-width: 850px;
+			margin: 0 auto;
+			padding: 60px 24px;
+			background-color: var(--bg-color);
+		}
+
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-weight: 700;
+			color: var(--text-main);
+			letter-spacing: -0.025em;
+		}
+
+		h1 {
+			font-size: 3.5rem;
+			line-height: 1.1;
+			margin-bottom: 0.5rem;
+			letter-spacing: -0.04em;
+		}
+
+		.subtitle {
+			font-size: 1.5rem;
+			font-weight: 500;
+			color: var(--text-muted);
+			margin-bottom: 2rem;
+			border-bottom: 1px solid var(--border-color);
+			padding-bottom: 2rem;
+		}
+
+		h2 {
+			font-size: 1.8rem;
+			margin-top: 3.5rem;
+			margin-bottom: 1.5rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid var(--text-main);
+		}
+
+		h3 {
+			font-size: 1.25rem;
+			margin-top: 2rem;
+			margin-bottom: 0.75rem;
+			color: var(--text-main);
+		}
+
+		p {
+			margin-bottom: 1.25rem;
+			color: var(--text-muted);
+		}
+
+		strong {
+			color: var(--text-main);
+			font-weight: 600;
+		}
+
+		ul,
+		ol {
+			margin-bottom: 1.5rem;
+			padding-left: 1.5rem;
+			color: var(--text-muted);
+		}
+
+		li {
+			margin-bottom: 0.5rem;
+		}
+
+		blockquote {
+			border-left: 4px solid var(--accent-color);
+			background-color: var(--section-bg);
+			margin: 2rem 0;
+			padding: 1rem 1.5rem;
+			font-style: italic;
+			color: var(--text-main);
+			border-radius: 0 4px 4px 0;
+		}
+
+		code {
+			font-family: 'JetBrains Mono', monospace;
+			background-color: var(--code-bg);
+			color: var(--code-text);
+			padding: 0.2em 0.4em;
+			border-radius: 4px;
+			font-size: 0.85em;
+			font-weight: 500;
+		}
+
+		.toc {
+			background-color: var(--section-bg);
+			padding: 2rem;
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+			margin-bottom: 4rem;
+		}
+
+		.toc h3 {
+			margin-top: 0;
+			font-size: 0.875rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: var(--text-muted);
+		}
+
+		.toc ul {
+			list-style: none;
+			padding-left: 0;
+			margin-bottom: 0;
+		}
+
+		.toc li {
+			margin-bottom: 0.5rem;
+		}
+
+		.toc a {
+			text-decoration: none;
+			color: var(--accent-color);
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+
+		.toc a:hover {
+			color: var(--text-main);
+			text-decoration: underline;
+		}
+
+		@media print {
+			body {
+				padding: 0;
+				color: #000;
+			}
+
+			h2 {
+				break-before: auto;
+				page-break-after: avoid;
+				border-bottom: 1px solid #000;
+			}
+
+			.toc {
+				display: none;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1>Architecture Handbook</h1>
+		<div class="subtitle">
+			Panduan teknis arsitektur backend untuk aplikasi production-grade, scalable, dan maintainable.
+		</div>
+	</header>
+
+	<nav class="toc">
+		<h3>Daftar Isi</h3>
+		<ul>
+			<li><a href="#intro">1. Purpose & Scope</a></li>
+			<li><a href="#mental-model">2. Mental Model</a></li>
+			<li><a href="#platform-core">3. Platform / Runtime Core</a></li>
+			<li><a href="#domain-api">4. Domain & API Layer</a></li>
+			<li><a href="#data-integration">5. Data & Integration Layer</a></li>
+			<li><a href="#security">6. Security & Access Layer</a></li>
+			<li><a href="#communication">7. Communication Layer</a></li>
+			<li><a href="#observability">8. Observability & Operations</a></li>
+			<li><a href="#dx-quality">9. Developer Experience & Quality</a></li>
+			<li><a href="#advanced">10. Advanced Topics</a></li>
+			<li><a href="#summary">11. Summary</a></li>
+		</ul>
+	</nav>
+
+	<section id="intro">
+		<h2>1. Purpose & Scope</h2>
+		<p>Dokumen ini adalah "North Star" teknis untuk memastikan aplikasi yang dibangun:</p>
+		<ul>
+			<li><strong>Production-grade:</strong> Siap melayani user nyata, stabil, dan aman.</li>
+			<li><strong>Scalable:</strong> Relevan untuk tim kecil (MVP) hingga skala besar.</li>
+			<li><strong>Technology-agnostic:</strong> Fokus pada konsep struktur, bukan framework spesifik.</li>
+		</ul>
+	</section>
+
+	<section id="mental-model">
+		<h2>2. Mental Model Arsitektur Backend</h2>
+		<p>Backend application dilihat sebagai kombinasi dari 7 layer utama:</p>
+		<ol>
+			<li><strong>Platform / Runtime Core</strong> (Fondasi)</li>
+			<li><strong>Domain & API Layer</strong> (Bisnis Logic)</li>
+			<li><strong>Data & Integration Layer</strong> (Storage & External)</li>
+			<li><strong>Security & Access Layer</strong> (Keamanan)</li>
+			<li><strong>Communication Layer</strong> (Protokol)</li>
+			<li><strong>Observability & Operations</strong> (Monitoring)</li>
+			<li><strong>Developer Experience & Quality</strong> (Tooling)</li>
+		</ol>
+		<blockquote>
+			Beberapa aspek adalah <strong>cross-cutting concerns</strong> (seperti Security, Logging, Config) yang "menembus"
+			berbagai layer, namun didefinisikan kebijakannya di layer spesifik.
+		</blockquote>
+	</section>
+
+	<section id="platform-core">
+		<h2>3. Platform / Runtime Core</h2>
+		<p>Layer fondasi teknis. Semua request bergantung pada bagian ini.</p>
+
+		<h3>3.1. Config & Environment Management</h3>
+		<p><strong>Prinsip:</strong> Explicit Configuration.</p>
+		<ul>
+			<li><strong>Environment Variables:</strong> Simpan rahasia (DB URL, Secrets) di environment, bukan code.</li>
+			<li><strong>Schema Validation:</strong> Aplikasi harus gagal start jika config wajib tidak valid.</li>
+			<li><strong>Abstraction:</strong> Gunakan satu objek config global (singleton) di dalam app.</li>
+		</ul>
+
+		<h3>3.2. HTTP Server & Routing</h3>
+		<p>Inisialisasi framework dan router global. Pastikan struktur URL konsisten (e.g., <code>/api/v1</code>) dan
+			routing dipecah per modul fitur.</p>
+
+		<h3>3.3. Global Middlewares</h3>
+		<p>Logic teknis yang berjalan sebelum business logic:</p>
+		<ul>
+			<li>Body parser, CORS, Security headers (Helmet).</li>
+			<li>Request ID generator (untuk tracing).</li>
+			<li>Rate limiter.</li>
+		</ul>
+
+		<h3>3.4. Error Handling Strategy</h3>
+		<p>Menstandarkan representasi error ke client:</p>
+		<ul>
+			<li><strong>Error Model:</strong> Struktur JSON standar (<code>code</code>, <code>message</code>,
+				<code>details</code>).
+			</li>
+			<li><strong>Error Mapping:</strong> Mapping jenis error ke HTTP status (400, 404, 500).</li>
+			<li><strong>Global Handler:</strong> Centralized catch-all untuk logging dan response sanitization.</li>
+		</ul>
+
+		<h3>3.5. Health Checks & Lifecycle</h3>
+		<ul>
+			<li><strong>Liveness Probe:</strong> Cek apakah proses hidup (untuk restart policy).</li>
+			<li><strong>Readiness Probe:</strong> Cek apakah siap terima traffic (stop traffic jika DB putus).</li>
+			<li><strong>Graceful Shutdown:</strong> Stop request baru, selesaikan request berjalan, tutup koneksi DB dengan
+				rapi sebelum mati.</li>
+		</ul>
+	</section>
+
+	<section id="domain-api">
+		<h2>4. Domain & API Layer</h2>
+		<p>Layer yang berisi Business Logic dan Kontrak HTTP.</p>
+
+		<h3>4.1. Domain Entities / Models</h3>
+		<p>Konsep bisnis murni (User, Order) dan aturannya. Tidak boleh bergantung pada detail framework HTTP.</p>
+
+		<h3>4.2. Service / Use Case Layer</h3>
+		<p>Mengorkestrasi alur bisnis (Register, Checkout). Menghubungkan validasi, repository, dan logic lain.</p>
+
+		<h3>4.3. Validation (Request & Domain)</h3>
+		<ul>
+			<li><strong>Request Validation:</strong> Cek format input (Schema Zod/Joi).</li>
+			<li><strong>Domain Validation:</strong> Cek aturan bisnis (misal: Stok tidak cukup).</li>
+		</ul>
+
+		<h3>4.4. CRUD Patterns & Response</h3>
+		<p>Standarisasi operasi Create, Read, Update, Delete:</p>
+		<ul>
+			<li>Naming convention yang konsisten.</li>
+			<li><strong>Response Format:</strong> Struktur sukses seragam (<code>data</code>, <code>meta</code> untuk
+				pagination).</li>
+		</ul>
+
+		<h3>4.5. Routing & Controllers</h3>
+		<p>Controller hanya bertugas menerima input, memanggil service, dan me-mapping hasil ke HTTP response.
+			<strong>Hindari logic bisnis di controller.</strong>
+		</p>
+
+		<h3>4.6. API Versioning</h3>
+		<p>Gunakan strategi versioning (URL prefix <code>/v1/</code>) agar evolusi API tidak merusak client lama.</p>
+	</section>
+
+	<section id="data-integration">
+		<h2>5. Data & Integration Layer</h2>
+
+		<h3>5.1. Database & Repository Pattern</h3>
+		<p>Gunakan <strong>Repository Pattern</strong> untuk mengisolasi domain dari detail query database (SQL/ORM),
+			memudahkan testing dan maintenance.</p>
+
+		<h3>5.2. Caching Strategy</h3>
+		<p>Mengurangi latency data (Redis). Tentukan strategi <strong>TTL</strong> dan <strong>Invalidation</strong> yang
+			jelas saat data berubah.</p>
+
+		<h3>5.3. Async Jobs (Message Queue)</h3>
+		<p>Menangani proses berat (email, report) secara background menggunakan Queue (RabbitMQ/BullMQ) dan Worker process.
+		</p>
+
+		<h3>5.4. File & Object Storage</h3>
+		<p>Menyimpan file binary (gambar, dokumen) di Object Storage (S3/MinIO), bukan di database. Database hanya menyimpan
+			URL/Key-nya.</p>
+
+		<h3>5.5. Search Engine Integration</h3>
+		<p>Jika fitur pencarian kompleks dibutuhkan (Full-text search), sync data ke search engine khusus
+			(Elasticsearch/MeiliSearch).</p>
+
+		<h3>5.6. External API Clients</h3>
+		<p>Wrapper untuk layanan pihak ketiga (Payment, SMS). Fokus pada penanganan <strong>Timeout</strong> dan strategi
+			<strong>Retry</strong>.
+		</p>
+	</section>
+
+	<section id="security">
+		<h2>6. Security & Access Layer</h2>
+
+		<h3>6.1. Authentication</h3>
+		<p>Identifikasi user (JWT, Session, OAuth). Pastikan mekanisme validasi token aman.</p>
+
+		<h3>6.2. Authorization</h3>
+		<p>Kontrol akses (RBAC/Permission-based). Menentukan "siapa boleh melakukan apa" terhadap resource tertentu.</p>
+
+		<h3>6.3. Security Hardening</h3>
+		<p>Implementasi pertahanan lapis tambahan: Rate Limiter, Input Sanitization (XSS/SQLi), CORS policy ketat, dan
+			proteksi Brute-force.</p>
+
+		<h3>6.4. Secrets Management</h3>
+		<p>Manajemen enkripsi dan keys. <strong>Jangan pernah commit secrets ke repo.</strong> Gunakan Secret Manager atau
+			Env Vars terenkripsi.</p>
+
+		<h3>6.5. Audit Log</h3>
+		<p>Mencatat jejak aktivitas kritis ("Siapa", "Melakukan Apa", "Kapan") untuk keperluan forensik, keamanan, dan
+			compliance.</p>
+	</section>
+
+	<section id="communication">
+		<h2>7. Communication Layer</h2>
+		<ul>
+			<li><strong>HTTP REST/GraphQL:</strong> Komunikasi request-response standar.</li>
+			<li><strong>Real-Time (WebSocket/SSE):</strong> Untuk notifikasi langsung atau chat.</li>
+			<li><strong>Event-Driven (Pub/Sub):</strong> Integrasi antar-modul yang <em>loosely-coupled</em> via event bus.
+			</li>
+		</ul>
+	</section>
+
+	<section id="observability">
+		<h2>8. Observability & Operations</h2>
+
+		<h3>8.1. Structured Logging</h3>
+		<p>Log dalam format JSON. Wajib menyertakan context (RequestId, UserId) dan Log Level yang tepat.</p>
+
+		<h3>8.2. Metrics & Monitoring</h3>
+		<p>Memantau kesehatan sistem: Throughput (RPS), Latency (p95, p99), Error Rate, dan Resource Usage.</p>
+
+		<h3>8.3. Tracing</h3>
+		<p>Menggunakan <code>TraceId</code> / <code>CorrelationId</code> untuk melacak perjalanan request melintasi berbagai
+			komponen sistem.</p>
+
+		<h3>8.4. Alerting Hooks</h3>
+		<p>Notifikasi otomatis (Slack/PagerDuty) ketika metrik kritis (Error rate, Latency) melebihi ambang batas wajar.</p>
+	</section>
+
+	<section id="dx-quality">
+		<h2>9. Developer Experience & Quality</h2>
+
+		<h3>9.1. Automated Testing Strategy</h3>
+		<p>Piramida testing untuk menjamin kualitas:</p>
+		<ul>
+			<li><strong>Unit Test:</strong> Logic terkecil terisolasi.</li>
+			<li><strong>Integration Test:</strong> Interaksi antar modul/DB.</li>
+			<li><strong>E2E Test (API Flow):</strong> Skenario user penuh dari awal sampai akhir.</li>
+			<li><strong>Load/Stress Test (k6):</strong> Uji performa dan ketahanan beban.</li>
+		</ul>
+
+		<h3>9.2. Documentation</h3>
+		<p>OpenAPI/Swagger yang selalu up-to-date (ideally generated from code) sebagai kontrak dengan Frontend/Client.</p>
+
+		<h3>9.3. Code Quality & Standards</h3>
+		<p>Otomatisasi Linter (ESLint) dan Formatter (Prettier) via <strong>Git Hooks</strong> (Husky) untuk standar kode
+			yang konsisten.</p>
+
+		<h3>9.4. CI Pipeline & Local Dev</h3>
+		<ul>
+			<li><strong>CI Pipeline:</strong> Otomatis jalankan test dan lint sebelum merge.</li>
+			<li><strong>Local Environment:</strong> Setup development lokal yang mudah dan standar menggunakan
+				<strong>Docker</strong>.
+			</li>
+		</ul>
+	</section>
+
+	<section id="advanced">
+		<h2>10. Advanced Topics</h2>
+		<p>Referensi pengembangan untuk skala lanjut:</p>
+		<ul>
+			<li><strong>Performance Strategy:</strong> Caching aggressive, stateless scaling.</li>
+			<li><strong>Data Lifecycle:</strong> Kebijakan retensi dan backup data.</li>
+			<li><strong>Multi-Tenancy:</strong> Isolasi data untuk aplikasi SaaS B2B.</li>
+			<li><strong>Feature Flags:</strong> Rilis fitur bertahap tanpa deploy ulang.</li>
+			<li><strong>CQRS:</strong> Pemisahan model baca dan tulis untuk performa tinggi.</li>
+			<li><strong>ADR (Architectural Decision Records):</strong> Dokumentasi historis alasan keputusan teknis diambil.
+			</li>
+			<li><strong>Operational Playbook:</strong> Checklist standar penanganan insiden produksi.</li>
+		</ul>
+	</section>
+
+	<section id="summary">
+		<h2>11. Summary</h2>
+		<p>Aplikasi backend <strong>production-grade</strong> adalah orkestrasi dari seluruh layer di atas. Dokumen ini
+			berfungsi sebagai peta konsep agar implementasi kode tetap terarah, konsisten, dan berkualitas tinggi.</p>
+	</section>
+
+</body>
+
+</html>

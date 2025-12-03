@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backend Starterkit Overview</title>
+  <style>
+    /* DESIGN SYSTEM: The Master Theme */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-color: #2563eb;
+      /* Primary Blue */
+      --border-color: #e2e8f0;
+      --card-bg: #f8fafc;
+      --section-bg: #ffffff;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-main);
+      max-width: 1000px;
+      /* Lebih lebar dikit buat Grid */
+      margin: 0 auto;
+      padding: 60px 24px;
+      background-color: var(--bg-color);
+    }
+
+    /* TYPOGRAPHY */
+    h1,
+    h2,
+    h3 {
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--text-main);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      color: var(--accent-color);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      max-width: 600px;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* GRID SYSTEM FOR THE 4 PILLARS */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-color: var(--accent-color);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .card li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* LINK BUTTONS */
+    .btn-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--accent-color);
+      transition: color 0.2s;
+    }
+
+    .btn-link:hover {
+      color: var(--accent-color);
+    }
+
+    /* BADGE FOR TECH STACK */
+    .tech-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 4rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .grid-container {
+        display: block;
+      }
+
+      .card {
+        break-inside: avoid;
+        margin-bottom: 2rem;
+        border: 1px solid #000;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="hero">
+    <h1>Backend Starterkit</h1>
+    <div class="subtitle">
+      Dokumentasi induk, standar teknis, dan filosofi pengembangan aplikasi backend production-grade.
+    </div>
+    <p>
+      Kitab ini adalah titik awal (Entry Point). Starterkit ini dirancang untuk mencapai keseimbangan antara
+      <strong>Kecepatan Development</strong> (MVP) dan <strong>Kestabilan Jangka Panjang</strong> (Scalability).
+    </p>
+  </header>
+
+  <section>
+    <h2>The 4 Pillars</h2>
+    <p>Ekosistem starterkit ini dibangun di atas 4 pilar dokumentasi utama:</p>
+
+    <div class="grid-container">
+
+      <article class="card">
+        <span class="card-icon">🏛️</span>
+        <h3>1. Architecture Handbook</h3>
+        <p>Peta mental ("The Map") tentang bagaimana sistem bekerja secara konseptual.</p>
+        <ul>
+          <li><strong>Mental Model:</strong> 7 Layer (Platform, Domain, Data, Security, etc).</li>
+          <li><strong>Decoupling:</strong> Pemisahan tegas Controller vs Service vs Repository.</li>
+          <li><strong>Observability:</strong> Strategi Logging & Tracing sejak hari pertama.</li>
+          <li><strong>Philosophy:</strong> Production-grade & Agnostic.</li>
+        </ul>
+        <a href="architecture.html" class="btn-link">Buka Architecture.html →</a>
+      </article>
+
+      <article class="card">
+        <span class="card-icon">⚖️</span>
+        <h3>2. Convention Handbook</h3>
+        <p>Hukum dan aturan main ("The Law") agar kode seragam dan mudah ditebak.</p>
+        <ul>
+          <li><strong>Structure:</strong> Feature-based folder structure (Colocation).</li>
+          <li><strong>Naming:</strong> Kebab-case files, PascalCase classes.</li>
+          <li><strong>Routing:</strong> Plural nouns, standard CRUD verbs.</li>
+          <li><strong>Testing:</strong> Penempatan file test di dalam modul (<code>__tests__</code>).</li>
+        </ul>
+        <a href="convention.html" class="btn-link">Buka Convention.html →</a>
+      </article>
+
+      <article class="card">
+        <span class="card-icon">📦</span>
+        <h3>3. Dependency Handbook</h3>
+        <p>Kotak peralatan ("The Tools") yang digunakan. Stabil, Typed, dan Mainstream.</p>
+        <div style="margin-bottom: 1rem;">
+          <span class="tech-badge">Node.js</span>
+          <span class="tech-badge">Express</span>
+          <span class="tech-badge">TypeScript</span>
+          <span class="tech-badge">PostgreSQL</span>
+          <span class="tech-badge">Prisma</span>
+          <span class="tech-badge">Redis</span>
+          <span class="tech-badge">Vitest</span>
+          <span class="tech-badge">Zod</span>
+          <span class="tech-badge">Pino</span>
+        </div>
+        <p>Mendefinisikan mana library <strong>CORE</strong> (Wajib) dan mana yang <strong>RECOMMENDED</strong>.</p>
+        <a href="depedency.html" class="btn-link">Buka Depedency.html →</a>
+      </article>
+
+      <article class="card">
+        <span class="card-icon">🧩</span>
+        <h3>4. Feature Handbook</h3>
+        <p>Cetak biru ("The Blueprint") fungsionalitas modul reusable.</p>
+        <ul>
+          <li><strong>Tier 1 (Wajib):</strong> Auth, User, Generic CRUD, File Infra.</li>
+          <li><strong>Tier 2 (Rec):</strong> Settings, Organization, Activity Feed.</li>
+          <li><strong>Tier 3 (Opt):</strong> Workflow, Comments, Tags.</li>
+        </ul>
+        <a href="feature.html" class="btn-link">Buka Feature.html →</a>
+      </article>
+
+    </div>
+  </section>
+
+  <section style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 4rem;">
+    <h2 style="border: none; margin-bottom: 1rem;">🚀 Quick Start Philosophy</h2>
+    <p>Bagaimana cara menggunakan starterkit ini secara efektif?</p>
+    <ol style="margin-bottom: 0;">
+      <li><strong>Baca Architecture:</strong> Pahami dulu "Kenapa" kita menyusun folder seperti ini.</li>
+      <li><strong>Install Dependency:</strong> Ikuti panduan instalasi <code>pnpm</code> di <em>Dependency
+          Handbook</em>.</li>
+      <li><strong>Ikuti Convention:</strong> Saat menulis fitur baru, contek struktur nama file dan kode dari
+        <em>Convention Handbook</em>.</li>
+      <li><strong>Gunakan Core Feature:</strong> Jangan buat Auth atau Upload dari nol, gunakan modul yang didefinisikan
+        di <em>Feature Handbook</em>.</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>Backend Starterkit Documentation Suite &mdash; Internal Developer Reference</p>
+    <p style="opacity: 0.6; font-size: 0.8rem;">Architecture &bull; Convention &bull; Dependency &bull; Feature</p>
+  </footer>
+
+</body>
+
+</html>
