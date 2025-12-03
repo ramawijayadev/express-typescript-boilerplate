@@ -17,7 +17,7 @@ Tech utama:
 ## 1. Struktur Project (Singkat)
 
 ```txt
-express-typescript-starterkit/
+express-typescript-boilerplate/
   package.json
   tsconfig.json
   tsconfig.build.json
@@ -172,4 +172,4 @@ Dokumen pendukung (disarankan taruh di `/docs`):
 - `depedency.html` – daftar dependency & peran masing-masing
 - `feature.html` – dokumentasi feature dasar
 
-Starterkit ini dimaksudkan sebagai baseline. Module di `modules/platform` bisa dipakai ulang di banyak project, sedangkan `modules/business` berisi logic spesifik domain/aplikasi.
+Boilerplate ini dimaksudkan sebagai baseline. Module di `modules/platform` bisa dipakai ulang di banyak project, sedangkan `modules/business` berisi logic spesifik domain/aplikasi.
