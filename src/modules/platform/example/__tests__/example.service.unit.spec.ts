@@ -52,10 +52,10 @@ describe("ExampleService", () => {
     const { service } = makeService();
     const created = await service.create({ name: "Test", description: null });
 
-    const found = await service.getById(created.id);
+    const found = await service.find(created.id);
     expect(found.id).toBe(created.id);
 
-    await expect(service.getById("non-existent")).rejects.toBeInstanceOf(AppError);
+    await expect(service.find("non-existent")).rejects.toBeInstanceOf(AppError);
   });
 
   it("should update existing example", async () => {
@@ -73,6 +73,6 @@ describe("ExampleService", () => {
 
     await service.delete(created.id);
 
-    await expect(service.getById(created.id)).rejects.toBeInstanceOf(AppError);
+    await expect(service.find(created.id)).rejects.toBeInstanceOf(AppError);
   });
 });

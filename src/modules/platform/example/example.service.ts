@@ -1,3 +1,5 @@
+import { StatusCodes } from "http-status-codes";
+
 import { AppError } from "@/shared/errors/AppError";
 
 import { ExampleRepository } from "./example.repository";
@@ -15,11 +17,13 @@ export class ExampleService {
     });
   }
 
-  async getById(id: ExampleId) {
+  async find(id: ExampleId) {
     const found = await this.repo.findById(id);
+
     if (!found) {
-      throw new AppError(404, "EXAMPLE_NOT_FOUND", "Example not found");
+      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
     }
+
     return found;
   }
 
@@ -36,7 +40,7 @@ export class ExampleService {
     });
 
     if (!updated) {
-      throw new AppError(404, "EXAMPLE_NOT_FOUND", "Example not found");
+      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
     }
 
     return updated;
@@ -44,8 +48,9 @@ export class ExampleService {
 
   async delete(id: ExampleId) {
     const deleted = await this.repo.delete(id);
+
     if (!deleted) {
-      throw new AppError(404, "EXAMPLE_NOT_FOUND", "Example not found");
+      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
     }
   }
 }
