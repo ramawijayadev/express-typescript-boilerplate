@@ -12,7 +12,8 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "types": ["node", "vitest", "supertest"]
   },
   "include": ["src"]
 }

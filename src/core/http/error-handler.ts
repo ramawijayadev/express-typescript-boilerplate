@@ -1,66 +1,69 @@
 import { StatusCodes } from "http-status-codes";
-import { ZodError } from "zod";
 
 import { logger } from "@/core/logging/logger";
 import { AppError } from "@/shared/errors/AppError";
 import {
   type FieldError,
+  type StatusCode,
   clientError,
   serverError,
-  validationError,
 } from "@/shared/http/api-response";
 
 import type { NextFunction, Request, Response } from "express";
 
+function isFieldErrorArray(value: unknown): value is FieldError[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        "field" in item &&
+        "message" in item &&
+        typeof (item as FieldError).field === "string" &&
+        typeof (item as FieldError).message === "string",
+    )
+  );
+}
+
 export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
   const isDevelopment = process.env.NODE_ENV === "development";
-
-  if (err instanceof ZodError) {
-    const errors: FieldError[] = err.issues.map((issue) => ({
-      field: issue.path.length > 0 ? issue.path.join(".") : "root",
-      message: issue.message,
-    }));
-
-    logger.warn(
-      {
-        path: req.path,
-        errors,
-      },
-      "Validation error",
-    );
-
-    return validationError(res, errors);
-  }
 
   if (err instanceof AppError) {
     logger.warn(
       {
+        err,
         path: req.path,
-        details: err.details,
       },
       "Handled AppError",
     );
 
-    const status = err.statusCode;
-
-    if (status >= 400 && status < 500) {
-      const fieldErrors = Array.isArray(err.details) ? (err.details as FieldError[]) : undefined;
-
-      return clientError(res, status, err.message, fieldErrors);
+    // 4xx => clientError
+    if (err.statusCode >= 400 && err.statusCode < 500) {
+      const errors = isFieldErrorArray(err.details) ? err.details : undefined;
+      return clientError(res, err.statusCode as StatusCode, err.message, errors);
     }
 
-    return serverError(res, err.message, status);
+    // 5xx => serverError
+    return serverError(
+      res,
+      err.message,
+      (err.statusCode as StatusCode) || StatusCodes.INTERNAL_SERVER_ERROR,
+    );
   }
 
   logger.error(
     {
-      path: req.path,
       err,
+      path: req.path,
     },
     "Unhandled error",
   );
 
-  const message = isDevelopment && err instanceof Error ? err.message : "Internal server error";
+  // Unexpected error => 500 generic
+  if (isDevelopment && err instanceof Error) {
+    logger.error({ stack: err.stack }, "Unhandled error stack");
+  }
 
-  return serverError(res, message, StatusCodes.INTERNAL_SERVER_ERROR);
+  return serverError(res);
 }
