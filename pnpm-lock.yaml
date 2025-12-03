@@ -41,6 +41,9 @@ importers:
       hpp:
         specifier: ^0.2.3
         version: 0.2.3
+      http-status-codes:
+        specifier: ^2.3.0
+        version: 2.3.0
       ioredis:
         specifier: ^5.8.2
         version: 5.8.2
