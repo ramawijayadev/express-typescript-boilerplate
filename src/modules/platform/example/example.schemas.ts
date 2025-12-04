@@ -17,3 +17,13 @@ export const listExamplesQuerySchema = z.object({
 export type CreateExampleInput = z.infer<typeof createExampleSchema>;
 export type UpdateExampleInput = z.infer<typeof updateExampleSchema>;
 export type ListExamplesQuery = z.infer<typeof listExamplesQuerySchema>;
+
+export const exampleIdSchema = z.object({
+  id: z.string().transform((val) => {
+    const num = parseInt(val, 10);
+    if (isNaN(num)) {
+      throw new Error("Invalid ID format");
+    }
+    return num;
+  }),
+});

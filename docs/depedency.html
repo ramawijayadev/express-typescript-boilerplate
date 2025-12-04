@@ -374,6 +374,20 @@
       </div>
       <p class="dep-desc">Generator ID unik (UUID v4) untuk keperluan non-database (misal: Request ID).</p>
     </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">http-status-codes</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Konstanta standar untuk HTTP status codes (e.g. StatusCodes.OK).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">cookie-parser</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Middleware untuk mem-parsing cookie header dan mengisi req.cookies.</p>
+    </div>
   </section>
 
   <section id="security">
@@ -442,6 +456,20 @@
         <span class="dep-name">prisma</span> <span class="badge tag-core">CORE</span> (Dev)
       </div>
       <p class="dep-desc">CLI tool untuk deklarasi schema, migration management, dan generate client.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">pg</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">PostgreSQL client for Node.js (driver native).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">@prisma/adapter-pg</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Driver adapter untuk menggunakan `pg` driver dengan Prisma (serverless ready).</p>
     </div>
   </section>
 
@@ -543,6 +571,9 @@
       <li><code>tsx</code>: Menjalankan file TypeScript langsung (pengganti <code>ts-node</code> yang lebih cepat).</li>
       <li><code>rimraf</code>: Utilitas hapus folder (<code>rm -rf</code>) yang cross-platform (Windows/Linux aman).
       </li>
+      <li><code>concurrently</code>: Menjalankan multiple command secara paralel (e.g. server + worker).</li>
+      <li><code>cross-env</code>: Mengatur environment variable lintas platform (Windows/Linux).</li>
+      <li><code>nodemon</code>: Utility monitor perubahan file dan restart server otomatis.</li>
       <li>Type definitions: <code>@types/node</code>, <code>@types/express</code>, dll.</li>
     </ul>
   </section>

@@ -15,7 +15,7 @@ export class ExampleController {
   }
 
   async find(req: Request, res: Response) {
-    const { id } = req.params;
+    const { id } = req.params as unknown as { id: number };
     const result = await service.find(id);
     return ok(res, result);
   }
@@ -27,16 +27,16 @@ export class ExampleController {
   }
 
   async update(req: Request, res: Response) {
-    const { id } = req.params;
+    const { id } = req.params as unknown as { id: number };
     const body = req.body as UpdateExampleInput;
     const result = await service.update(id, body);
     return ok(res, result);
   }
 
   async delete(req: Request, res: Response) {
-    const { id } = req.params;
+    const { id } = req.params as unknown as { id: number };
     await service.delete(id);
-    return ok(res, {});
+    return ok(res, { deleted: true });
   }
 }
 

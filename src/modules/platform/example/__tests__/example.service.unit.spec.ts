@@ -1,21 +1,32 @@
 import { StatusCodes } from "http-status-codes";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { AppError } from "@/shared/errors/AppError";
 
 import { ExampleRepository } from "../example.repository";
 import { ExampleService } from "../example.service";
 
+// Mock the repository
+vi.mock("../example.repository");
+
 describe("Example service (unit)", () => {
   const makeService = () => {
     const repo = new ExampleRepository();
+    // Mock methods
+    repo.findAll = vi.fn();
+    repo.findById = vi.fn();
+    repo.create = vi.fn();
+    repo.update = vi.fn();
+    repo.delete = vi.fn();
+
     const service = new ExampleService(repo);
     return { service, repo };
   };
 
   describe("list", () => {
     it("should return empty array when no examples exist", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      vi.mocked(repo.findAll).mockResolvedValue([]);
 
       const result = await service.list({});
 
@@ -24,58 +35,75 @@ describe("Example service (unit)", () => {
     });
 
     it("should return all examples when no filter is provided", async () => {
-      const { service } = makeService();
-
-      await service.create({ name: "A", description: null });
-      await service.create({ name: "B", description: null });
+      const { service, repo } = makeService();
+      const mockData = [
+        {
+          id: 1,
+          name: "A",
+          description: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+          createdBy: null,
+          updatedBy: null,
+          deletedBy: null,
+        },
+        {
+          id: 2,
+          name: "B",
+          description: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+          createdBy: null,
+          updatedBy: null,
+          deletedBy: null,
+        },
+      ];
+      vi.mocked(repo.findAll).mockResolvedValue(mockData);
 
       const result = await service.list({});
 
       expect(result).toHaveLength(2);
-      expect(result.map((r) => r.name).sort()).toEqual(["A", "B"]);
+      expect(result).toEqual(mockData);
     });
 
-    it("should filter examples by search term", async () => {
-      const { service } = makeService();
+    it("should pass search filter to repository", async () => {
+      const { service, repo } = makeService();
+      vi.mocked(repo.findAll).mockResolvedValue([]);
 
-      await service.create({ name: "Alpha", description: null });
-      await service.create({ name: "Beta", description: null });
+      await service.list({ search: "alp" });
 
-      const result = await service.list({ search: "alp" });
-
-      expect(result).toHaveLength(1);
-      expect(result[0]?.name).toBe("Alpha");
-    });
-
-    it("should return empty array when no examples match search", async () => {
-      const { service } = makeService();
-
-      await service.create({ name: "Alpha", description: null });
-      await service.create({ name: "Beta", description: null });
-
-      const result = await service.list({ search: "zzz" });
-
-      expect(result).toHaveLength(0);
-      expect(result).toEqual([]);
+      expect(repo.findAll).toHaveBeenCalledWith({ search: "alp" });
     });
   });
 
   describe("find", () => {
     it("should return example by id when it exists", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      const mockData = {
+        id: 1,
+        name: "Test",
+        description: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        createdBy: null,
+        updatedBy: null,
+        deletedBy: null,
+      };
+      vi.mocked(repo.findById).mockResolvedValue(mockData);
 
-      const created = await service.create({ name: "Test", description: null });
+      const found = await service.find(1);
 
-      const found = await service.find(created.id);
-
-      expect(found.id).toBe(created.id);
-      expect(found.name).toBe("Test");
+      expect(found).toEqual(mockData);
     });
 
     it("should throw AppError 404 when example is not found", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      vi.mocked(repo.findById).mockResolvedValue(null);
 
-      const promise = service.find("non-existent-id");
+      const promise = service.find(999);
 
       await expect(promise).rejects.toBeInstanceOf(AppError);
       await expect(promise).rejects.toMatchObject({
@@ -87,69 +115,54 @@ describe("Example service (unit)", () => {
 
   describe("create", () => {
     it("should create example with given name and description", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      const input = { name: "Test example", description: "desc" };
+      const mockData = {
+        id: 1,
+        ...input,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        createdBy: null,
+        updatedBy: null,
+        deletedBy: null,
+      };
+      vi.mocked(repo.create).mockResolvedValue(mockData);
 
-      const result = await service.create({
-        name: "Test example",
-        description: "desc",
-      });
+      const result = await service.create(input);
 
-      expect(result.id).toBeTypeOf("string");
-      expect(result.name).toBe("Test example");
-      expect(result.description).toBe("desc");
-    });
-
-    it("should allow null description", async () => {
-      const { service } = makeService();
-
-      const result = await service.create({
-        name: "No desc",
-        description: null,
-      });
-
-      expect(result.name).toBe("No desc");
-      expect(result.description).toBeNull();
+      expect(repo.create).toHaveBeenCalledWith(input);
+      expect(result).toEqual(mockData);
     });
   });
 
   describe("update", () => {
     it("should update existing example", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      const input = { name: "New name", description: "updated desc" };
+      const mockData = {
+        id: 1,
+        ...input,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        createdBy: null,
+        updatedBy: null,
+        deletedBy: null,
+      };
+      vi.mocked(repo.update).mockResolvedValue(mockData);
 
-      const created = await service.create({ name: "Old", description: null });
+      const updated = await service.update(1, input);
 
-      const updated = await service.update(created.id, {
-        name: "New name",
-        description: "updated desc",
-      });
-
-      expect(updated.id).toBe(created.id);
-      expect(updated.name).toBe("New name");
-      expect(updated.description).toBe("updated desc");
-    });
-
-    it("should allow clearing description to null", async () => {
-      const { service } = makeService();
-
-      const created = await service.create({
-        name: "With desc",
-        description: "initial",
-      });
-
-      const updated = await service.update(created.id, {
-        name: "With desc",
-        description: null,
-      });
-
-      expect(updated.id).toBe(created.id);
-      expect(updated.name).toBe("With desc");
-      expect(updated.description).toBeNull();
+      expect(repo.update).toHaveBeenCalledWith(1, input);
+      expect(updated).toEqual(mockData);
     });
 
     it("should throw AppError 404 when updating non-existent example", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      vi.mocked(repo.update).mockResolvedValue(null);
 
-      const promise = service.update("non-existent-id", {
+      const promise = service.update(999, {
         name: "New name",
         description: null,
       });
@@ -164,19 +177,19 @@ describe("Example service (unit)", () => {
 
   describe("delete", () => {
     it("should delete existing example", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      vi.mocked(repo.delete).mockResolvedValue(true);
 
-      const created = await service.create({ name: "To delete", description: null });
+      await service.delete(1);
 
-      await service.delete(created.id);
-
-      await expect(service.find(created.id)).rejects.toBeInstanceOf(AppError);
+      expect(repo.delete).toHaveBeenCalledWith(1);
     });
 
     it("should throw AppError 404 when deleting non-existent example", async () => {
-      const { service } = makeService();
+      const { service, repo } = makeService();
+      vi.mocked(repo.delete).mockResolvedValue(false);
 
-      const promise = service.delete("non-existent-id");
+      const promise = service.delete(999);
 
       await expect(promise).rejects.toBeInstanceOf(AppError);
       await expect(promise).rejects.toMatchObject({

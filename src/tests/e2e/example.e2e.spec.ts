@@ -9,7 +9,7 @@ describe("Example module - error mapping", () => {
     const app = createApp();
 
     const res = await request(app)
-      .get("/api/v1/platform/examples/non-existent-id")
+      .get("/api/v1/platform/examples/999999")
       .expect(StatusCodes.NOT_FOUND);
 
     expect(res.body).toEqual({

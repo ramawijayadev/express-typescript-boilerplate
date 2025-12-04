@@ -1,15 +1,18 @@
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
+import { Router } from "express";
 
 import { createApp } from "@/app/app";
+import { db } from "@/core/database";
 
 describe("Example routes (integration)", () => {
   const baseUrl = "/api/v1/platform/examples";
   let app: ReturnType<typeof createApp>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     app = createApp();
+    await db().example.deleteMany();
   });
 
   describe("GET /api/v1/platform/examples (list)", () => {
@@ -60,7 +63,7 @@ describe("Example routes (integration)", () => {
         .send({ name: "Detail example", description: "detail desc" })
         .expect(StatusCodes.CREATED);
 
-      const id = createRes.body.data.id as string;
+      const id = createRes.body.data.id as number;
 
       const res = await request(app).get(`${baseUrl}/${id}`).expect(StatusCodes.OK);
 
@@ -77,9 +80,7 @@ describe("Example routes (integration)", () => {
     });
 
     it("should return 404 with standard error format when example not found", async () => {
-      const res = await request(app)
-        .get(`${baseUrl}/non-existent-id`)
-        .expect(StatusCodes.NOT_FOUND);
+      const res = await request(app).get(`${baseUrl}/999999`).expect(StatusCodes.NOT_FOUND);
 
       expect(res.body).toMatchObject({
         success: false,
@@ -106,7 +107,7 @@ describe("Example routes (integration)", () => {
         message: "Created",
         statusCode: StatusCodes.CREATED,
         data: {
-          id: expect.any(String),
+          id: expect.any(Number),
           name: "Sample example",
           description: "Just testing",
         },
@@ -144,7 +145,7 @@ describe("Example routes (integration)", () => {
         .send({ name: "Old name", description: "old desc" })
         .expect(StatusCodes.CREATED);
 
-      const id = createRes.body.data.id as string;
+      const id = createRes.body.data.id as number;
 
       const res = await request(app)
         .put(`${baseUrl}/${id}`)
@@ -165,7 +166,7 @@ describe("Example routes (integration)", () => {
 
     it("should return 404 when updating non-existent example", async () => {
       const res = await request(app)
-        .put(`${baseUrl}/non-existent-id`)
+        .put(`${baseUrl}/999999`)
         .send({ name: "New name", description: null })
         .expect(StatusCodes.NOT_FOUND);
 
@@ -185,7 +186,7 @@ describe("Example routes (integration)", () => {
         .send({ name: "To delete", description: null })
         .expect(StatusCodes.CREATED);
 
-      const id = createRes.body.data.id as string;
+      const id = createRes.body.data.id as number;
 
       const res = await request(app).delete(`${baseUrl}/${id}`).expect(StatusCodes.OK);
 
@@ -200,9 +201,7 @@ describe("Example routes (integration)", () => {
     });
 
     it("should return 404 when deleting non-existent example", async () => {
-      const res = await request(app)
-        .delete(`${baseUrl}/non-existent-id`)
-        .expect(StatusCodes.NOT_FOUND);
+      const res = await request(app).delete(`${baseUrl}/999999`).expect(StatusCodes.NOT_FOUND);
 
       expect(res.body).toMatchObject({
         success: false,
