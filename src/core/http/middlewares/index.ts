@@ -11,10 +11,20 @@ import { requestLoggerMiddleware } from "./request-logger.middleware";
 
 import type { Express } from "express";
 
+import { appConfig } from "@/config/app";
+
+// ...
+
 export function registerMiddlewares(app: Express) {
   // HTTP hardening
+  app.disable("x-powered-by");
   app.use(helmet());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: appConfig.corsOrigin === "*" ? "*" : appConfig.corsOrigin.split(","),
+      credentials: true,
+    }),
+  );
   app.use(hpp());
 
   // Basic rate limiting
