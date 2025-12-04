@@ -15,6 +15,9 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000), // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(1000),
 
+  // Pagination
+  PAGINATION_DEFAULT_LIMIT: z.coerce.number().default(10),
+
   // Swagger
   SWAGGER_SERVER_URL: z.string().optional(),
 });

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { appConfig } from "@/config/app";
+
 export const createExampleSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().nullish(),
@@ -13,7 +15,11 @@ export const updateExampleSchema = z.object({
 export const listExamplesQuerySchema = z.object({
   search: z.string().optional(),
   page: z.string().optional().default("1").transform(Number),
-  limit: z.string().optional().default("10").transform(Number),
+  limit: z
+    .string()
+    .optional()
+    .default(appConfig.pagination.defaultLimit.toString())
+    .transform(Number),
 });
 
 export type CreateExampleInput = z.infer<typeof createExampleSchema>;

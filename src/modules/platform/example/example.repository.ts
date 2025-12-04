@@ -1,3 +1,4 @@
+import { appConfig } from "@/config/app";
 import { db } from "@/core/database";
 import type { Prisma } from "@/generated/prisma";
 
@@ -21,7 +22,7 @@ export interface PaginatedResult<T> {
 export class ExampleRepository {
   async findAll(
     filter: ListExamplesFilter = {},
-    pagination: PaginationParams = { page: 1, limit: 10 },
+    pagination: PaginationParams = { page: 1, limit: appConfig.pagination.defaultLimit },
   ): Promise<PaginatedResult<Example>> {
     const where: Prisma.ExampleWhereInput = {
       deletedAt: null,
