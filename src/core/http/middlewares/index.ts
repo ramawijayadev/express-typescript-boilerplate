@@ -44,6 +44,6 @@ export function registerMiddlewares(app: Express) {
   // Internal middlewares
   app.use(requestIdMiddleware);
   app.use(requestLoggerMiddleware);
-  app.use(requestLoggerMiddleware);
+
   app.use(authContextMiddleware);
 }
