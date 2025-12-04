@@ -3,9 +3,12 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
+import { testResponsesRouter } from "@/shared/http/__tests__/test-responses.routes";
 
 describe("API response formatter - E2E", () => {
-  const app = createApp();
+  const app = createApp((app) => {
+    app.use("/api/v1/_test/responses", testResponsesRouter);
+  });
 
   it("200 OK", async () => {
     const res = await request(app)
