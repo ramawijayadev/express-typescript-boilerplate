@@ -36,7 +36,7 @@ export class ExampleController {
   async delete(req: Request, res: Response) {
     const { id } = req.params;
     await service.delete(id);
-    return ok(res, { deleted: true });
+    return ok(res, {});
   }
 }
 
