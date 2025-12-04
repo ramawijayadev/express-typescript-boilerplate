@@ -1,58 +1,56 @@
-import { randomUUID } from "node:crypto";
+import { db } from "@/core/database";
+import type { Prisma } from "@/generated/prisma";
 
 import type { Example, ExampleId, ListExamplesFilter } from "./example.types";
 
 export class ExampleRepository {
-  private items = new Map<ExampleId, Example>();
+  async findAll(filter: ListExamplesFilter = {}): Promise<Example[]> {
+    const where: Prisma.ExampleWhereInput = {};
 
-  async create(data: Omit<Example, "id" | "createdAt" | "updatedAt">): Promise<Example> {
-    const now = new Date();
-    const item: Example = {
-      id: randomUUID(),
-      createdAt: now,
-      updatedAt: now,
-      ...data,
-    };
+    if (filter.search) {
+      where.name = {
+        contains: filter.search,
+        mode: "insensitive",
+      };
+    }
 
-    this.items.set(item.id, item);
-    return item;
+    return db().example.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
   }
 
   async findById(id: ExampleId): Promise<Example | null> {
-    return this.items.get(id) ?? null;
+    return db().example.findUnique({
+      where: { id },
+    });
   }
 
-  async findAll(filter: ListExamplesFilter = {}): Promise<Example[]> {
-    const all = Array.from(this.items.values());
-
-    if (filter.search) {
-      const q = filter.search.toLowerCase();
-      return all.filter((item) => item.name.toLowerCase().includes(q));
-    }
-
-    return all;
+  async create(data: { name: string; description?: string | null }): Promise<Example> {
+    return db().example.create({
+      data: {
+        name: data.name,
+        description: data.description,
+      },
+    });
   }
 
   async update(
     id: ExampleId,
-    data: Partial<Omit<Example, "id" | "createdAt">>,
+    data: { name?: string; description?: string | null },
   ): Promise<Example | null> {
-    const existing = this.items.get(id);
-    if (!existing) {
-      return null;
-    }
-
-    const updated: Example = {
-      ...existing,
-      ...data,
-      updatedAt: new Date(),
-    };
-
-    this.items.set(id, updated);
-    return updated;
+    return db()
+      .example.update({
+        where: { id },
+        data,
+      })
+      .catch(() => null);
   }
 
   async delete(id: ExampleId): Promise<boolean> {
-    return this.items.delete(id);
+    return db()
+      .example.delete({ where: { id } })
+      .then(() => true)
+      .catch(() => false);
   }
 }

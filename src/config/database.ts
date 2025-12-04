@@ -1,9 +1,19 @@
 import "dotenv/config";
 
-export type DbConnectionName = "primary";
+export type DatabaseConnectionName = "app" | "reporting" | "audit";
 
-export const dbConfig = {
-  primary: {
-    url: process.env.DATABASE_URL,
+interface ConnectionConfig {
+  url: string | undefined;
+}
+
+export const databaseConfig: {
+  default: DatabaseConnectionName;
+  connections: Record<DatabaseConnectionName, ConnectionConfig>;
+} = {
+  default: "app",
+  connections: {
+    app: { url: process.env.DATABASE_URL_APP ?? process.env.DATABASE_URL },
+    reporting: { url: process.env.DATABASE_URL_REPORTING },
+    audit: { url: process.env.DATABASE_URL_AUDIT },
   },
 };

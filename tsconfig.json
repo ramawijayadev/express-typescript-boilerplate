@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "baseUrl": "src",
     "paths": {
+      "@/generated/prisma": ["generated/prisma/client"],
       "@/*": ["*"]
     },
     "types": ["node", "vitest", "supertest"]

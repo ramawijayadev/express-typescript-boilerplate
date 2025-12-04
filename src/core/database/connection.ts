@@ -1,37 +1,51 @@
-import { dbConfig } from "@/config/database";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { type DatabaseConnectionName, databaseConfig } from "@/config/database";
 import { PrismaClient } from "@/generated/prisma";
 
-class DatabaseConnection {
-  private static instance: DatabaseConnection;
-  public readonly primary: PrismaClient;
+const clients: Partial<Record<DatabaseConnectionName, PrismaClient>> = {};
 
-  private constructor() {
-    this.primary = new PrismaClient({
-      datasourceUrl: dbConfig.primary.url,
-    });
+function createClient(name: DatabaseConnectionName): PrismaClient {
+  const config = databaseConfig.connections[name];
+
+  if (!config) {
+    throw new Error(`Database connection "${name}" is not defined`);
   }
 
-  public static getInstance(): DatabaseConnection {
-    if (!DatabaseConnection.instance) {
-      DatabaseConnection.instance = new DatabaseConnection();
-    }
-    return DatabaseConnection.instance;
+  if (!config.url) {
+    throw new Error(`Missing connection string for "${name}"`);
   }
 
-  public async connect(): Promise<void> {
-    try {
-      await this.primary.$connect();
-      console.log("✅ [Database] Primary connection established");
-    } catch (error) {
-      console.error("❌ [Database] Failed to connect to primary:", error);
-      throw error;
-    }
-  }
+  const pool = new Pool({ connectionString: config.url });
+  const adapter = new PrismaPg(pool);
 
-  public async disconnect(): Promise<void> {
-    await this.primary.$disconnect();
-    console.log("⚠️ [Database] Primary connection closed");
-  }
+  return new PrismaClient({ adapter });
 }
 
-export const db = DatabaseConnection.getInstance();
+export function connection(name?: DatabaseConnectionName): PrismaClient {
+  const resolvedName = name ?? databaseConfig.default;
+
+  if (!clients[resolvedName]) {
+    clients[resolvedName] = createClient(resolvedName);
+  }
+
+  return clients[resolvedName] as PrismaClient;
+}
+
+export function db(name?: DatabaseConnectionName): PrismaClient {
+  return connection(name);
+}
+
+export async function disconnectAll(): Promise<void> {
+  const activeConnections = Object.keys(clients) as DatabaseConnectionName[];
+
+  const promises = activeConnections.map(async (key) => {
+    const client = clients[key];
+    if (client) {
+      await client.$disconnect();
+      delete clients[key];
+    }
+  });
+
+  await Promise.all(promises);
+}

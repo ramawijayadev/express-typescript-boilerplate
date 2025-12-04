@@ -10,21 +10,12 @@ import type { ExampleId } from "./example.types";
 export class ExampleService {
   constructor(private readonly repo = new ExampleRepository()) {}
 
-  async create(input: CreateExampleInput) {
-    return this.repo.create({
-      name: input.name,
-      description: input.description ?? null,
-    });
-  }
-
-  async find(id: ExampleId) {
-    const found = await this.repo.findById(id);
-
-    if (!found) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+  private parseId(id: string): ExampleId {
+    const parsed = parseInt(id, 10);
+    if (isNaN(parsed)) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Invalid ID format");
     }
-
-    return found;
+    return parsed;
   }
 
   async list(query: ListExamplesQuery) {
@@ -33,8 +24,28 @@ export class ExampleService {
     });
   }
 
-  async update(id: ExampleId, input: UpdateExampleInput) {
-    const updated = await this.repo.update(id, {
+  async find(id: string) {
+    const numericId = this.parseId(id);
+    const found = await this.repo.findById(numericId);
+
+    if (!found) {
+      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+    }
+
+    return found;
+  }
+
+  async create(input: CreateExampleInput) {
+    return this.repo.create({
+      name: input.name,
+      description: input.description,
+    });
+  }
+
+  async update(id: string, input: UpdateExampleInput) {
+    const numericId = this.parseId(id);
+
+    const updated = await this.repo.update(numericId, {
       name: input.name,
       description: input.description,
     });
@@ -46,8 +57,10 @@ export class ExampleService {
     return updated;
   }
 
-  async delete(id: ExampleId) {
-    const deleted = await this.repo.delete(id);
+  async delete(id: string) {
+    const numericId = this.parseId(id);
+
+    const deleted = await this.repo.delete(numericId);
 
     if (!deleted) {
       throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
