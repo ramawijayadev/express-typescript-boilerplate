@@ -2,10 +2,52 @@ import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 
+import { Router } from "express";
+
 import { createApp } from "@/app/app";
-import { testResponsesRouter } from "@/shared/http/__tests__/test-responses.routes";
+import { AppError } from "@/shared/errors/AppError";
+import { type FieldError, created, ok, validationError } from "@/shared/http/api-response";
 
 describe("API response formatter - E2E", () => {
+  const testResponsesRouter = Router();
+
+  testResponsesRouter.get("/success-200", (_req, res) => {
+    return ok(res, { foo: "bar" });
+  });
+
+  testResponsesRouter.post("/success-201", (_req, res) => {
+    return created(res, { id: "123" });
+  });
+
+  testResponsesRouter.get("/unauthorized", (_req, _res) => {
+    throw new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+  });
+
+  testResponsesRouter.get("/forbidden", (_req, _res) => {
+    throw new AppError(StatusCodes.FORBIDDEN, "Forbidden");
+  });
+
+  testResponsesRouter.get("/not-found", (_req, _res) => {
+    throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+  });
+
+  testResponsesRouter.post("/validation-error", (_req, res) => {
+    const errors: FieldError[] = [
+      { field: "email", message: "Invalid email format" },
+      { field: "password", message: "Password too short" },
+    ];
+
+    return validationError(res, errors);
+  });
+
+  testResponsesRouter.get("/server-error", (_req, _res) => {
+    throw new Error("Boom from server-error route");
+  });
+
+  testResponsesRouter.get("/service-unavailable", (_req, _res) => {
+    throw new AppError(StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable");
+  });
+
   const app = createApp((app) => {
     app.use("/api/v1/_test/responses", testResponsesRouter);
   });
