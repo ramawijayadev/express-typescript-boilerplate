@@ -1,21 +1,17 @@
 import { created, ok } from "@/shared/http/api-response";
 
-import {
-  createExampleSchema,
-  listExamplesQuerySchema,
-  updateExampleSchema,
-} from "./example.schemas";
 import { ExampleService } from "./example.service";
 
+import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 import type { Request, Response } from "express";
 
 const service = new ExampleService();
 
 export class ExampleController {
   async list(req: Request, res: Response) {
-    const query = listExamplesQuerySchema.parse(req.query);
+    const query = req.query as ListExamplesQuery;
     const result = await service.list(query);
-    return ok(res, result, "Examples retrieved successfully!");
+    return ok(res, result);
   }
 
   async find(req: Request, res: Response) {
@@ -25,14 +21,14 @@ export class ExampleController {
   }
 
   async create(req: Request, res: Response) {
-    const body = createExampleSchema.parse(req.body);
+    const body = req.body as CreateExampleInput;
     const result = await service.create(body);
     return created(res, result);
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const body = updateExampleSchema.parse(req.body);
+    const body = req.body as UpdateExampleInput;
     const result = await service.update(id, body);
     return ok(res, result);
   }
