@@ -1,8 +1,8 @@
-# Node dependencies
+# Dependencies
 node_modules/
 .pnpm-store/
 
-# Build output
+# Build
 dist/
 build/
 
@@ -14,14 +14,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Env files
+# Env
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Coverage & test output
+# Coverage
 coverage/
 .nyc_output/
 jest-html-reporters-*.html
@@ -32,8 +32,9 @@ jest-html-reporters-*.html
 # Prisma
 prisma/dev.db
 prisma/dev.db-journal
+/src/generated/prisma
 
-# OS / Editor junk
+# Junk
 .DS_Store
 Thumbs.db
 .idea/

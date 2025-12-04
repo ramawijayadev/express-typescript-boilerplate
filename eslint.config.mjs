@@ -29,6 +29,7 @@ export default defineConfig([
     rules: {
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
+      "no-redeclare": "off",
       "no-console": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
