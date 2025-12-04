@@ -6,6 +6,17 @@ const envSchema = z.object({
   APP_PORT: z.coerce.number().default(3000),
   APP_BASE_PATH: z.string().default("/api/v1"),
   CORS_ORIGIN: z.string().default("*"),
+
+  // Database
+  DATABASE_URL: z.string().optional(),
+  DATABASE_URL_OTHER: z.string().optional(),
+
+  // Rate Limiting
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000), // 15 minutes
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(1000),
+
+  // Swagger
+  SWAGGER_SERVER_URL: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

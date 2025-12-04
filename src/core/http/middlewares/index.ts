@@ -30,8 +30,8 @@ export function registerMiddlewares(app: Express) {
   // Basic rate limiting
   app.use(
     rateLimit({
-      windowMs: 15 * 60 * 1000,
-      max: 1000,
+      windowMs: appConfig.rateLimit.windowMs,
+      max: appConfig.rateLimit.max,
       standardHeaders: true,
       legacyHeaders: false,
     }),

@@ -1,6 +1,6 @@
-import "dotenv/config";
+import { env } from "@/app/env";
 
-export type DatabaseConnectionName = "app" | "reporting" | "audit";
+export type DatabaseConnectionName = "app" | "other";
 
 interface ConnectionConfig {
   url: string | undefined;
@@ -12,8 +12,7 @@ export const databaseConfig: {
 } = {
   default: "app",
   connections: {
-    app: { url: process.env.DATABASE_URL_APP ?? process.env.DATABASE_URL },
-    reporting: { url: process.env.DATABASE_URL_REPORTING },
-    audit: { url: process.env.DATABASE_URL_AUDIT },
+    app: { url: env.DATABASE_URL },
+    other: { url: env.DATABASE_URL_OTHER },
   },
 };
