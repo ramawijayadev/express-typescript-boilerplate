@@ -1,3 +1,4 @@
+import { Prisma } from "@/generated/prisma";
 import { StatusCodes } from "http-status-codes";
 import { ZodError } from "zod";
 
@@ -40,6 +41,13 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
     }
 
     return serverError(res, err.message, err.statusCode as StatusCode);
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === "P2025") {
+      logger.warn({ path, code: err.code }, "Prisma error: Record not found");
+      return clientError(res, StatusCodes.NOT_FOUND, "Record not found");
+    }
   }
 
   if (err instanceof ZodError) {

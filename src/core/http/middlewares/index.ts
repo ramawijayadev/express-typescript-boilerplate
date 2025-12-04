@@ -8,7 +8,6 @@ import hpp from "hpp";
 import { authContextMiddleware } from "./auth-context.middleware";
 import { requestIdMiddleware } from "./request-id.middleware";
 import { requestLoggerMiddleware } from "./request-logger.middleware";
-import { securityMiddleware } from "./security.middleware";
 
 import type { Express } from "express";
 
@@ -35,6 +34,6 @@ export function registerMiddlewares(app: Express) {
   // Internal middlewares
   app.use(requestIdMiddleware);
   app.use(requestLoggerMiddleware);
-  app.use(securityMiddleware);
+  app.use(requestLoggerMiddleware);
   app.use(authContextMiddleware);
 }
