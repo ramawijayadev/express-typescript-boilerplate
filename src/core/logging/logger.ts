@@ -4,6 +4,7 @@ import { appConfig } from "@/config/app";
 
 export const logger = pino({
   level: appConfig.env === "production" ? "info" : "debug",
+  redact: ["req.headers.authorization", "req.body.password", "req.body.token"],
   transport:
     appConfig.env === "development"
       ? {
