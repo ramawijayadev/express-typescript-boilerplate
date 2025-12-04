@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { ZodError } from "zod";
 
 import { logger } from "@/core/logging/logger";
 import { AppError } from "@/shared/errors/AppError";
@@ -7,63 +8,64 @@ import {
   type StatusCode,
   clientError,
   serverError,
+  validationError,
 } from "@/shared/http/api-response";
 
 import type { NextFunction, Request, Response } from "express";
 
-function isFieldErrorArray(value: unknown): value is FieldError[] {
-  return (
-    Array.isArray(value) &&
-    value.every(
-      (item) =>
-        item &&
-        typeof item === "object" &&
-        "field" in item &&
-        "message" in item &&
-        typeof (item as FieldError).field === "string" &&
-        typeof (item as FieldError).message === "string",
-    )
-  );
-}
-
 export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
-  const isDevelopment = process.env.NODE_ENV === "development";
+  const path = req.originalUrl ?? req.url;
 
   if (err instanceof AppError) {
     logger.warn(
       {
         err,
-        path: req.path,
+        path,
+        statusCode: err.statusCode,
       },
       "Handled AppError",
     );
 
-    // 4xx => clientError
-    if (err.statusCode >= 400 && err.statusCode < 500) {
-      const errors = isFieldErrorArray(err.details) ? err.details : undefined;
-      return clientError(res, err.statusCode as StatusCode, err.message, errors);
+    if (err.statusCode === StatusCodes.UNPROCESSABLE_ENTITY && Array.isArray(err.details)) {
+      return validationError(res, err.details as FieldError[], err.message);
     }
 
-    // 5xx => serverError
-    return serverError(
-      res,
-      err.message,
-      (err.statusCode as StatusCode) || StatusCodes.INTERNAL_SERVER_ERROR,
+    if (err.statusCode >= 400 && err.statusCode < 500) {
+      return clientError(
+        res,
+        err.statusCode as StatusCode,
+        err.message,
+        Array.isArray(err.details) ? (err.details as FieldError[]) : undefined,
+      );
+    }
+
+    return serverError(res, err.message, err.statusCode as StatusCode);
+  }
+
+  if (err instanceof ZodError) {
+    const errors: FieldError[] = err.issues.map((issue) => ({
+      field: issue.path.length ? issue.path.join(".") : "root",
+      message: issue.message,
+    }));
+
+    logger.warn(
+      {
+        path,
+        errors,
+      },
+      "Validation error (ZodError)",
     );
+
+    return validationError(res, errors);
   }
 
   logger.error(
     {
       err,
-      path: req.path,
+      path,
     },
     "Unhandled error",
   );
-
-  // Unexpected error => 500 generic
-  if (isDevelopment && err instanceof Error) {
-    logger.error({ stack: err.stack }, "Unhandled error stack");
-  }
 
   return serverError(res);
 }
