@@ -12,6 +12,8 @@ export const updateExampleSchema = z.object({
 
 export const listExamplesQuerySchema = z.object({
   search: z.string().optional(),
+  page: z.string().optional().default("1").transform(Number),
+  limit: z.string().optional().default("10").transform(Number),
 });
 
 export type CreateExampleInput = z.infer<typeof createExampleSchema>;

@@ -32,8 +32,11 @@ describe("Example routes (integration)", () => {
       expect(res.body.success).toBe(true);
       expect(res.body.statusCode).toBe(StatusCodes.OK);
       expect(res.body.message).toBe("OK");
-      expect(Array.isArray(res.body.data)).toBe(true);
-      expect(res.body.data.length).toBeGreaterThanOrEqual(2);
+      expect(Array.isArray(res.body.data.data)).toBe(true);
+      expect(res.body.data.data.length).toBeGreaterThanOrEqual(2);
+      expect(res.body.data.meta).toBeDefined();
+      expect(res.body.data.meta.page).toBe(1);
+      expect(res.body.data.meta.limit).toBe(10);
     });
 
     it("should filter examples by search query", async () => {
@@ -51,8 +54,8 @@ describe("Example routes (integration)", () => {
 
       expect(res.body.success).toBe(true);
       expect(res.body.statusCode).toBe(StatusCodes.OK);
-      expect(res.body.data).toHaveLength(1);
-      expect(res.body.data[0]?.name).toBe("Alpha");
+      expect(res.body.data.data).toHaveLength(1);
+      expect(res.body.data.data[0]?.name).toBe("Alpha");
     });
   });
 

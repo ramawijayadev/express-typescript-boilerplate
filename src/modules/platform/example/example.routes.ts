@@ -2,7 +2,8 @@ import { Router } from "express";
 
 import { validateBody, validateParams, validateQuery } from "@/core/http/validation.middleware";
 
-import { exampleController } from "./example.controller";
+import { exampleController } from ".";
+
 import {
   createExampleSchema,
   exampleIdSchema,
@@ -12,33 +13,25 @@ import {
 
 export const exampleRouter = Router();
 
-exampleRouter.get(
-  "/",
-  validateQuery(listExamplesQuerySchema),
-  exampleController.list.bind(exampleController),
+exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
+  exampleController.list(req, res),
 );
 
-exampleRouter.get(
-  "/:id",
-  validateParams(exampleIdSchema),
-  exampleController.find.bind(exampleController),
+exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
+  exampleController.find(req, res),
 );
 
-exampleRouter.post(
-  "/",
-  validateBody(createExampleSchema),
-  exampleController.create.bind(exampleController),
+exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
+  exampleController.create(req, res),
 );
 
 exampleRouter.put(
   "/:id",
   validateParams(exampleIdSchema),
   validateBody(updateExampleSchema),
-  exampleController.update.bind(exampleController),
+  (req, res) => exampleController.update(req, res),
 );
 
-exampleRouter.delete(
-  "/:id",
-  validateParams(exampleIdSchema),
-  exampleController.delete.bind(exampleController),
+exampleRouter.delete("/:id", validateParams(exampleIdSchema), (req, res) =>
+  exampleController.delete(req, res),
 );

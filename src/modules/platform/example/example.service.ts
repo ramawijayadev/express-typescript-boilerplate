@@ -8,12 +8,10 @@ import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "
 import type { ExampleId } from "./example.types";
 
 export class ExampleService {
-  constructor(private readonly repo = new ExampleRepository()) {}
+  constructor(private readonly repo: ExampleRepository) {}
 
   async list(query: ListExamplesQuery) {
-    return this.repo.findAll({
-      search: query.search,
-    });
+    return this.repo.findAll({ search: query.search }, { page: query.page, limit: query.limit });
   }
 
   async find(id: number) {
@@ -34,23 +32,30 @@ export class ExampleService {
   }
 
   async update(id: number, input: UpdateExampleInput) {
-    const updated = await this.repo.update(id, {
-      name: input.name,
-      description: input.description,
-    });
-
-    if (!updated) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+    try {
+      return await this.repo.update(id, {
+        name: input.name,
+        description: input.description,
+      });
+    } catch (error) {
+      // P2025 is Prisma's "Record to update not found."
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((error as any).code === "P2025") {
+        throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+      }
+      throw error;
     }
-
-    return updated;
   }
 
   async delete(id: number) {
-    const deleted = await this.repo.delete(id);
-
-    if (!deleted) {
-      throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+    try {
+      await this.repo.delete(id);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((error as any).code === "P2025") {
+        throw new AppError(StatusCodes.NOT_FOUND, "Example not found");
+      }
+      throw error;
     }
   }
 }

@@ -26,12 +26,15 @@ describe("Example service (unit)", () => {
   describe("list", () => {
     it("should return empty array when no examples exist", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.findAll).mockResolvedValue([]);
+      vi.mocked(repo.findAll).mockResolvedValue({
+        data: [],
+        meta: { total: 0, page: 1, limit: 10, totalPages: 0 },
+      });
 
-      const result = await service.list({});
+      const result = await service.list({ page: 1, limit: 10 });
 
-      expect(result).toHaveLength(0);
-      expect(result).toEqual([]);
+      expect(result.data).toHaveLength(0);
+      expect(result.data).toEqual([]);
     });
 
     it("should return all examples when no filter is provided", async () => {
@@ -60,21 +63,27 @@ describe("Example service (unit)", () => {
           deletedBy: null,
         },
       ];
-      vi.mocked(repo.findAll).mockResolvedValue(mockData);
+      vi.mocked(repo.findAll).mockResolvedValue({
+        data: mockData,
+        meta: { total: 2, page: 1, limit: 10, totalPages: 1 },
+      });
 
-      const result = await service.list({});
+      const result = await service.list({ page: 1, limit: 10 });
 
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(mockData);
+      expect(result.data).toHaveLength(2);
+      expect(result.data).toEqual(mockData);
     });
 
     it("should pass search filter to repository", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.findAll).mockResolvedValue([]);
+      vi.mocked(repo.findAll).mockResolvedValue({
+        data: [],
+        meta: { total: 0, page: 1, limit: 10, totalPages: 0 },
+      });
 
-      await service.list({ search: "alp" });
+      await service.list({ search: "alp", page: 1, limit: 10 });
 
-      expect(repo.findAll).toHaveBeenCalledWith({ search: "alp" });
+      expect(repo.findAll).toHaveBeenCalledWith({ search: "alp" }, { page: 1, limit: 10 });
     });
   });
 
@@ -160,7 +169,7 @@ describe("Example service (unit)", () => {
 
     it("should throw AppError 404 when updating non-existent example", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.update).mockResolvedValue(null);
+      vi.mocked(repo.update).mockRejectedValue({ code: "P2025" });
 
       const promise = service.update(999, {
         name: "New name",
@@ -178,7 +187,7 @@ describe("Example service (unit)", () => {
   describe("delete", () => {
     it("should delete existing example", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.delete).mockResolvedValue(true);
+      vi.mocked(repo.delete).mockResolvedValue(undefined);
 
       await service.delete(1);
 
@@ -187,7 +196,7 @@ describe("Example service (unit)", () => {
 
     it("should throw AppError 404 when deleting non-existent example", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.delete).mockResolvedValue(false);
+      vi.mocked(repo.delete).mockRejectedValue({ code: "P2025" });
 
       const promise = service.delete(999);
 
