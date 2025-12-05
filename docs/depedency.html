@@ -504,6 +504,13 @@
 
     <div class="dep-item">
       <div class="dep-header">
+        <span class="dep-name">pino-roll</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Log rotation utility untuk pino, memastikan log file tidak membengkak tanpa kendali.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
         <span class="dep-name">pino-pretty</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
       </div>
       <p class="dep-desc">Memformat log JSON menjadi teks berwarna yang mudah dibaca saat development.</p>
@@ -543,7 +550,14 @@
       <div class="dep-header">
         <span class="dep-name">swagger-jsdoc</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Generate spesifikasi OpenAPI secara otomatis dari komentar JSDoc di kode.</p>
+      <p class="dep-desc">Generate spesifikasi OpenAPI secara otomatis dari komentar JSDoc di kode (Legacy support).</p>
+    </div>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">@asteasolutions/zod-to-openapi</span> <span class="badge tag-core">CORE</span>
+      </div>
+      <p class="dep-desc">Generate OpenAPI definitions langsung dari Zod schema. Menjamin dokumentasi selalu sync dengan
+        validasi.</p>
     </div>
   </section>
 
@@ -644,7 +658,8 @@ husky lint-staged cross-env concurrently \
         <span class="dep-name">k6</span>
       </div>
       <p class="dep-desc">Load testing tool (ditulis dalam Go/JS). Digunakan untuk stress test API (lihat folder
-        <code>tests/perf</code>).</p>
+        <code>tests/perf</code>).
+      </p>
     </div>
   </section>
 

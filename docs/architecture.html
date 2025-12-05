@@ -221,7 +221,8 @@
 			<li><strong>Developer Experience & Quality</strong> (Tooling)</li>
 		</ol>
 		<blockquote>
-			Beberapa aspek adalah <strong>cross-cutting concerns</strong> (seperti Security, Logging, Config) yang "menembus"
+			Beberapa aspek adalah <strong>cross-cutting concerns</strong> (seperti Security, Logging, Config) yang
+			"menembus"
 			berbagai layer, namun didefinisikan kebijakannya di layer spesifik.
 		</blockquote>
 	</section>
@@ -233,7 +234,8 @@
 		<h3>3.1. Config & Environment Management</h3>
 		<p><strong>Prinsip:</strong> Explicit Configuration.</p>
 		<ul>
-			<li><strong>Environment Variables:</strong> Simpan rahasia (DB URL, Secrets) di environment, bukan code.</li>
+			<li><strong>Environment Variables:</strong> Simpan rahasia (DB URL, Secrets) di environment, bukan code.
+			</li>
 			<li><strong>Schema Validation:</strong> Aplikasi harus gagal start jika config wajib tidak valid.</li>
 			<li><strong>Abstraction:</strong> Gunakan satu objek config global (singleton) di dalam app.</li>
 		</ul>
@@ -256,15 +258,18 @@
 			<li><strong>Error Model:</strong> Struktur JSON standar (<code>code</code>, <code>message</code>,
 				<code>details</code>).
 			</li>
-			<li><strong>Error Mapping:</strong> Mapping jenis error ke HTTP status (400, 404, 500).</li>
-			<li><strong>Global Handler:</strong> Centralized catch-all untuk logging dan response sanitization.</li>
+			<li><strong>Error Mapping:</strong> Mapping jenis error ke HTTP status (400, 404, 500) menggunakan class
+				<code>AppError</code>.</li>
+			<li><strong>Global Handler:</strong> Centralized catch-all untuk logging (terpisah dari user response) dan
+				sanitization.</li>
 		</ul>
 
 		<h3>3.5. Health Checks & Lifecycle</h3>
 		<ul>
 			<li><strong>Liveness Probe:</strong> Cek apakah proses hidup (untuk restart policy).</li>
 			<li><strong>Readiness Probe:</strong> Cek apakah siap terima traffic (stop traffic jika DB putus).</li>
-			<li><strong>Graceful Shutdown:</strong> Stop request baru, selesaikan request berjalan, tutup koneksi DB dengan
+			<li><strong>Graceful Shutdown:</strong> Stop request baru, selesaikan request berjalan, tutup koneksi DB
+				dengan
 				rapi sebelum mati.</li>
 		</ul>
 	</section>
@@ -306,19 +311,23 @@
 		<h2>5. Data & Integration Layer</h2>
 
 		<h3>5.1. Database & Repository Pattern</h3>
-		<p>Gunakan <strong>Repository Pattern</strong> untuk mengisolasi domain dari detail query database (SQL/ORM),
+		<p>Gunakan <strong>Repository Pattern</strong> (via Prisma ORM) untuk mengisolasi domain dari detail query
+			database,
 			memudahkan testing dan maintenance.</p>
 
 		<h3>5.2. Caching Strategy</h3>
-		<p>Mengurangi latency data (Redis). Tentukan strategi <strong>TTL</strong> dan <strong>Invalidation</strong> yang
+		<p>Mengurangi latency data (Redis). Tentukan strategi <strong>TTL</strong> dan <strong>Invalidation</strong>
+			yang
 			jelas saat data berubah.</p>
 
 		<h3>5.3. Async Jobs (Message Queue)</h3>
-		<p>Menangani proses berat (email, report) secara background menggunakan Queue (RabbitMQ/BullMQ) dan Worker process.
+		<p>Menangani proses berat (email, report) secara background menggunakan Queue (BullMQ/Redis) dan Worker process
+			terpisah.
 		</p>
 
 		<h3>5.4. File & Object Storage</h3>
-		<p>Menyimpan file binary (gambar, dokumen) di Object Storage (S3/MinIO), bukan di database. Database hanya menyimpan
+		<p>Menyimpan file binary (gambar, dokumen) di Object Storage (S3/MinIO), bukan di database. Database hanya
+			menyimpan
 			URL/Key-nya.</p>
 
 		<h3>5.5. Search Engine Integration</h3>
@@ -326,7 +335,8 @@
 			(Elasticsearch/MeiliSearch).</p>
 
 		<h3>5.6. External API Clients</h3>
-		<p>Wrapper untuk layanan pihak ketiga (Payment, SMS). Fokus pada penanganan <strong>Timeout</strong> dan strategi
+		<p>Wrapper untuk layanan pihak ketiga (Payment, SMS). Fokus pada penanganan <strong>Timeout</strong> dan
+			strategi
 			<strong>Retry</strong>.
 		</p>
 	</section>
@@ -345,7 +355,8 @@
 			proteksi Brute-force.</p>
 
 		<h3>6.4. Secrets Management</h3>
-		<p>Manajemen enkripsi dan keys. <strong>Jangan pernah commit secrets ke repo.</strong> Gunakan Secret Manager atau
+		<p>Manajemen enkripsi dan keys. <strong>Jangan pernah commit secrets ke repo.</strong> Gunakan Secret Manager
+			atau
 			Env Vars terenkripsi.</p>
 
 		<h3>6.5. Audit Log</h3>
@@ -358,7 +369,8 @@
 		<ul>
 			<li><strong>HTTP REST/GraphQL:</strong> Komunikasi request-response standar.</li>
 			<li><strong>Real-Time (WebSocket/SSE):</strong> Untuk notifikasi langsung atau chat.</li>
-			<li><strong>Event-Driven (Pub/Sub):</strong> Integrasi antar-modul yang <em>loosely-coupled</em> via event bus.
+			<li><strong>Event-Driven (Pub/Sub):</strong> Integrasi antar-modul yang <em>loosely-coupled</em> via event
+				bus.
 			</li>
 		</ul>
 	</section>
@@ -373,11 +385,13 @@
 		<p>Memantau kesehatan sistem: Throughput (RPS), Latency (p95, p99), Error Rate, dan Resource Usage.</p>
 
 		<h3>8.3. Tracing</h3>
-		<p>Menggunakan <code>TraceId</code> / <code>CorrelationId</code> untuk melacak perjalanan request melintasi berbagai
+		<p>Menggunakan <code>TraceId</code> / <code>CorrelationId</code> untuk melacak perjalanan request melintasi
+			berbagai
 			komponen sistem.</p>
 
 		<h3>8.4. Alerting Hooks</h3>
-		<p>Notifikasi otomatis (Slack/PagerDuty) ketika metrik kritis (Error rate, Latency) melebihi ambang batas wajar.</p>
+		<p>Notifikasi otomatis (Slack/PagerDuty) ketika metrik kritis (Error rate, Latency) melebihi ambang batas wajar.
+		</p>
 	</section>
 
 	<section id="dx-quality">
@@ -393,10 +407,12 @@
 		</ul>
 
 		<h3>9.2. Documentation</h3>
-		<p>OpenAPI/Swagger yang selalu up-to-date (ideally generated from code) sebagai kontrak dengan Frontend/Client.</p>
+		<p>OpenAPI/Swagger yang <strong>generated from code</strong> (via zod-to-openapi) sebagai kontrak (Single Source
+			of Truth) dengan Frontend/Client.</p>
 
 		<h3>9.3. Code Quality & Standards</h3>
-		<p>Otomatisasi Linter (ESLint) dan Formatter (Prettier) via <strong>Git Hooks</strong> (Husky) untuk standar kode
+		<p>Otomatisasi Linter (ESLint) dan Formatter (Prettier) via <strong>Git Hooks</strong> (Husky) untuk standar
+			kode
 			yang konsisten.</p>
 
 		<h3>9.4. CI Pipeline & Local Dev</h3>
@@ -417,7 +433,8 @@
 			<li><strong>Multi-Tenancy:</strong> Isolasi data untuk aplikasi SaaS B2B.</li>
 			<li><strong>Feature Flags:</strong> Rilis fitur bertahap tanpa deploy ulang.</li>
 			<li><strong>CQRS:</strong> Pemisahan model baca dan tulis untuk performa tinggi.</li>
-			<li><strong>ADR (Architectural Decision Records):</strong> Dokumentasi historis alasan keputusan teknis diambil.
+			<li><strong>ADR (Architectural Decision Records):</strong> Dokumentasi historis alasan keputusan teknis
+				diambil.
 			</li>
 			<li><strong>Operational Playbook:</strong> Checklist standar penanganan insiden produksi.</li>
 		</ul>

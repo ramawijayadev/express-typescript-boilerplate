@@ -270,6 +270,9 @@
       <li><a href="#logging">11. Logging</a></li>
       <li><a href="#context">12. Context Objects</a></li>
       <li><a href="#testing">13. Testing Conventions</a></li>
+      <li><a href="#response">14. API Response Standardization</a></li>
+      <li><a href="#openapi">15. OpenAPI Documentation Strategy</a></li>
+      <li><a href="#pagination">16. Pagination Standards</a></li>
     </ul>
   </nav>
 
@@ -583,6 +586,63 @@ import { usersRouter } from '@/modules/platform/users/users.routes';</code></pre
         </ul>
       </li>
     </ul>
+  </section>
+
+  <section id="response">
+    <h2>14. API Response Standardization</h2>
+
+    <h3>14.1. Format Baku <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Setiap endpoint API <strong>harus</strong> mengembalikan response dengan format JSON berikut:</p>
+    <pre><code>{
+  "status": "success" | "error" | "fail",
+  "message": "Human readable message",
+  "data": { ... },      // Payload utama (object/array)
+  "meta": { ... },      // Metadata (pagination, etc)
+  "error": { ... }      // Detail error (jika status != success)
+}</code></pre>
+
+    <h3>14.2. Helper Class <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan helper <code>ApiResponse</code> untuk menjamin konsistensi:</p>
+    <pre><code>return ApiResponse.success(res, data, 'User created');
+return ApiResponse.error(res, 'Invalid input', 400);</code></pre>
+  </section>
+
+  <section id="openapi">
+    <h2>15. OpenAPI Documentation Strategy</h2>
+
+    <h3>15.1. Code-First Approach <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Dokumentasi API dihasilkan langsung dari kode menggunakan <strong>zod-to-openapi</strong>. Jangan tulis YAML
+      manual.</p>
+
+    <h3>15.2. Registry & Generator <span class="badge bg-wajib">WAJIB</span></h3>
+    <ul>
+      <li>Definisikan Zod Schema dengan method <code>openApi()</code> (contoh:
+        <code>.openapi({ example: '...' })</code>).</li>
+      <li>Registrasi schema/path ke <code>OpenAPIRegistry</code> di file <code>*.routes.ts</code>.</li>
+      <li>Gunakan <code>OpenApiGeneratorV3</code> untuk build spec final.</li>
+    </ul>
+  </section>
+
+  <section id="pagination">
+    <h2>16. Pagination Standards</h2>
+
+    <h3>16.1. Query Parameters <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Gunakan parameter standar: <code>page</code> (number, default 1) dan <code>limit</code> (number, default 10).</p>
+
+    <h3>16.2. Response Metadata <span class="badge bg-wajib">WAJIB</span></h3>
+    <p>Response list harus menyertakan object <code>meta</code> dan <code>links</code>:</p>
+    <pre><code>"meta": {
+  "total": 100,
+  "page": 2,
+  "limit": 10,
+  "totalPages": 10
+},
+"links": {
+  "first": "/api/resource?page=1",
+  "last": "/api/resource?page=10",
+  "prev": "/api/resource?page=1",
+  "next": "/api/resource?page=3"
+}</code></pre>
   </section>
 
   <footer
