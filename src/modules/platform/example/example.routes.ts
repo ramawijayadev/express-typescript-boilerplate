@@ -21,7 +21,8 @@ const exampleService = new ExampleService(exampleRepository);
 const exampleController = new ExampleController(exampleService);
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(req, res),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exampleController.list(req as any, res),
 );
 
 exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
@@ -29,14 +30,16 @@ exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
 );
 
 exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
-  exampleController.create(req, res),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exampleController.create(req as any, res),
 );
 
 exampleRouter.put(
   "/:id",
   validateParams(exampleIdSchema),
   validateBody(updateExampleSchema),
-  (req, res) => exampleController.update(req, res),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (req, res) => exampleController.update(req as any, res),
 );
 
 exampleRouter.delete("/:id", validateParams(exampleIdSchema), (req, res) =>

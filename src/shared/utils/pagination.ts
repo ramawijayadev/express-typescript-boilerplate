@@ -1,14 +1,9 @@
+import type { PaginatedMeta } from "@/shared/types/pagination";
 import type { Request } from "express";
 
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
 export function generatePaginationLinks(
-  req: Request,
-  meta: PaginationMeta,
+  req: Request<any, any, any, any>,
+  meta: PaginatedMeta,
 ): Record<string, string | null> {
   const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${req.path}`;
   const query = { ...req.query };

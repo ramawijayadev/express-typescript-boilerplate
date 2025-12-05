@@ -9,34 +9,31 @@ import type { Request, Response } from "express";
 export class ExampleController {
   constructor(private readonly service: ExampleService) {}
 
-  async list(req: Request, res: Response) {
-    const query = req.query as unknown as ListExamplesQuery;
-    const { data, meta } = await this.service.list(query);
+  async list(req: Request<unknown, unknown, unknown, ListExamplesQuery>, res: Response) {
+    const { data, meta } = await this.service.list(req.query);
     const links = generatePaginationLinks(req, meta);
     return okPaginated(res, data, meta, links);
   }
 
   async find(req: Request, res: Response) {
-    const { id } = req.params as unknown as { id: number };
+    const id = Number(req.params.id);
     const result = await this.service.find(id);
     return ok(res, result);
   }
 
-  async create(req: Request, res: Response) {
-    const body = req.body as CreateExampleInput;
-    const result = await this.service.create(body);
+  async create(req: Request<unknown, unknown, CreateExampleInput>, res: Response) {
+    const result = await this.service.create(req.body);
     return created(res, result);
   }
 
-  async update(req: Request, res: Response) {
-    const { id } = req.params as unknown as { id: number };
-    const body = req.body as UpdateExampleInput;
-    const result = await this.service.update(id, body);
+  async update(req: Request<{ id: string }, unknown, UpdateExampleInput>, res: Response) {
+    const id = Number(req.params.id);
+    const result = await this.service.update(id, req.body);
     return ok(res, result);
   }
 
   async delete(req: Request, res: Response) {
-    const { id } = req.params as unknown as { id: number };
+    const id = Number(req.params.id);
     await this.service.delete(id);
     return ok(res, { deleted: true });
   }

@@ -1,23 +1,9 @@
 import { appConfig } from "@/config/app";
 import { db } from "@/core/database";
 import type { Prisma } from "@/generated/prisma";
+import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
 
 import type { Example, ExampleId, ListExamplesFilter } from "./example.types";
-
-export interface PaginationParams {
-  page: number;
-  limit: number;
-}
-
-export interface PaginatedResult<T> {
-  data: T[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
 
 export class ExampleRepository {
   async findAll(
@@ -78,16 +64,33 @@ export class ExampleRepository {
     id: ExampleId,
     data: { name?: string; description?: string | null },
   ): Promise<Example | null> {
-    return db().example.update({
-      where: { id },
-      data,
-    });
+    try {
+      return await db().example.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((error as any).code === "P2025") {
+        return null;
+      }
+      throw error;
+    }
   }
 
-  async delete(id: ExampleId): Promise<void> {
-    await db().example.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+  async delete(id: ExampleId): Promise<boolean> {
+    try {
+      await db().example.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
+      return true;
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((error as any).code === "P2025") {
+        return false;
+      }
+      throw error;
+    }
   }
 }

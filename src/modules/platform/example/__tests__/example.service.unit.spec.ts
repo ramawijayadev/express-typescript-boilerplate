@@ -169,7 +169,7 @@ describe("Example service (unit)", () => {
 
     it("should throw AppError 404 when updating non-existent example", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.update).mockRejectedValue({ code: "P2025" });
+      vi.mocked(repo.update).mockResolvedValue(null);
 
       const promise = service.update(999, {
         name: "New name",
@@ -187,7 +187,7 @@ describe("Example service (unit)", () => {
   describe("delete", () => {
     it("should delete existing example", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.delete).mockResolvedValue(undefined);
+      vi.mocked(repo.delete).mockResolvedValue(true);
 
       await service.delete(1);
 
@@ -196,7 +196,7 @@ describe("Example service (unit)", () => {
 
     it("should throw AppError 404 when deleting non-existent example", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.delete).mockRejectedValue({ code: "P2025" });
+      vi.mocked(repo.delete).mockResolvedValue(false);
 
       const promise = service.delete(999);
 
