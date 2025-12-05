@@ -7,7 +7,7 @@ import hpp from "hpp";
 
 import { appConfig } from "@/config/app";
 
-import { authContextMiddleware } from "./auth-context.middleware";
+
 import { requestLoggerMiddleware } from "./request-logger.middleware";
 
 import type { Express } from "express";
@@ -41,5 +41,5 @@ export function registerMiddlewares(app: Express) {
   // Internal middlewares
   app.use(requestLoggerMiddleware);
 
-  app.use(authContextMiddleware);
+
 }

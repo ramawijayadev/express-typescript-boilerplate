@@ -12,6 +12,7 @@ import type {
   RegisterBody,
   ResetPasswordBody,
 } from "./auth.types";
+import type { AuthenticatedRequest } from "@/core/http/types";
 import type { Request, Response } from "express";
 
 
@@ -41,11 +42,8 @@ export class AuthController {
     return ok(res, result);
   }
 
-  async getProfile(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, "User ID missing from request");
-    }
+  async getProfile(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user.id;
 
     const result = await this.service.getProfile(userId);
     return ok(res, result);
@@ -56,11 +54,8 @@ export class AuthController {
     return ok(res, { message: "Logged out successfully" });
   }
 
-  async revokeAll(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, "User ID missing from request");
-    }
+  async revokeAll(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user.id;
     await this.service.revokeAllSessions(userId);
     return ok(res, { message: "All sessions revoked" });
   }
@@ -70,8 +65,8 @@ export class AuthController {
     return ok(res, { message: "Email verified successfully" });
   }
 
-  async resendVerification(req: Request, res: Response) {
-    const userId = req.user?.id;
+  async resendVerification(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user.id;
     if (userId) {
       await this.service.resendVerification(userId);
     }
