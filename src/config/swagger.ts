@@ -1,6 +1,7 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 
 import { env } from "@/app/env";
+import { authRegistry } from "@/modules/platform/auth/auth.routes";
 import { exampleRegistry } from "@/modules/platform/example/example.routes";
 import { healthRegistry } from "@/modules/platform/health/health.routes";
 
@@ -18,6 +19,7 @@ registry.registerComponent("securitySchemes", "bearerAuth", {
 const getOpenApiDocumentation = () => {
   const generator = new OpenApiGeneratorV3([
     ...registry.definitions,
+    ...authRegistry.definitions,
     ...exampleRegistry.definitions,
     ...healthRegistry.definitions,
   ]);
