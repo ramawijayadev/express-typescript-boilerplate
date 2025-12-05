@@ -31,7 +31,7 @@ const exampleController = new ExampleController(exampleService);
 
 exampleRegistry.registerPath({
   method: "get",
-  path: "/platform/examples",
+  path: "/examples",
   tags: ["Example"],
   request: {
     query: listExamplesQuerySchema,
@@ -46,7 +46,7 @@ exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
 
 exampleRegistry.registerPath({
   method: "get",
-  path: "/platform/examples/{id}",
+  path: "/examples/{id}",
   tags: ["Example"],
   request: {
     params: exampleIdSchema,
@@ -61,7 +61,7 @@ exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
 
 exampleRegistry.registerPath({
   method: "post",
-  path: "/platform/examples",
+  path: "/examples",
   tags: ["Example"],
   request: {
     body: {
@@ -81,7 +81,7 @@ exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
 
 exampleRegistry.registerPath({
   method: "put",
-  path: "/platform/examples/{id}",
+  path: "/examples/{id}",
   tags: ["Example"],
   request: {
     params: exampleIdSchema,
@@ -106,10 +106,17 @@ exampleRouter.put(
 
 exampleRegistry.registerPath({
   method: "delete",
-  path: "/platform/examples/{id}",
+  path: "/examples/{id}",
   tags: ["Example"],
   request: {
     params: exampleIdSchema,
+    body: {
+      content: {
+        "application/json": {
+          schema: updateExampleSchema,
+        },
+      },
+    },
   },
   responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted"),
 });

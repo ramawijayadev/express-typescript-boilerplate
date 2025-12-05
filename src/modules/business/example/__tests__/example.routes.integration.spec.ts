@@ -6,7 +6,7 @@ import { createApp } from "@/app/app";
 import { db } from "@/core/database";
 
 describe("Example routes (integration)", () => {
-  const baseUrl = "/api/v1/platform/examples";
+  const baseUrl = "/api/v1/examples";
   let app: ReturnType<typeof createApp>;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe("Example routes (integration)", () => {
     await db().example.deleteMany();
   });
 
-  describe("GET /api/v1/platform/examples (list)", () => {
+  describe("GET /api/v1/examples (list)", () => {
     it("should list examples (200) with standard success format", async () => {
       await request(app)
         .post(baseUrl)
@@ -58,7 +58,7 @@ describe("Example routes (integration)", () => {
     });
   });
 
-  describe("GET /api/v1/platform/examples/:id (find)", () => {
+  describe("GET /api/v1/examples/:id (find)", () => {
     it("should return example detail (200) with standard success format", async () => {
       const createRes = await request(app)
         .post(baseUrl)
@@ -94,7 +94,7 @@ describe("Example routes (integration)", () => {
     });
   });
 
-  describe("POST /api/v1/platform/examples (create)", () => {
+  describe("POST /api/v1/examples (create)", () => {
     it("should create example (201) and return standard success format", async () => {
       const res = await request(app)
         .post(baseUrl)
@@ -140,7 +140,7 @@ describe("Example routes (integration)", () => {
     });
   });
 
-  describe("PUT /api/v1/platform/examples/:id (update)", () => {
+  describe("PUT /api/v1/examples/:id (update)", () => {
     it("should update existing example and return standard success format", async () => {
       const createRes = await request(app)
         .post(baseUrl)
@@ -207,7 +207,7 @@ describe("Example routes (integration)", () => {
     });
   });
 
-  describe("DELETE /api/v1/platform/examples/:id (delete)", () => {
+  describe("DELETE /api/v1/examples/:id (delete)", () => {
     it("should delete existing example and return standard success format", async () => {
       const createRes = await request(app)
         .post(baseUrl)
