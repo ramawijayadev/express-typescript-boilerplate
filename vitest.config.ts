@@ -12,6 +12,7 @@ export default defineConfig({
       JWT_ACCESS_EXPIRATION: "1m",
       JWT_REFRESH_EXPIRATION: "5m",
     },
+    fileParallelism: false,
   },
   resolve: {
     alias: {

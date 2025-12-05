@@ -123,6 +123,10 @@ describe("Auth service (unit)", () => {
         lockedUntil: null,
       } as any;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
+      vi.mocked(repo.incrementFailedLogin).mockResolvedValue({
+        ...mockUser,
+        failedLoginAttempts: 1,
+      });
 
       const promise = service.login({
         email: "test@example.com",

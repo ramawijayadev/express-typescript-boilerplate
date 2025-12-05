@@ -16,6 +16,7 @@ describe("Example module - error mapping", () => {
       success: false,
       message: "Example not found",
       statusCode: StatusCodes.NOT_FOUND,
+      requestId: expect.any(String),
     });
   });
 });

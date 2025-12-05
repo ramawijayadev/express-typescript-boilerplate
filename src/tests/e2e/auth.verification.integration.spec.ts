@@ -4,8 +4,17 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
-import { emailSender } from "@/core/mail/mailer";
 import { hashToken } from "@/core/auth/hash";
+
+// Mock job queue to avoid Redis dependency and worker timing issues
+vi.mock("@/core/queue", () => ({
+  jobQueue: {
+    enqueueEmailVerification: vi.fn(),
+    enqueuePasswordReset: vi.fn(),
+  },
+}));
+
+import { jobQueue } from "@/core/queue";
 
 describe("Auth Verification & Password Reset Integration", () => {
   let app: any;
@@ -14,7 +23,6 @@ describe("Auth Verification & Password Reset Integration", () => {
 
   beforeAll(async () => {
     app = await createApp();
-    // Allow queue to process
     server = app.listen(0);
   });
 
@@ -22,9 +30,6 @@ describe("Auth Verification & Password Reset Integration", () => {
     await db().$disconnect();
     server.close();
   });
-
-  // Spy on email sender
-  const sendEmailSpy = vi.spyOn(emailSender, "send").mockResolvedValue(undefined);
 
   beforeEach(async () => {
     // Clean up
@@ -38,33 +43,17 @@ describe("Auth Verification & Password Reset Integration", () => {
       data: {
         name: "Test User",
         email: "test@example.com",
-        password: "hashedpassword123", // Manually set or use service
+        password: "hashedpassword123",
         isActive: true,
       },
     });
-    
-    sendEmailSpy.mockClear();
+
+    vi.clearAllMocks();
   });
 
   describe("POST /auth/resend-verification", () => {
     it("should enqueue verification email for unverified user", async () => {
       // Authenticate
-      const agent = request.agent(app);
-      // We need to login or fake a session. 
-      // Since we don't have login helper here easily without importing service,
-      // let's manually create a session and attach cookie/header.
-      // Or just use the register endpoint which auto-logs in? 
-      // User is already created. Let's create a session manually.
-      const session = await db().userSession.create({
-        data: {
-          userId: testUser.id,
-          refreshTokenHash: "hash",
-          expiresAt: new Date(Date.now() + 10000),
-        },
-      });
-      // But middleware checks access token. 
-      // We need to generate a valid access token.
-      // Importing generateAccessToken from core/auth/jwt.
       const { generateAccessToken } = await import("@/core/auth/jwt");
       const accessToken = generateAccessToken({ userId: testUser.id });
 
@@ -81,10 +70,12 @@ describe("Auth Verification & Password Reset Integration", () => {
       });
       expect(token).toBeDefined();
 
-      // Verify email sent (async worker might take a moment, so use vitest waitFor or sleep)
-      // Since worker runs in same process, it might happen quickly.
-      await new Promise(r => setTimeout(r, 1000));
-      expect(sendEmailSpy).toHaveBeenCalled();
+      // Verify job enqueued instead of checking email sender directly
+      expect(jobQueue.enqueueEmailVerification).toHaveBeenCalledWith(expect.objectContaining({
+         userId: testUser.id,
+         email: testUser.email,
+         token: expect.any(String),
+      }));
     });
   });
 
@@ -140,8 +131,11 @@ describe("Auth Verification & Password Reset Integration", () => {
       });
       expect(token).toBeDefined();
 
-      await new Promise(r => setTimeout(r, 1000));
-      expect(sendEmailSpy).toHaveBeenCalled();
+      expect(jobQueue.enqueuePasswordReset).toHaveBeenCalledWith(expect.objectContaining({
+        userId: testUser.id,
+        email: testUser.email,
+        token: expect.any(String),
+      }));
     });
   });
 
