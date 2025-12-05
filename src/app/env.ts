@@ -48,6 +48,9 @@ const envSchema = z.object({
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_PASSWORD: z.string().optional(),
+  
+  // Feature Flags
+  ENABLE_BACKGROUND_JOBS: z.coerce.boolean().default(true),
 });
 
 export const env = envSchema.parse(process.env);
