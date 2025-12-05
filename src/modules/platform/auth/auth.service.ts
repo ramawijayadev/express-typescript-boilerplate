@@ -30,28 +30,23 @@ export class AuthService {
 
     const passwordHash = await hashPassword(data.password);
     const user = await this.repo.create({ ...data, passwordHash });
-
-    // Send verification email
     await this.sendVerificationEmail(user);
+
 
     return this.createSession(user, meta);
   }
 
   async login(data: LoginBody, meta?: { ip?: string; userAgent?: string }): Promise<AuthResponse> {
     const user = await this.repo.findByEmail(data.email);
-    if (!user) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
-    }
-
-    if (!user.password) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
+    if (!user ||!user.password) {
+      this.throwInvalidCredentials();
     }
 
     if (!user.isActive) {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
     }
 
-    // Check locking
+
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       throw new AppError(
         StatusCodes.UNAUTHORIZED,
@@ -61,20 +56,17 @@ export class AuthService {
 
     const isValidPassword = await verifyPassword(user.password, data.password);
     if (!isValidPassword) {
-      // Increment failed attempts
       const updatedUser = await this.repo.incrementFailedLogin(user.id);
 
       if (updatedUser.failedLoginAttempts >= authConfig.locking.maxAttempts) {
-        // Lock user
         const lockDurationMs = authConfig.locking.durationMinutes * 60 * 1000;
         const lockedUntil = new Date(Date.now() + lockDurationMs);
         await this.repo.lockUser(user.id, lockedUntil);
       }
 
-      throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
+      this.throwInvalidCredentials();
     }
 
-    // Reset stats on success
     await this.repo.resetLoginStats(user.id);
 
     return this.createSession(user, meta);
@@ -87,7 +79,6 @@ export class AuthService {
     const accessToken = generateAccessToken({ userId: user.id });
     const refreshToken = generateRefreshToken({ userId: user.id });
 
-    // Decode to get expiration time
     const decoded = verifyToken(refreshToken);
     const expiresAt = new Date((decoded.exp || 0) * 1000);
 
@@ -129,7 +120,6 @@ export class AuthService {
         throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
       }
 
-      // Rotate token
       const newRefreshToken = generateRefreshToken({ userId: session.userId });
       const newDecoded = verifyToken(newRefreshToken);
       const newExpiresAt = new Date((newDecoded.exp || 0) * 1000);
@@ -275,5 +265,8 @@ export class AuthService {
     await this.repo.updatePassword(resetToken.userId, passwordHash);
     await this.repo.markPasswordResetTokenUsed(resetToken.id);
     await this.repo.revokeAllUserSessions(resetToken.userId);
+  }
+  private throwInvalidCredentials(): never {
+    throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
   }
 }
