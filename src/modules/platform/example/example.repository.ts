@@ -76,9 +76,6 @@ export class ExampleRepository {
       return null;
     }
 
-    // Since we just updated it, we can fetch it.
-    // We can rely on findById which also checks deletedAt: null,
-    // although strictly speaking we know it's not deleted.
     return this.findById(id);
   }
 

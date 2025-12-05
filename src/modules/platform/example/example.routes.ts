@@ -13,21 +13,14 @@ import {
   updateExampleSchema,
 } from "./example.schemas";
 
-import type { Request } from "express";
-import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
-
 export const exampleRouter = Router();
 
-// Instantiate dependencies
 const exampleRepository = new ExampleRepository();
 const exampleService = new ExampleService(exampleRepository);
 const exampleController = new ExampleController(exampleService);
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(
-    req as unknown as Request<unknown, unknown, unknown, ListExamplesQuery>,
-    res,
-  ),
+  exampleController.list(req, res),
 );
 
 exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
@@ -35,15 +28,14 @@ exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
 );
 
 exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
-  exampleController.create(req as Request<unknown, unknown, CreateExampleInput>, res),
+  exampleController.create(req, res),
 );
 
 exampleRouter.put(
   "/:id",
   validateParams(exampleIdSchema),
   validateBody(updateExampleSchema),
-  (req, res) =>
-    exampleController.update(req as Request<{ id: string }, unknown, UpdateExampleInput>, res),
+  (req, res) => exampleController.update(req, res),
 );
 
 exampleRouter.delete("/:id", validateParams(exampleIdSchema), (req, res) =>
