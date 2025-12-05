@@ -1,11 +1,12 @@
 import { AsyncLocalStorage } from "async_hooks";
 import path from "path";
+
 import pino from "pino";
 
 import { loggingConfig } from "@/config/logging";
 
 // Request Context Store
-export const requestContext = new AsyncLocalStorage<Map<string, any>>();
+export const requestContext = new AsyncLocalStorage<Map<string, unknown>>();
 
 // Redaction Keys
 const redacts = [
@@ -63,7 +64,7 @@ export const logger = pino({
 });
 
 // Helper to run with context
-export function runWithContext(context: Record<string, any>, callback: () => void) {
+export function runWithContext(context: Record<string, unknown>, callback: () => void) {
   const store = new Map(Object.entries(context));
   requestContext.run(store, callback);
 }

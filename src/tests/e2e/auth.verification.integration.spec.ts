@@ -1,10 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/app/app";
-import { db } from "@/core/database/connection";
 import { hashToken } from "@/core/auth/hash";
+import { db } from "@/core/database/connection";
 
 // Mock job queue to avoid Redis dependency and worker timing issues
 vi.mock("@/core/queue", () => ({

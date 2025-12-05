@@ -5,6 +5,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createApp } from "@/app/app";
 import { hashPassword } from "@/core/auth/password";
 import { db } from "@/core/database/connection";
+
 import { AuthRepository } from "../auth.repository";
 
 // Mock job queue to prevent Redis connection
@@ -251,7 +252,6 @@ describe("Auth routes (integration)", () => {
   });
 
   describe("POST /auth/logout", () => {
-    let accessToken: string;
     let refreshToken: string;
 
     beforeEach(async () => {
@@ -267,7 +267,6 @@ describe("Auth routes (integration)", () => {
         password: "Password123",
       });
 
-      accessToken = loginResponse.body.data.tokens.accessToken;
       refreshToken = loginResponse.body.data.tokens.refreshToken;
     });
 

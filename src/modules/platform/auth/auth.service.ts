@@ -1,12 +1,14 @@
+import { randomBytes } from "node:crypto";
+
 import { StatusCodes } from "http-status-codes";
 
 import { authConfig } from "@/config/auth";
+import { hashToken } from "@/core/auth/hash";
 import { generateAccessToken, generateRefreshToken, verifyToken } from "@/core/auth/jwt";
 import { hashPassword, verifyPassword } from "@/core/auth/password";
-import { hashToken } from "@/core/auth/hash";
-import { randomBytes } from "node:crypto";
-import { AppError } from "@/shared/errors/AppError";
 import { jobQueue } from "@/core/queue";
+import { AppError } from "@/shared/errors/AppError";
+
 import type { AuthRepository } from "./auth.repository";
 import type {
   AuthResponse,
@@ -107,7 +109,7 @@ export class AuthService {
 
   async refreshToken(token: string): Promise<RefreshTokenResponse> {
     try {
-      const payload = verifyToken(token);
+      verifyToken(token);
       const tokenHash = hashToken(token);
 
       const session = await this.repo.findSessionByHash(tokenHash);
@@ -132,7 +134,7 @@ export class AuthService {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
       };
-    } catch (error) {
+    } catch {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid refresh token");
     }
   }

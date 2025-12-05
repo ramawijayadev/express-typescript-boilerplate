@@ -3,6 +3,7 @@ import IORedis from "ioredis";
 
 import { queueConfig } from "@/config/queue";
 import { logger } from "@/core/logging/logger";
+
 import { emailWorkerHandler, emailWorkerName } from "./handlers/send-email.job";
 
 export function initJobs() {

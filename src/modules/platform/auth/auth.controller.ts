@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { AppError } from "@/shared/errors/AppError";
-import { clientError, created, ok } from "@/shared/http/api-response";
+import { created, ok } from "@/shared/http/api-response";
+
 import type { AuthService } from "./auth.service";
 import type {
   EmailVerificationBody,
@@ -12,6 +13,7 @@ import type {
   RegisterBody,
   ResetPasswordBody,
 } from "./auth.types";
+
 
 export class AuthController {
   constructor(private readonly service: AuthService) {}

@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { verifyToken } from "@/core/auth/jwt";
 import { logger } from "@/core/logging/logger";
 import { AppError } from "@/shared/errors/AppError";
+
+import type { NextFunction, Request, Response } from "express";
 
 declare global {
   namespace Express {

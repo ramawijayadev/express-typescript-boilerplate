@@ -1,5 +1,6 @@
 import { db } from "@/core/database/connection";
-import { RegisterBody } from "./auth.types";
+
+import type { RegisterBody } from "./auth.types";
 
 export class AuthRepository {
   async create(data: Omit<RegisterBody, "password"> & { passwordHash: string }) {

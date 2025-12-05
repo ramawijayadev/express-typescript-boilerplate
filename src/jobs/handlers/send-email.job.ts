@@ -1,8 +1,9 @@
-import { Job } from "bullmq";
 
 import { env } from "@/app/env";
 import { logger } from "@/core/logging/logger";
 import { emailSender } from "@/core/mail/mailer";
+
+import type { Job } from "bullmq";
 
 interface EmailJobData {
   userId: number;

@@ -3,9 +3,9 @@ import request from "supertest";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
+import { authConfig } from "@/config/auth";
 import { hashPassword } from "@/core/auth/password";
 import { db } from "@/core/database/connection";
-import { authConfig } from "@/config/auth";
 
 describe("Auth Account Locking (Integration)", () => {
   const app = createApp();

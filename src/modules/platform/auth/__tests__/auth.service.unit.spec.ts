@@ -56,6 +56,7 @@ describe("Auth service (unit)", () => {
         deletedAt: null,
         failedLoginAttempts: 0,
         lockedUntil: null,
+        passwordChangedAt: null,
       };
       vi.mocked(repo.create).mockResolvedValue(mockUser);
 
@@ -73,7 +74,7 @@ describe("Auth service (unit)", () => {
 
     it("should throw CONFLICT if email exists", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.findByEmail).mockResolvedValue({ id: 1 } as any);
+      vi.mocked(repo.findByEmail).mockResolvedValue({ id: 1 } as unknown as any);
 
       const promise = service.register({
         name: "Test",
@@ -100,7 +101,7 @@ describe("Auth service (unit)", () => {
         isActive: true,
         failedLoginAttempts: 0,
         lockedUntil: null,
-      } as any;
+      } as unknown as any;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
 
       const result = await service.login({
@@ -121,7 +122,7 @@ describe("Auth service (unit)", () => {
         isActive: true,
         failedLoginAttempts: 0,
         lockedUntil: null,
-      } as any;
+      } as unknown as any;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
       vi.mocked(repo.incrementFailedLogin).mockResolvedValue({
         ...mockUser,

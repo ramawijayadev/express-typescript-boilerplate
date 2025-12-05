@@ -6,6 +6,7 @@ import { createApp } from "@/app/app";
 import { hashToken } from "@/core/auth/hash";
 import { hashPassword } from "@/core/auth/password";
 import { db } from "@/core/database/connection";
+
 import { AuthRepository } from "../auth.repository";
 
 describe("Auth Session Management (Integrations)", () => {
@@ -171,7 +172,7 @@ describe("Auth Session Management (Integrations)", () => {
       const token1 = loginRes1.body.data.tokens.accessToken;
 
       // Create session 2 (simulate another device)
-      const loginRes2 = await request(app).post("/api/v1/auth/login").send({
+      await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
         password: "Password123",
       });

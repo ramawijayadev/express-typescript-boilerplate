@@ -1,10 +1,10 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
-import { z } from "zod";
 
 import { authenticate } from "@/core/http/middlewares/authenticate";
 import { validateBody } from "@/core/http/validation.middleware";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
+
 import { AuthController } from "./auth.controller";
 import { AuthRepository } from "./auth.repository";
 import {

@@ -1,9 +1,9 @@
-import { Queue, Worker } from "bullmq";
+import { Queue } from "bullmq";
 import IORedis from "ioredis";
 
 import { queueConfig } from "@/config/queue";
 import { logger } from "@/core/logging/logger";
-import { emailSender, type EmailSender } from "@/core/mail/mailer";
+import { type EmailSender } from "@/core/mail/mailer";
 
 export interface EmailJobData {
   to: string;

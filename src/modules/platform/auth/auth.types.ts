@@ -1,6 +1,4 @@
-import { z } from "zod";
-
-import {
+import type {
   emailVerificationSchema,
   forgotPasswordSchema,
   loginSchema,
@@ -8,6 +6,8 @@ import {
   registerSchema,
   resetPasswordSchema,
 } from "./auth.schemas";
+import type { z } from "zod";
+
 
 export type RegisterBody = z.infer<typeof registerSchema>;
 export type LoginBody = z.infer<typeof loginSchema>;

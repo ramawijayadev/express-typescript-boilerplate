@@ -1,7 +1,7 @@
-import { Request } from "express";
+import type { Request } from "express";
 
-export interface TypedRequest<
+export type TypedRequest<
   Body = unknown,
   Query = any,
   Params = any,
-> extends Request<Params, unknown, Body, Query> {}
+> = Request<Params, unknown, Body, Query>;

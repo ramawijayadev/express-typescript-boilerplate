@@ -3,7 +3,6 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
-
 import { logger } from "@/core/logging/logger";
 
 describe("Logging System Integration", () => {

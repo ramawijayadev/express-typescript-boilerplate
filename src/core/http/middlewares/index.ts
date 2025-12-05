@@ -8,7 +8,6 @@ import hpp from "hpp";
 import { appConfig } from "@/config/app";
 
 import { authContextMiddleware } from "./auth-context.middleware";
-
 import { requestLoggerMiddleware } from "./request-logger.middleware";
 
 import type { Express } from "express";
