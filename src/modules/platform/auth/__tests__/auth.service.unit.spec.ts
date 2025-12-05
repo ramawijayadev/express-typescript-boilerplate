@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import { AppError } from "@/shared/errors/AppError";
 
+import { User } from "@/generated/prisma";
+
 import { AuthRepository } from "../auth.repository";
 import { AuthService } from "../auth.service";
 
@@ -74,7 +76,7 @@ describe("Auth service (unit)", () => {
 
     it("should throw CONFLICT if email exists", async () => {
       const { service, repo } = makeService();
-      vi.mocked(repo.findByEmail).mockResolvedValue({ id: 1 } as unknown as any);
+      vi.mocked(repo.findByEmail).mockResolvedValue({ id: 1 } as unknown as User);
 
       const promise = service.register({
         name: "Test",

@@ -200,7 +200,7 @@ describe("Auth Session Management (Integrations)", () => {
 
   describe("Cross-cutting Scenarios", () => {
     it("should support independent multi-device sessions", async () => {
-      const user = await createUser();
+      await createUser();
 
       // Device A Login
       const loginA = await request(app).post("/api/v1/auth/login").send({

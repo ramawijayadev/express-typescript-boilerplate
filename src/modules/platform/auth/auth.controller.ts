@@ -1,4 +1,3 @@
-import { NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { AppError } from "@/shared/errors/AppError";

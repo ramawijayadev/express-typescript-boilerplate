@@ -1,3 +1,6 @@
+import { Server } from "http";
+
+import type { Express } from "express";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -17,9 +20,9 @@ vi.mock("@/core/queue", () => ({
 import { jobQueue } from "@/core/queue";
 
 describe("Auth Verification & Password Reset Integration", () => {
-  let app: any;
-  let testUser: any;
-  let server: any;
+  let app: Express;
+  let testUser: any; // User type unavailable in test scope easily without import, keeping any for now but could use User
+  let server: Server;
 
   beforeAll(async () => {
     app = await createApp();
