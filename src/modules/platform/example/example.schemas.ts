@@ -30,13 +30,10 @@ export const listExamplesQuerySchema = z.object({
 });
 
 export const exampleIdSchema = z.object({
-  id: z.string().transform((val) => {
-    const num = parseInt(val, 10);
-    if (isNaN(num)) {
-      throw new Error("Invalid ID format");
-    }
-    return num;
-  }),
+  id: z
+    .string()
+    .refine((val) => !isNaN(parseInt(val, 10)), { message: "Invalid ID format" })
+    .transform((val) => parseInt(val, 10)),
 });
 
 export const ExampleSchema = z

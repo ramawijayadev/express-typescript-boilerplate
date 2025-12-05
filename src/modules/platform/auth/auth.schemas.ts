@@ -59,6 +59,7 @@ export const profileResponseSchema = z
 export const refreshTokenResponseSchema = z
   .object({
     accessToken: z.string(),
+    refreshToken: z.string(),
   })
   .openapi("RefreshTokenResponse");
 

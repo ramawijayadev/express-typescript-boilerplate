@@ -31,6 +31,7 @@ export interface ProfileResponse {
 
 export interface RefreshTokenResponse {
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface LogoutResponse {

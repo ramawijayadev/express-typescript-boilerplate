@@ -1,8 +1,10 @@
 import { PrismaPg } from "@prisma/adapter-pg";
+import { StatusCodes } from "http-status-codes";
 import { Pool } from "pg";
 
 import { type DatabaseConnectionName, databaseConfig } from "@/config/database";
 import { PrismaClient } from "@/generated/prisma";
+import { AppError } from "@/shared/errors/AppError";
 
 const clients: Partial<Record<DatabaseConnectionName, PrismaClient>> = {};
 
@@ -10,11 +12,17 @@ function createClient(name: DatabaseConnectionName): PrismaClient {
   const config = databaseConfig.connections[name];
 
   if (!config) {
-    throw new Error(`Database connection "${name}" is not defined`);
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      `Database connection "${name}" is not defined`,
+    );
   }
 
   if (!config.url) {
-    throw new Error(`Missing connection string for "${name}"`);
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      `Missing connection string for "${name}"`,
+    );
   }
 
   const pool = new Pool({ connectionString: config.url });

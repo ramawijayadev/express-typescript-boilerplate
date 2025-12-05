@@ -160,6 +160,7 @@ describe("Auth routes (integration)", () => {
 
   describe("POST /auth/logout", () => {
     let accessToken: string;
+    let refreshToken: string;
 
     beforeEach(async () => {
       const passwordHash = await hashPassword("Password123");
@@ -175,12 +176,11 @@ describe("Auth routes (integration)", () => {
       });
 
       accessToken = loginResponse.body.data.tokens.accessToken;
+      refreshToken = loginResponse.body.data.tokens.refreshToken;
     });
 
     it("should successfully logout", async () => {
-      const response = await request(app)
-        .post("/api/v1/auth/logout")
-        .set("Authorization", `Bearer ${accessToken}`);
+      const response = await request(app).post("/api/v1/auth/logout").send({ refreshToken });
 
       expect(response.status).toBe(StatusCodes.OK);
     });

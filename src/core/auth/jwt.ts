@@ -1,9 +1,11 @@
+import { randomUUID } from "node:crypto";
 import jwt from "jsonwebtoken";
 
 import { authConfig } from "@/config/auth";
 
-interface TokenPayload {
+export interface TokenPayload {
   userId: number;
+  jti?: string;
 }
 
 export function generateAccessToken(payload: TokenPayload): string {
@@ -13,7 +15,8 @@ export function generateAccessToken(payload: TokenPayload): string {
 }
 
 export function generateRefreshToken(payload: TokenPayload): string {
-  return jwt.sign(payload, authConfig.jwt.secret, {
+  const jti = randomUUID();
+  return jwt.sign({ ...payload, jti }, authConfig.jwt.secret, {
     expiresIn: authConfig.jwt.refreshExpiration,
   });
 }

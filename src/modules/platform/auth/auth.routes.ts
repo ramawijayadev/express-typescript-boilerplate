@@ -87,10 +87,30 @@ authRegistry.registerPath({
   method: "post",
   path: "/auth/logout",
   tags: ["Auth"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: refreshTokenSchema,
+        },
+      },
+    },
+  },
   responses: createApiResponse(logoutResponseSchema, "User logged out"),
 });
 
-authRouter.post("/logout", authenticate, (req, res) => authController.logout(req, res));
+authRouter.post("/logout", validateBody(refreshTokenSchema), (req, res) =>
+  authController.logout(req, res),
+);
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/revoke-all",
+  tags: ["Auth"],
+  responses: createApiResponse(logoutResponseSchema, "All sessions revoked"),
+});
+
+authRouter.post("/revoke-all", authenticate, (req, res) => authController.revokeAll(req, res));
 
 authRegistry.registerPath({
   method: "get",
