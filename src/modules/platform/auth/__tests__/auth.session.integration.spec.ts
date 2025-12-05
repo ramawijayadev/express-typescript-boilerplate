@@ -119,6 +119,44 @@ describe("Auth Session Management (Integrations)", () => {
       });
       expect(session?.revokedAt).not.toBeNull();
     });
+
+    it("should NOT immediately invalidate access token (stateless)", async () => {
+      await createUser();
+      const loginRes = await request(app).post("/api/v1/auth/login").send({
+        email: "session_test@example.com",
+        password: "Password123",
+      });
+      const { accessToken, refreshToken } = loginRes.body.data.tokens;
+
+      // Logout
+      await request(app).post("/api/v1/auth/logout").send({ refreshToken });
+
+      // Access token should still work for profile (stateless)
+      const profileRes = await request(app)
+        .get("/api/v1/auth/profile")
+        .set("Authorization", `Bearer ${accessToken}`);
+
+      expect(profileRes.status).toBe(StatusCodes.OK);
+    });
+
+    it("should fail refresh after logout", async () => {
+      await createUser();
+      const loginRes = await request(app).post("/api/v1/auth/login").send({
+        email: "session_test@example.com",
+        password: "Password123",
+      });
+      const { refreshToken } = loginRes.body.data.tokens;
+
+      // Logout
+      await request(app).post("/api/v1/auth/logout").send({ refreshToken });
+
+      // Refresh attempt
+      const refreshRes = await request(app)
+        .post("/api/v1/auth/refresh-token")
+        .send({ refreshToken });
+
+      expect(refreshRes.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
   });
 
   describe("Revoke All Sessions", () => {
@@ -156,6 +194,64 @@ describe("Auth Session Management (Integrations)", () => {
         where: { userId: user.id, revokedAt: null },
       });
       expect(countAfter).toBe(0);
+    });
+  });
+
+  describe("Cross-cutting Scenarios", () => {
+    it("should support independent multi-device sessions", async () => {
+      const user = await createUser();
+
+      // Device A Login
+      const loginA = await request(app).post("/api/v1/auth/login").send({
+        email: "session_test@example.com",
+        password: "Password123",
+      });
+      const tokenA = loginA.body.data.tokens.refreshToken;
+
+      // Device B Login
+      const loginB = await request(app).post("/api/v1/auth/login").send({
+        email: "session_test@example.com",
+        password: "Password123",
+      });
+      const tokenB = loginB.body.data.tokens.refreshToken;
+
+      // Logout Device A
+      await request(app).post("/api/v1/auth/logout").send({ refreshToken: tokenA });
+
+      // Device A Refresh -> Fail
+      const refreshA = await request(app)
+        .post("/api/v1/auth/refresh-token")
+        .send({ refreshToken: tokenA });
+      expect(refreshA.status).toBe(StatusCodes.UNAUTHORIZED);
+
+      // Device B Refresh -> OK
+      const refreshB = await request(app)
+        .post("/api/v1/auth/refresh-token")
+        .send({ refreshToken: tokenB });
+      expect(refreshB.status).toBe(StatusCodes.OK);
+    });
+
+    it("should prevent refresh for inactive users", async () => {
+      const user = await createUser();
+
+      const loginRes = await request(app).post("/api/v1/auth/login").send({
+        email: "session_test@example.com",
+        password: "Password123",
+      });
+      const { refreshToken } = loginRes.body.data.tokens;
+
+      // Deactivate User
+      await db().user.update({
+        where: { id: user.id },
+        data: { isActive: false },
+      });
+
+      // Refresh Attempt
+      const refreshRes = await request(app)
+        .post("/api/v1/auth/refresh-token")
+        .send({ refreshToken });
+
+      expect(refreshRes.status).toBe(StatusCodes.UNAUTHORIZED);
     });
   });
 });

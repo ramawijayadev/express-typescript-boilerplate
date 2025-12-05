@@ -41,6 +41,10 @@ export class AuthService {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
     }
 
+    if (!user.isActive) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
+    }
+
     const isValidPassword = await verifyPassword(user.password, data.password);
     if (!isValidPassword) {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
@@ -94,6 +98,10 @@ export class AuthService {
         throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid refresh token");
       }
 
+      if (!session.user.isActive) {
+        throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
+      }
+
       // Rotate token
       const newRefreshToken = generateRefreshToken({ userId: session.userId });
       const newDecoded = verifyToken(newRefreshToken);
@@ -115,9 +123,10 @@ export class AuthService {
   async logout(refreshToken: string): Promise<void> {
     const tokenHash = hashToken(refreshToken);
     const session = await this.repo.findSessionByHash(tokenHash);
-    if (session) {
-      await this.repo.revokeSession(session.id);
+    if (!session) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid refresh token");
     }
+    await this.repo.revokeSession(session.id);
   }
 
   async revokeAllSessions(userId: number): Promise<void> {

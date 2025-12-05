@@ -59,6 +59,28 @@ describe("Auth routes (integration)", () => {
 
       expect(response.status).toBe(StatusCodes.CONFLICT);
     });
+
+    it("should fail if required fields are missing", async () => {
+      const payload = {
+        email: "missing_fields@example.com",
+      };
+
+      const response = await request(app).post("/api/v1/auth/register").send(payload);
+
+      expect(response.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it("should fail if email format is invalid", async () => {
+      const payload = {
+        name: "Invalid Email",
+        email: "not-an-email",
+        password: "Password123",
+      };
+
+      const response = await request(app).post("/api/v1/auth/register").send(payload);
+
+      expect(response.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
   });
 
   describe("POST /auth/login", () => {
@@ -89,6 +111,38 @@ describe("Auth routes (integration)", () => {
       const payload = {
         email: "login_test@example.com",
         password: "WrongPassword",
+      };
+
+      const response = await request(app).post("/api/v1/auth/login").send(payload);
+
+      expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it("should fail if user does not exist", async () => {
+      const payload = {
+        email: "ghost@example.com",
+        password: "Password123",
+      };
+
+      const response = await request(app).post("/api/v1/auth/login").send(payload);
+
+      expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it("should fail if user is inactive", async () => {
+      const passwordHash = await hashPassword("Password123");
+      await db().user.create({
+        data: {
+          name: "Inactive User",
+          email: "inactive@example.com",
+          password: passwordHash,
+          isActive: false,
+        },
+      });
+
+      const payload = {
+        email: "inactive@example.com",
+        password: "Password123",
       };
 
       const response = await request(app).post("/api/v1/auth/login").send(payload);
@@ -129,6 +183,22 @@ describe("Auth routes (integration)", () => {
       const response = await request(app).get("/api/v1/auth/profile");
       expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
     });
+
+    it("should fail with malformed token", async () => {
+      const response = await request(app)
+        .get("/api/v1/auth/profile")
+        .set("Authorization", "Bearer invalid.token.structure");
+
+      expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it("should fail with wrong auth scheme", async () => {
+      const response = await request(app)
+        .get("/api/v1/auth/profile")
+        .set("Authorization", "Token somevalidtoken");
+
+      expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
   });
 
   describe("POST /auth/refresh-token", () => {
@@ -155,6 +225,20 @@ describe("Auth routes (integration)", () => {
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body.data).toHaveProperty("accessToken");
+    });
+
+    it("should fail with invalid refresh token", async () => {
+      const response = await request(app)
+        .post("/api/v1/auth/refresh-token")
+        .send({ refreshToken: "invalid_token" });
+
+      expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it("should fail with empty body", async () => {
+      const response = await request(app).post("/api/v1/auth/refresh-token").send({});
+
+      expect(response.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
   });
 
@@ -183,6 +267,18 @@ describe("Auth routes (integration)", () => {
       const response = await request(app).post("/api/v1/auth/logout").send({ refreshToken });
 
       expect(response.status).toBe(StatusCodes.OK);
+    });
+
+    it("should fail with invalid refresh token", async () => {
+      const response = await request(app)
+        .post("/api/v1/auth/logout")
+        .send({ refreshToken: "invalid_token" });
+
+      // Note: Depending on implementation, this might be 204 or 401.
+      // Requirement says "Any refresh attempt using a revoked / expired / unknown session must fail".
+      // Logout usually just requires checking the token owner.
+      // If the provided refresh token for logout is invalid, it should probably be 401 or 400.
+      expect(response.status).not.toBe(StatusCodes.OK);
     });
   });
 });
