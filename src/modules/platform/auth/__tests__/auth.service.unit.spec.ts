@@ -1,0 +1,130 @@
+import { StatusCodes } from "http-status-codes";
+import { describe, expect, it, vi } from "vitest";
+
+import { AppError } from "@/shared/errors/AppError";
+
+import { AuthRepository } from "../auth.repository";
+import { AuthService } from "../auth.service";
+
+// Mock the repository
+vi.mock("../auth.repository");
+
+// Mock dependencies
+vi.mock("@/core/auth/jwt", () => ({
+  generateAccessToken: vi.fn(() => "access_token"),
+  generateRefreshToken: vi.fn(() => "refresh_token"),
+  verifyToken: vi.fn((token) => {
+    if (token === "valid_refresh_token") return { userId: 1 };
+    throw new Error("Invalid token");
+  }),
+}));
+
+vi.mock("@/core/auth/password", () => ({
+  hashPassword: vi.fn(() => Promise.resolve("hashed_password")),
+  verifyPassword: vi.fn((hash, plain) => Promise.resolve(plain === "Password123")),
+}));
+
+describe("Auth service (unit)", () => {
+  const makeService = () => {
+    const repo = new AuthRepository();
+    // Mock methods
+    repo.create = vi.fn();
+    repo.findByEmail = vi.fn();
+    repo.findById = vi.fn();
+
+    const service = new AuthService(repo);
+    return { service, repo };
+  };
+
+  describe("register", () => {
+    it("should register new user and return tokens", async () => {
+      const { service, repo } = makeService();
+      vi.mocked(repo.findByEmail).mockResolvedValue(null);
+      const mockUser = {
+        id: 1,
+        name: "Test",
+        email: "test@example.com",
+        password: "hashed_password",
+        isActive: true,
+        emailVerifiedAt: null,
+        lastLoginAt: null,
+        createdBy: null,
+        updatedBy: null,
+        deletedBy: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+      vi.mocked(repo.create).mockResolvedValue(mockUser);
+
+      const result = await service.register({
+        name: "Test",
+        email: "test@example.com",
+        password: "Password123",
+      });
+
+      expect(repo.findByEmail).toHaveBeenCalledWith("test@example.com");
+      expect(repo.create).toHaveBeenCalled();
+      expect(result.tokens).toHaveProperty("accessToken", "access_token");
+      expect(result.tokens).toHaveProperty("refreshToken", "refresh_token");
+    });
+
+    it("should throw CONFLICT if email exists", async () => {
+      const { service, repo } = makeService();
+      vi.mocked(repo.findByEmail).mockResolvedValue({ id: 1 } as any);
+
+      const promise = service.register({
+        name: "Test",
+        email: "test@example.com",
+        password: "Password123",
+      });
+
+      await expect(promise).rejects.toBeInstanceOf(AppError);
+      await expect(promise).rejects.toMatchObject({
+        statusCode: StatusCodes.CONFLICT,
+        message: "Email already registered",
+      });
+    });
+  });
+
+  describe("login", () => {
+    it("should login with correct credentials", async () => {
+      const { service, repo } = makeService();
+      const mockUser = {
+        id: 1,
+        name: "Test",
+        email: "test@example.com",
+        password: "hashed_password",
+      } as any;
+      vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
+
+      const result = await service.login({
+        email: "test@example.com",
+        password: "Password123",
+      });
+
+      expect(result.tokens).toBeDefined();
+    });
+
+    it("should throw UNAUTHORIZED for wrong password", async () => {
+      const { service, repo } = makeService();
+      const mockUser = {
+        id: 1,
+        name: "Test",
+        email: "test@example.com",
+        password: "hashed_password",
+      } as any;
+      vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
+
+      const promise = service.login({
+        email: "test@example.com",
+        password: "WrongPassword",
+      });
+
+      await expect(promise).rejects.toBeInstanceOf(AppError);
+      await expect(promise).rejects.toMatchObject({
+        statusCode: StatusCodes.UNAUTHORIZED,
+      });
+    });
+  });
+});

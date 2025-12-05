@@ -7,6 +7,11 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["src/**/*.spec.ts"],
+    env: {
+      JWT_SECRET: "test-secret",
+      JWT_ACCESS_EXPIRATION: "1m",
+      JWT_REFRESH_EXPIRATION: "5m",
+    },
   },
   resolve: {
     alias: {

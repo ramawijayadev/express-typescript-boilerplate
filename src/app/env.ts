@@ -26,6 +26,11 @@ const envSchema = z.object({
   LOG_DRIVER: z.enum(["file", "stdout", "stack"]).default("file"),
   LOG_FILE_PATH: z.string().default("logs"),
   ERROR_REPORTING: z.enum(["none", "sentry", "honeybadger"]).default("none"),
+
+  // Auth
+  JWT_SECRET: z.string(),
+  JWT_ACCESS_EXPIRATION: z.string().default("15m"),
+  JWT_REFRESH_EXPIRATION: z.string().default("7d"),
 });
 
 export const env = envSchema.parse(process.env);
