@@ -2,6 +2,7 @@ import { OpenApiGeneratorV3, OpenAPIRegistry } from "@asteasolutions/zod-to-open
 
 import { env } from "@/app/env";
 import { exampleRegistry } from "@/modules/platform/example/example.routes";
+import { healthRegistry } from "@/modules/platform/health/health.routes";
 
 import { appConfig } from "./app";
 
@@ -18,6 +19,7 @@ const getOpenApiDocumentation = () => {
   const generator = new OpenApiGeneratorV3([
     ...registry.definitions,
     ...exampleRegistry.definitions,
+    ...healthRegistry.definitions,
   ]);
 
   return generator.generateDocument({

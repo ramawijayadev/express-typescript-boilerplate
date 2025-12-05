@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { exampleRouter } from "@/modules/platform/example/example.routes";
+import { healthRouter } from "@/modules/platform/health/health.routes";
 import { ok } from "@/shared/http/api-response";
 
 import type { Express } from "express";
@@ -8,13 +9,7 @@ import type { Express } from "express";
 export function registerRoutes(app: Express) {
   const api = Router();
 
-  api.get("/health", (_req, res) => {
-    return ok(res, {
-      status: "Server up and running gracefully!",
-      version: "1.0.0",
-      timestamp: new Date().toISOString(),
-    });
-  });
+  api.use("/", healthRouter);
 
   api.use("/platform/examples", exampleRouter);
 
