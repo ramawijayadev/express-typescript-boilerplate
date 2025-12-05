@@ -64,33 +64,33 @@ export class ExampleRepository {
     id: ExampleId,
     data: { name?: string; description?: string | null },
   ): Promise<Example | null> {
-    try {
-      return await db().example.update({
-        where: { id },
-        data,
-      });
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((error as any).code === "P2025") {
-        return null;
-      }
-      throw error;
+    const { count } = await db().example.updateMany({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data,
+    });
+
+    if (count === 0) {
+      return null;
     }
+
+    // Since we just updated it, we can fetch it.
+    // We can rely on findById which also checks deletedAt: null,
+    // although strictly speaking we know it's not deleted.
+    return this.findById(id);
   }
 
   async delete(id: ExampleId): Promise<boolean> {
-    try {
-      await db().example.update({
-        where: { id },
-        data: { deletedAt: new Date() },
-      });
-      return true;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((error as any).code === "P2025") {
-        return false;
-      }
-      throw error;
-    }
+    const { count } = await db().example.updateMany({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: { deletedAt: new Date() },
+    });
+
+    return count > 0;
   }
 }

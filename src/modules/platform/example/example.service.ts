@@ -5,6 +5,7 @@ import { AppError } from "@/shared/errors/AppError";
 import { ExampleRepository } from "./example.repository";
 
 import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
+import type { ExampleId } from "./example.types";
 
 export class ExampleService {
   constructor(private readonly repo: ExampleRepository) {}
@@ -13,7 +14,7 @@ export class ExampleService {
     return this.repo.findAll({ search: query.search }, { page: query.page, limit: query.limit });
   }
 
-  async find(id: number) {
+  async find(id: ExampleId) {
     const found = await this.repo.findById(id);
 
     if (!found) {
@@ -30,7 +31,7 @@ export class ExampleService {
     });
   }
 
-  async update(id: number, input: UpdateExampleInput) {
+  async update(id: ExampleId, input: UpdateExampleInput) {
     const updated = await this.repo.update(id, {
       name: input.name,
       description: input.description,
@@ -43,7 +44,7 @@ export class ExampleService {
     return updated;
   }
 
-  async delete(id: number) {
+  async delete(id: ExampleId) {
     const deleted = await this.repo.delete(id);
 
     if (!deleted) {

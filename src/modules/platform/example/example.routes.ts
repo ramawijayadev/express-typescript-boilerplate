@@ -13,6 +13,9 @@ import {
   updateExampleSchema,
 } from "./example.schemas";
 
+import type { Request } from "express";
+import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
+
 export const exampleRouter = Router();
 
 // Instantiate dependencies
@@ -21,8 +24,10 @@ const exampleService = new ExampleService(exampleRepository);
 const exampleController = new ExampleController(exampleService);
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exampleController.list(req as any, res),
+  exampleController.list(
+    req as unknown as Request<unknown, unknown, unknown, ListExamplesQuery>,
+    res,
+  ),
 );
 
 exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
@@ -30,16 +35,15 @@ exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
 );
 
 exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exampleController.create(req as any, res),
+  exampleController.create(req as Request<unknown, unknown, CreateExampleInput>, res),
 );
 
 exampleRouter.put(
   "/:id",
   validateParams(exampleIdSchema),
   validateBody(updateExampleSchema),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (req, res) => exampleController.update(req as any, res),
+  (req, res) =>
+    exampleController.update(req as Request<{ id: string }, unknown, UpdateExampleInput>, res),
 );
 
 exampleRouter.delete("/:id", validateParams(exampleIdSchema), (req, res) =>

@@ -180,6 +180,32 @@ describe("Example routes (integration)", () => {
       });
       expect(res.body.errors).toBeUndefined();
     });
+
+    it("should return 404 when updating a soft-deleted example", async () => {
+      // 1. Create
+      const createRes = await request(app)
+        .post(baseUrl)
+        .send({ name: "To be deleted", description: "desc" })
+        .expect(StatusCodes.CREATED);
+      const id = createRes.body.data.id;
+
+      // 2. Delete
+      await request(app).delete(`${baseUrl}/${id}`).expect(StatusCodes.OK);
+
+      // 3. Try to Update
+      const res = await request(app)
+        .put(`${baseUrl}/${id}`)
+        .send({ name: "Resurrected?", description: "should not happen" });
+
+      // EXPECTATION: 404 Not Found
+      // CURRENT BUG: Likely 200 OK
+      expect(res.status).toBe(StatusCodes.NOT_FOUND);
+      expect(res.body).toMatchObject({
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "Example not found",
+      });
+    });
   });
 
   describe("DELETE /api/v1/platform/examples/:id (delete)", () => {
