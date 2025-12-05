@@ -30,6 +30,11 @@ async function shutdown(signal: string) {
   try {
     await import("@/core/database/connection").then((m) => m.disconnectAll());
     logger.info("Database connections closed");
+    
+    if (env.ENABLE_BACKGROUND_JOBS) {
+      await import("@/jobs/index").then((m) => m.shutdownJobs());
+    }
+    
     process.exit(0);
   } catch (err) {
     logger.error({ err }, "Error during database disconnection");

@@ -16,22 +16,15 @@ export const emailWorkerName = "email-queue";
 export async function emailWorkerHandler(job: Job<EmailJobData>) {
   const { name, data } = job;
 
-  logger.info({ jobId: job.id, jobName: name }, "Processing email job");
-
-  try {
-    switch (name) {
-      case "verify-email":
-        await sendVerificationEmail(data);
-        break;
-      case "password-reset":
-        await sendPasswordResetEmail(data);
-        break;
-      default:
-        logger.warn({ jobName: name }, "Unknown job name");
-    }
-  } catch (error) {
-    logger.error({ error, jobId: job.id }, "Job processing failed");
-    throw error;
+  switch (name) {
+    case "verify-email":
+      await sendVerificationEmail(data);
+      break;
+    case "password-reset":
+      await sendPasswordResetEmail(data);
+      break;
+    default:
+      logger.warn({ jobName: name }, "Unknown job name");
   }
 }
 

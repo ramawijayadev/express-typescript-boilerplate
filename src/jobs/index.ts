@@ -6,6 +6,8 @@ import { logger } from "@/core/logging/logger";
 
 import { emailWorkerHandler, emailWorkerName } from "./handlers/send-email.job";
 
+let worker: Worker | undefined;
+
 export function initJobs() {
   const connection = new IORedis({
     host: queueConfig.redis.host,
@@ -14,9 +16,13 @@ export function initJobs() {
     maxRetriesPerRequest: null,
   });
 
-  const worker = new Worker(emailWorkerName, emailWorkerHandler, {
+  worker = new Worker(emailWorkerName, emailWorkerHandler, {
     connection,
     concurrency: 5,
+  });
+
+  worker.on("active", (job) => {
+    logger.info({ jobId: job.id, jobName: job.name }, "Job started");
   });
 
   worker.on("completed", (job) => {
@@ -28,4 +34,11 @@ export function initJobs() {
   });
   
   logger.info("Background jobs initialized");
+}
+
+export async function shutdownJobs() {
+  if (worker) {
+    await worker.close();
+    logger.info("Job worker closed");
+  }
 }
