@@ -1,6 +1,5 @@
-import { Server } from "http";
+import { type Server } from "http";
 
-import type { Express } from "express";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,6 +7,10 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import { createApp } from "@/app/app";
 import { hashToken } from "@/core/auth/hash";
 import { db } from "@/core/database/connection";
+import { jobQueue } from "@/core/queue";
+import type { User } from "@/generated/prisma";
+
+import type { Express } from "express";
 
 // Mock job queue to avoid Redis dependency and worker timing issues
 vi.mock("@/core/queue", () => ({
@@ -17,11 +20,9 @@ vi.mock("@/core/queue", () => ({
   },
 }));
 
-import { jobQueue } from "@/core/queue";
-
 describe("Auth Verification & Password Reset Integration", () => {
   let app: Express;
-  let testUser: any; // User type unavailable in test scope easily without import, keeping any for now but could use User
+  let testUser: User;
   let server: Server;
 
   beforeAll(async () => {
@@ -168,7 +169,7 @@ describe("Auth Verification & Password Reset Integration", () => {
 
       const updatedUser = await db().user.findUnique({ where: { id: testUser.id } });
       // We can't check password directly but can check passwordChangedAt
-      expect((updatedUser as any)?.passwordChangedAt).not.toBeNull();
+      expect((updatedUser as User)?.passwordChangedAt).not.toBeNull();
 
       const usedToken = await db().passwordResetToken.findFirst({ where: { tokenHash } });
       expect(usedToken?.usedAt).not.toBeNull();

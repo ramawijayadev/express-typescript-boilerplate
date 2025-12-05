@@ -1,9 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";
 
+import { type User } from "@/generated/prisma";
 import { AppError } from "@/shared/errors/AppError";
-
-import { User } from "@/generated/prisma";
 
 import { AuthRepository } from "../auth.repository";
 import { AuthService } from "../auth.service";
@@ -103,7 +102,7 @@ describe("Auth service (unit)", () => {
         isActive: true,
         failedLoginAttempts: 0,
         lockedUntil: null,
-      } as unknown as any;
+      } as unknown as User;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
 
       const result = await service.login({
@@ -124,7 +123,7 @@ describe("Auth service (unit)", () => {
         isActive: true,
         failedLoginAttempts: 0,
         lockedUntil: null,
-      } as unknown as any;
+      } as unknown as User;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
       vi.mocked(repo.incrementFailedLogin).mockResolvedValue({
         ...mockUser,
