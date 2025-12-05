@@ -3,6 +3,7 @@ import type { TypedRequest } from "@/core/http/types";
 import { created, ok, okPaginated } from "@/shared/http/api-response";
 import { generatePaginationLinks } from "@/shared/utils/pagination";
 
+import type { IdParam } from "@/shared/schemas/common.schemas";
 import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 import type { ExampleService } from "./example.service";
 import type { Request, Response } from "express";
@@ -13,12 +14,12 @@ export class ExampleController {
   async list(req: TypedRequest<unknown, ListExamplesQuery>, res: Response) {
     const query = req.query;
     const { data, meta } = await this.service.list(query);
-    const links = generatePaginationLinks(req, meta);
+    const links = generatePaginationLinks(req as any, meta);
     return okPaginated(res, data, meta, links);
   }
 
-  async find(req: Request, res: Response) {
-    const id = Number(req.params.id);
+  async find(req: TypedRequest<unknown, unknown, IdParam>, res: Response) {
+    const id = req.params.id; // Already a number
     const result = await this.service.find(id);
     return ok(res, result);
   }
@@ -28,14 +29,14 @@ export class ExampleController {
     return created(res, result);
   }
 
-  async update(req: Request<Record<string, string>, unknown, UpdateExampleInput>, res: Response) {
-    const id = Number(req.params.id);
+  async update(req: TypedRequest<UpdateExampleInput, unknown, IdParam>, res: Response) {
+    const id = req.params.id;
     const result = await this.service.update(id, req.body);
     return ok(res, result);
   }
 
-  async delete(req: Request, res: Response) {
-    const id = Number(req.params.id);
+  async delete(req: TypedRequest<unknown, unknown, IdParam>, res: Response) {
+    const id = req.params.id;
     await this.service.delete(id);
     return ok(res, { deleted: true });
   }

@@ -7,6 +7,7 @@ import {
   createApiPaginatedResponse,
   createApiResponse,
 } from "@/shared/open-api/openapi-response-builders";
+import { idParamSchema } from "@/shared/schemas/common.schemas";
 
 import { ExampleController } from "./example.controller";
 import { ExampleRepository } from "./example.repository";
@@ -39,7 +40,8 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(req, res),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exampleController.list(req as any, res),
 );
 
 exampleRegistry.registerPath({
@@ -52,8 +54,9 @@ exampleRegistry.registerPath({
   responses: createApiResponse(ExampleSchema, "Example details"),
 });
 
-exampleRouter.get("/:id", validateParams(exampleIdSchema), (req, res) =>
-  exampleController.find(req, res),
+exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exampleController.find(req as any, res),
 );
 
 exampleRegistry.registerPath({
@@ -95,9 +98,10 @@ exampleRegistry.registerPath({
 
 exampleRouter.put(
   "/:id",
-  validateParams(exampleIdSchema),
+  validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  (req, res) => exampleController.update(req, res),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (req, res) => exampleController.update(req as any, res),
 );
 
 exampleRegistry.registerPath({
@@ -110,6 +114,7 @@ exampleRegistry.registerPath({
   responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted"),
 });
 
-exampleRouter.delete("/:id", validateParams(exampleIdSchema), (req, res) =>
-  exampleController.delete(req, res),
+exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exampleController.delete(req as any, res),
 );
