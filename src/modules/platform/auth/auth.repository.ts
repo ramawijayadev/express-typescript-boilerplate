@@ -59,7 +59,7 @@ export class AuthRepository {
       data: {
         refreshTokenHash: newHash,
         expiresAt,
-        lastUsedAt: new Date(), // Wait, lastUsedAt is not in schema provided earlier? I'll check schema again.
+        lastUsedAt: new Date(),
       },
     });
   }

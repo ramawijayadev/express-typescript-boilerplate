@@ -408,6 +408,13 @@ GET    /resource/:id   (Detail)
 POST   /resource       (Create)
 PUT    /resource/:id   (Full Update)
 DELETE /resource/:id   (Delete)</code></pre>
+
+    <h3>6.4. Type-Safe Requests <span class="badge bg-saran">DIREKOMENDASIKAN</span></h3>
+    <p>Hindari melakukan casting manual seperti <code>req.body as unknown as MyDto</code>.</p>
+    <ul>
+      <li>Gunakan Generics pada interface <code>Request</code> dari Express, atau helper <code>TypedRequest</code>.</li>
+      <li>Pastikan validasi runtime (Zod Middleware) sinkron dengan tipe TS yang dipakai di Controller.</li>
+    </ul>
   </section>
 
   <section id="dto">
