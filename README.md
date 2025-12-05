@@ -27,7 +27,6 @@ express-typescript-boilerplate/
   .env.example
 
   /logs/              # log file (ignored)
-  /migrations/        # migration DB
   /scripts/           # helper scripts
   /docs/              # dokumentasi (arsitektur, conventions, dll)
 
@@ -124,8 +123,8 @@ Tambahkan script berikut (atau serupa) di `package.json`:
     "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
 
     "test": "vitest",
-    "test:e2e": "vitest run src/tests/e2e --runInBand"
-  }
+    "test:e2e": "vitest run src/tests/e2e --runInBand",
+  },
 }
 ```
 

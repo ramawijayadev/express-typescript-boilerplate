@@ -21,6 +21,8 @@ model User {
   isActive              Boolean   @default(true) @map("is_active")
   emailVerifiedAt       DateTime? @map("email_verified_at")
   lastLoginAt           DateTime? @map("last_login_at")
+  failedLoginAttempts   Int       @default(0) @map("failed_login_attempts")
+  lockedUntil           DateTime? @map("locked_until")
   createdBy             String?   @map("created_by")
   updatedBy             String?   @map("updated_by")
   deletedBy             String?   @map("deleted_by")

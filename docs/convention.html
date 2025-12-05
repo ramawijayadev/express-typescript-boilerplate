@@ -292,7 +292,6 @@
   .eslintrc.cjs
   .env.example
   /logs/              # output log harian (gitignored)
-  /migrations/        # migration database
   /scripts/           # script helper build/deploy
   /docs/              # handbook, styleguide
   /src/               # source code aplikasi</code></pre>
@@ -368,11 +367,13 @@ src/core/http/middlewares/request-logger.middleware.ts</code></pre>
     <h3>4.1. Suffix file module <span class="badge bg-wajib">WAJIB</span></h3>
     <p>Setiap file harus memiliki suffix sesuai perannya: <code>.routes.ts</code>, <code>.controller.ts</code>,
       <code>.service.ts</code>, <code>.repository.ts</code>, <code>.schemas.ts</code>, <code>.types.ts</code>,
-      <code>.config.ts</code>.</p>
+      <code>.config.ts</code>.
+    </p>
 
     <h3>4.2. Suffix core/infra <span class="badge bg-wajib">WAJIB</span></h3>
     <p><code>.middleware.ts</code>, <code>.job.ts</code>, <code>.cli.ts</code>, <code>.transport.ts</code>,
-      <code>.formatter.ts</code>, <code>.adapter.ts</code>.</p>
+      <code>.formatter.ts</code>, <code>.adapter.ts</code>.
+    </p>
   </section>
 
   <section id="indexusage">
@@ -429,7 +430,8 @@ DELETE /resource/:id   (Delete)</code></pre>
 
     <h3>8.1. Base Error <span class="badge bg-wajib">WAJIB</span></h3>
     <p>Gunakan class <code>AppError</code> dengan properti: <code>code</code>, <code>message</code>,
-      <code>status</code>.</p>
+      <code>status</code>.
+    </p>
 
     <h3>8.2. Layer Responsibility <span class="badge bg-wajib">WAJIB</span></h3>
     <ul>
@@ -482,7 +484,8 @@ import { usersRouter } from '@/modules/platform/users/users.routes';</code></pre
 
     <h3>11.3. Request Logging <span class="badge bg-wajib">WAJIB</span></h3>
     <p>Wajib log: <code>requestId</code>, <code>method</code>, <code>path</code>, <code>status</code>,
-      <code>durationMs</code>.</p>
+      <code>durationMs</code>.
+    </p>
   </section>
 
   <section id="context">
@@ -502,7 +505,8 @@ import { usersRouter } from '@/modules/platform/users/users.routes';</code></pre
         <ul>
           <li>Test yang menguji <strong>1 feature/module</strong> → diletakkan di folder module tersebut.</li>
           <li>Test yang menguji <strong>banyak feature sekaligus (E2E)</strong> → diletakkan di
-            <code>src/tests/e2e</code>.</li>
+            <code>src/tests/e2e</code>.
+          </li>
         </ul>
       </li>
       <li>Semua file test menggunakan ekstensi: <code>*.spec.ts</code></li>
@@ -529,7 +533,8 @@ import { usersRouter } from '@/modules/platform/users/users.routes';</code></pre
       <li><strong>Unit test:</strong> <code>*.unit.spec.ts</code><br>Contoh: <code>users.service.unit.spec.ts</code>
       </li>
       <li><strong>Integration test:</strong> <code>*.integration.spec.ts</code><br>Contoh:
-        <code>users.routes.integration.spec.ts</code></li>
+        <code>users.routes.integration.spec.ts</code>
+      </li>
       <li><strong>E2E (lintas feature):</strong> <code>*.e2e.spec.ts</code><br>Contoh: <code>auth.e2e.spec.ts</code>
       </li>
     </ul>
