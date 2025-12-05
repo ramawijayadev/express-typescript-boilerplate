@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
+import { authConfig } from "@/config/auth";
 import { generateAccessToken, generateRefreshToken, verifyToken } from "@/core/auth/jwt";
 import { hashPassword, verifyPassword } from "@/core/auth/password";
 import { hashToken } from "@/core/auth/hash";
@@ -45,10 +46,31 @@ export class AuthService {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
     }
 
+    // Check locking
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      throw new AppError(
+        StatusCodes.UNAUTHORIZED,
+        `Account is locked. Try again after ${user.lockedUntil.toISOString()}`,
+      );
+    }
+
     const isValidPassword = await verifyPassword(user.password, data.password);
     if (!isValidPassword) {
+      // Increment failed attempts
+      const updatedUser = await this.repo.incrementFailedLogin(user.id);
+
+      if (updatedUser.failedLoginAttempts >= authConfig.locking.maxAttempts) {
+        // Lock user
+        const lockDurationMs = authConfig.locking.durationMinutes * 60 * 1000;
+        const lockedUntil = new Date(Date.now() + lockDurationMs);
+        await this.repo.lockUser(user.id, lockedUntil);
+      }
+
       throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
     }
+
+    // Reset stats on success
+    await this.repo.resetLoginStats(user.id);
 
     return this.createSession(user, meta);
   }

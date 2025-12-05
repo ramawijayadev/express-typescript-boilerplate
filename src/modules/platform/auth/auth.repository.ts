@@ -77,4 +77,29 @@ export class AuthRepository {
       data: { revokedAt: new Date() },
     });
   }
+
+  async incrementFailedLogin(userId: number) {
+    return db().user.update({
+      where: { id: userId },
+      data: { failedLoginAttempts: { increment: 1 } },
+    });
+  }
+
+  async lockUser(userId: number, lockedUntil: Date) {
+    return db().user.update({
+      where: { id: userId },
+      data: { lockedUntil },
+    });
+  }
+
+  async resetLoginStats(userId: number) {
+    return db().user.update({
+      where: { id: userId },
+      data: {
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+        lastLoginAt: new Date(),
+      },
+    });
+  }
 }
