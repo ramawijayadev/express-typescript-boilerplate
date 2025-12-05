@@ -68,12 +68,11 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     return validationError(res, errors);
   }
 
-  // Unhandled Error
   logger.error(
     {
       err,
       path,
-      requestId, // Explicitly log requestId for unhandled errors
+      requestId,
     },
     "Unhandled error",
   );

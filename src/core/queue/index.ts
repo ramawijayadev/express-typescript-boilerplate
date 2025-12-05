@@ -66,14 +66,10 @@ export class InMemoryJobQueue implements JobQueue {
     token: string;
   }): Promise<void> {
     logger.info({ userId: data.userId }, "Processing in-memory email verification");
-    // Directly call the logic that the worker would do.
-    // Ideally we shouldn't duplicate logic, but for simple test/dev this is fine.
-    // Or we could trigger the handler.
-    // For now, let's just log it or maybe send a mock email.
     await this.emailService.send({
       to: data.email,
       subject: "Verify your email",
-      text: `Token: ${data.token}`, // Simplified
+      text: `Token: ${data.token}`,
     });
   }
 
@@ -82,7 +78,7 @@ export class InMemoryJobQueue implements JobQueue {
     await this.emailService.send({
       to: data.email,
       subject: "Reset your password",
-      text: `Token: ${data.token}`, // Simplified
+      text: `Token: ${data.token}`,
     });
   }
 }
