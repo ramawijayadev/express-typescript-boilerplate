@@ -66,7 +66,7 @@ exampleRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(ExampleSchema, "Example created"),
+  responses: createApiResponse(ExampleSchema, "Example created", 201),
 });
 
 exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>

@@ -2,14 +2,16 @@ import { z } from "zod";
 
 import type { ZodType } from "zod";
 
-export function createApiResponse(schema: ZodType, description: string) {
+export function createApiResponse(schema: ZodType, description: string, statusCode = 200) {
   return {
-    200: {
+    [statusCode]: {
       description,
       content: {
         "application/json": {
           schema: z.object({
             success: z.boolean(),
+            message: z.string(),
+            statusCode: z.number(),
             data: schema,
           }),
         },
@@ -18,14 +20,16 @@ export function createApiResponse(schema: ZodType, description: string) {
   };
 }
 
-export function createApiPaginatedResponse(schema: ZodType, description: string) {
+export function createApiPaginatedResponse(schema: ZodType, description: string, statusCode = 200) {
   return {
-    200: {
+    [statusCode]: {
       description,
       content: {
         "application/json": {
           schema: z.object({
             success: z.boolean(),
+            message: z.string(),
+            statusCode: z.number(),
             data: schema,
             meta: z.object({
               total: z.number(),
