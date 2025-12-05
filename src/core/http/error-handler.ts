@@ -12,10 +12,11 @@ import {
   validationError,
 } from "@/shared/http/api-response";
 
-import type { NextFunction, Request, Response } from "express";
+import type { ErrorRequestHandler } from "express";
 
-export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
+export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const path = req.originalUrl ?? req.url;
+  const requestId = req.requestId;
 
   if (err instanceof AppError) {
     logger.warn(
@@ -67,13 +68,15 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
     return validationError(res, errors);
   }
 
+  // Unhandled Error
   logger.error(
     {
       err,
       path,
+      requestId, // Explicitly log requestId for unhandled errors
     },
     "Unhandled error",
   );
 
   return serverError(res);
-}
+};

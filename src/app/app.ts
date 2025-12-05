@@ -12,8 +12,6 @@ export function createApp(configure?: (app: express.Express) => void) {
 
   registerMiddlewares(app);
 
-  registerMiddlewares(app);
-
   app.get("/", swaggerUi.setup(swaggerSpec));
   app.use("/", swaggerUi.serve);
 

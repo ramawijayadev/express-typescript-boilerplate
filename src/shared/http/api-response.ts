@@ -14,6 +14,7 @@ export type SuccessResponse<T = unknown> = {
   data?: T;
   meta?: Record<string, unknown>;
   links?: Record<string, unknown>;
+  requestId?: string;
 };
 
 export type ClientErrorResponse = {
@@ -21,12 +22,14 @@ export type ClientErrorResponse = {
   message: string;
   statusCode: number;
   errors?: FieldError[];
+  requestId?: string;
 };
 
 export type ServerErrorResponse = {
   success: false;
   message: string;
   statusCode: number;
+  requestId?: string;
 };
 
 export type ApiResponse<T = unknown> =
@@ -107,6 +110,7 @@ export function clientError(
     message: message ?? "Client error",
     statusCode,
     ...(errors && errors.length > 0 ? { errors } : {}),
+    requestId: res.req.requestId,
   };
 
   return res.status(body.statusCode).json(body);
@@ -130,6 +134,7 @@ export function serverError(
     success: false,
     message,
     statusCode,
+    requestId: res.req.requestId,
   };
 
   return res.status(body.statusCode).json(body);

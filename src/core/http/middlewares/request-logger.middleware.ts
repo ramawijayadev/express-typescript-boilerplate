@@ -1,22 +1,39 @@
-import { logger } from "@/core/logging/logger";
+import { logger, runWithContext } from "@/core/logging/logger";
+import { v4 as uuidv4 } from "uuid";
 
-import type { NextFunction, Request, Response } from "express";
+import type { RequestHandler } from "express";
 
-export function requestLoggerMiddleware(req: Request, res: Response, next: NextFunction) {
-  const start = Date.now();
+export const requestLoggerMiddleware: RequestHandler = (req, res, next) => {
+  const requestId = (req.headers["x-request-id"] as string) || uuidv4();
+  req.requestId = requestId;
+  req.startTime = Date.now();
 
-  res.on("finish", () => {
-    const durationMs = Date.now() - start;
+  const context = {
+    requestId,
+    service: "api", // Could be configurable
+    // Add other context like userId here later if available from auth middleware
+  };
 
+  runWithContext(context, () => {
     logger.info({
-      msg: "HTTP request completed",
-      requestId: req.requestId,
+      msg: "Incoming request",
       method: req.method,
-      path: req.originalUrl ?? req.url,
-      status: res.statusCode,
-      durationMs,
+      url: req.originalUrl || req.url,
+      ip: req.ip,
     });
-  });
 
-  next();
-}
+    res.on("finish", () => {
+      const durationMs = Date.now() - req.startTime;
+
+      logger.info({
+        msg: "Request completed",
+        method: req.method,
+        url: req.originalUrl || req.url,
+        statusCode: res.statusCode,
+        durationMs,
+      });
+    });
+
+    next();
+  });
+};

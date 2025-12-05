@@ -20,6 +20,12 @@ const envSchema = z.object({
 
   // Swagger
   SWAGGER_SERVER_URL: z.string().optional(),
+
+  // Logging
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error", "fatal"]).default("info"),
+  LOG_DRIVER: z.enum(["file", "stdout", "stack"]).default("file"),
+  LOG_FILE_PATH: z.string().default("logs"),
+  ERROR_REPORTING: z.enum(["none", "sentry", "honeybadger"]).default("none"),
 });
 
 export const env = envSchema.parse(process.env);
