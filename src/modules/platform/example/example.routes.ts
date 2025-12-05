@@ -3,7 +3,10 @@ import { Router } from "express";
 import { z } from "zod";
 
 import { validateBody, validateParams, validateQuery } from "@/core/http/validation.middleware";
-import { createApiPaginatedResponse, createApiResponse } from "@/docs/openAPIResponseBuilders";
+import {
+  createApiPaginatedResponse,
+  createApiResponse,
+} from "@/shared/open-api/openapi-response-builders";
 
 import { ExampleController } from "./example.controller";
 import { ExampleRepository } from "./example.repository";
