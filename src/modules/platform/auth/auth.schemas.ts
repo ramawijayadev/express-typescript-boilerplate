@@ -62,8 +62,4 @@ export const refreshTokenResponseSchema = z
   })
   .openapi("RefreshTokenResponse");
 
-export const logoutResponseSchema = z
-  .object({
-    message: z.string(),
-  })
-  .openapi("LogoutResponse");
+export const logoutResponseSchema = z.object({}).openapi("LogoutResponse");

@@ -33,7 +33,6 @@ export class AuthController {
   }
 
   async logout(_req: Request, res: Response) {
-    const response: { message: string } = { message: "Logged out successfully" };
-    return ok(res, response);
+    return ok(res, {});
   }
 }
