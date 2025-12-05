@@ -1,4 +1,5 @@
-import { created, ok } from "@/shared/http/api-response";
+import { created, ok, okPaginated } from "@/shared/http/api-response";
+import { generatePaginationLinks } from "@/shared/utils/pagination";
 
 import { ExampleService } from "./example.service";
 
@@ -10,8 +11,9 @@ export class ExampleController {
 
   async list(req: Request, res: Response) {
     const query = req.query as unknown as ListExamplesQuery;
-    const result = await this.service.list(query);
-    return ok(res, result);
+    const { data, meta } = await this.service.list(query);
+    const links = generatePaginationLinks(req, meta);
+    return okPaginated(res, data, meta, links);
   }
 
   async find(req: Request, res: Response) {

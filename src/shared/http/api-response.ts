@@ -65,6 +65,25 @@ export function okWithMeta<T>(
   return res.status(body.statusCode).json(body);
 }
 
+export function okPaginated<T>(
+  res: Response,
+  data: T,
+  meta: Record<string, unknown>,
+  links: Record<string, unknown> = {},
+  message = "OK",
+): Response<ApiResponse<T>> {
+  const body: SuccessResponse<T> = {
+    success: true,
+    message,
+    statusCode: StatusCodes.OK,
+    data,
+    meta,
+    links,
+  };
+
+  return res.status(body.statusCode).json(body);
+}
+
 export function created<T>(res: Response, data: T, message = "Created"): Response<ApiResponse<T>> {
   const body: SuccessResponse<T> = {
     success: true,
