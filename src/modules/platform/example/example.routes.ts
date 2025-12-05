@@ -2,7 +2,9 @@ import { Router } from "express";
 
 import { validateBody, validateParams, validateQuery } from "@/core/http/validation.middleware";
 
-import { exampleController } from ".";
+import { ExampleController } from "./example.controller";
+import { ExampleRepository } from "./example.repository";
+import { ExampleService } from "./example.service";
 
 import {
   createExampleSchema,
@@ -12,6 +14,11 @@ import {
 } from "./example.schemas";
 
 export const exampleRouter = Router();
+
+// Instantiate dependencies
+const exampleRepository = new ExampleRepository();
+const exampleService = new ExampleService(exampleRepository);
+const exampleController = new ExampleController(exampleService);
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
   exampleController.list(req, res),
