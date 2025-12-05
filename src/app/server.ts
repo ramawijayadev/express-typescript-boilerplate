@@ -4,8 +4,8 @@ import { initMetrics } from "@/core/observability/metrics";
 import { initTracing } from "@/core/observability/tracing";
 import { initJobs } from "@/jobs/index";
 
-import { env } from "./env";
 import { createApp } from "./app";
+import { env } from "./env";
 
 const app = createApp();
 

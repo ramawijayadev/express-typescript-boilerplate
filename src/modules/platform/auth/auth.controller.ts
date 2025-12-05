@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { AppError } from "@/shared/errors/AppError";
@@ -13,6 +13,7 @@ import type {
   RegisterBody,
   ResetPasswordBody,
 } from "./auth.types";
+import type { Request, Response } from "express";
 
 
 export class AuthController {
