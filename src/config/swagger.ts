@@ -1,10 +1,26 @@
-import swaggerJsdoc from "swagger-jsdoc";
+import { OpenApiGeneratorV3, OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 
 import { env } from "@/app/env";
+import { exampleRegistry } from "@/modules/platform/example/example.routes";
+
 import { appConfig } from "./app";
 
-const options: swaggerJsdoc.Options = {
-  definition: {
+const registry = new OpenAPIRegistry();
+
+// Register Bearer Auth
+registry.registerComponent("securitySchemes", "bearerAuth", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+});
+
+const getOpenApiDocumentation = () => {
+  const generator = new OpenApiGeneratorV3([
+    ...registry.definitions,
+    ...exampleRegistry.definitions,
+  ]);
+
+  return generator.generateDocument({
     openapi: "3.0.0",
     info: {
       title: "Express TypeScript Boilerplate API",
@@ -17,22 +33,8 @@ const options: swaggerJsdoc.Options = {
         description: "API Server",
       },
     ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
-  apis: ["./src/modules/**/*.routes.ts", "./src/modules/**/*.schemas.ts"],
+    security: [{ bearerAuth: [] }],
+  });
 };
 
-export const swaggerSpec = swaggerJsdoc(options);
+export const swaggerSpec = getOpenApiDocumentation();
