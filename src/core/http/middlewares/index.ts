@@ -12,8 +12,6 @@ import { requestLoggerMiddleware } from "./request-logger.middleware";
 
 import type { Express } from "express";
 
-// ...
-
 export function registerMiddlewares(app: Express) {
   // HTTP hardening
   app.disable("x-powered-by");
