@@ -87,6 +87,7 @@ describe("API response formatter - E2E", () => {
       success: false,
       message: "Unauthorized",
       statusCode: StatusCodes.UNAUTHORIZED,
+      requestId: expect.any(String),
     });
   });
 
@@ -99,6 +100,7 @@ describe("API response formatter - E2E", () => {
       success: false,
       message: "Forbidden",
       statusCode: StatusCodes.FORBIDDEN,
+      requestId: expect.any(String),
     });
   });
 
@@ -111,6 +113,7 @@ describe("API response formatter - E2E", () => {
       success: false,
       message: "Example not found",
       statusCode: StatusCodes.NOT_FOUND,
+      requestId: expect.any(String),
     });
   });
 
@@ -123,6 +126,7 @@ describe("API response formatter - E2E", () => {
       success: false,
       message: "Validation failed",
       statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
+      requestId: expect.any(String),
       errors: [
         { field: "email", message: "Invalid email format" },
         { field: "password", message: "Password too short" },
@@ -139,6 +143,7 @@ describe("API response formatter - E2E", () => {
       success: false,
       message: "Internal server error",
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      requestId: expect.any(String),
     });
   });
 
@@ -151,6 +156,7 @@ describe("API response formatter - E2E", () => {
       success: false,
       message: "Service unavailable",
       statusCode: StatusCodes.SERVICE_UNAVAILABLE,
+      requestId: expect.any(String),
     });
   });
 });

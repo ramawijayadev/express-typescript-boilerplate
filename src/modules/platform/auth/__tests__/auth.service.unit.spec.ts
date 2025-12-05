@@ -12,7 +12,7 @@ vi.mock("../auth.repository");
 // Mock dependencies
 vi.mock("@/core/auth/jwt", () => ({
   generateAccessToken: vi.fn(() => "access_token"),
-  generateRefreshToken: vi.fn(() => "refresh_token"),
+  generateRefreshToken: vi.fn(() => "valid_refresh_token"),
   verifyToken: vi.fn((token) => {
     if (token === "valid_refresh_token") return { userId: 1 };
     throw new Error("Invalid token");
@@ -54,6 +54,8 @@ describe("Auth service (unit)", () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        failedLoginAttempts: 0,
+        lockedUntil: null,
       };
       vi.mocked(repo.create).mockResolvedValue(mockUser);
 
@@ -66,7 +68,7 @@ describe("Auth service (unit)", () => {
       expect(repo.findByEmail).toHaveBeenCalledWith("test@example.com");
       expect(repo.create).toHaveBeenCalled();
       expect(result.tokens).toHaveProperty("accessToken", "access_token");
-      expect(result.tokens).toHaveProperty("refreshToken", "refresh_token");
+      expect(result.tokens).toHaveProperty("refreshToken", "valid_refresh_token");
     });
 
     it("should throw CONFLICT if email exists", async () => {
@@ -95,6 +97,9 @@ describe("Auth service (unit)", () => {
         name: "Test",
         email: "test@example.com",
         password: "hashed_password",
+        isActive: true,
+        failedLoginAttempts: 0,
+        lockedUntil: null,
       } as any;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
 
@@ -113,6 +118,9 @@ describe("Auth service (unit)", () => {
         name: "Test",
         email: "test@example.com",
         password: "hashed_password",
+        isActive: true,
+        failedLoginAttempts: 0,
+        lockedUntil: null,
       } as any;
       vi.mocked(repo.findByEmail).mockResolvedValue(mockUser);
 

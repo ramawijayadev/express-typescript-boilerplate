@@ -23,6 +23,9 @@ function createMockResponse<T = unknown>(): { res: Response; state: MockState<T>
   const state: MockState<T> = {};
 
   const res = {
+    req: {
+      requestId: "test-request-id",
+    },
     status(code: number) {
       state.statusCode = code;
       return this;
@@ -119,6 +122,7 @@ describe("api-response helpers", () => {
       success: false,
       message: "Invalid input",
       statusCode: StatusCodes.BAD_REQUEST,
+      requestId: "test-request-id",
       errors,
     });
   });
@@ -132,6 +136,7 @@ describe("api-response helpers", () => {
       success: false,
       message: "Forbidden",
       statusCode: StatusCodes.FORBIDDEN,
+      requestId: "test-request-id",
     });
     expect("errors" in (state.body as object)).toBe(false);
   });
@@ -147,6 +152,7 @@ describe("api-response helpers", () => {
       success: false,
       message: "Validation failed",
       statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
+      requestId: "test-request-id",
       errors,
     });
   });
@@ -161,6 +167,7 @@ describe("api-response helpers", () => {
       success: false,
       message: "Internal server error",
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      requestId: "test-request-id",
     });
   });
 
@@ -173,6 +180,7 @@ describe("api-response helpers", () => {
       success: false,
       message: "Service unavailable",
       statusCode: StatusCodes.SERVICE_UNAVAILABLE,
+      requestId: "test-request-id",
     });
   });
 });

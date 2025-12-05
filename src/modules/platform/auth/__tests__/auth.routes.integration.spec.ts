@@ -1,11 +1,19 @@
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/app/app";
 import { hashPassword } from "@/core/auth/password";
 import { db } from "@/core/database/connection";
 import { AuthRepository } from "../auth.repository";
+
+// Mock job queue to prevent Redis connection
+vi.mock("@/core/queue", () => ({
+  jobQueue: {
+    enqueueEmailVerification: vi.fn(),
+    enqueuePasswordReset: vi.fn(),
+  },
+}));
 
 describe("Auth routes (integration)", () => {
   const app = createApp();
