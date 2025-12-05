@@ -48,6 +48,10 @@ const envSchema = z.object({
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_PASSWORD: z.string().optional(),
+  QUEUE_JOB_ATTEMPTS: z.coerce.number().default(3),
+  QUEUE_JOB_BACKOFF_DELAY: z.coerce.number().default(1000),
+  QUEUE_JOB_REMOVE_ON_COMPLETE: z.coerce.boolean().default(true),
+  QUEUE_JOB_REMOVE_ON_FAIL: z.coerce.boolean().default(false),
   
   // Feature Flags
   ENABLE_BACKGROUND_JOBS: z.coerce.boolean().default(true),

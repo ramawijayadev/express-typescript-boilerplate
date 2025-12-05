@@ -7,12 +7,12 @@ export const queueConfig = {
     password: env.REDIS_PASSWORD,
   },
   defaultJobOptions: {
-    attempts: 3,
+    attempts: env.QUEUE_JOB_ATTEMPTS,
     backoff: {
       type: "exponential",
-      delay: 1000,
+      delay: env.QUEUE_JOB_BACKOFF_DELAY,
     },
-    removeOnComplete: true,
-    removeOnFail: false,
+    removeOnComplete: env.QUEUE_JOB_REMOVE_ON_COMPLETE,
+    removeOnFail: env.QUEUE_JOB_REMOVE_ON_FAIL,
   },
 };
