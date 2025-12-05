@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 
 import { verifyToken } from "@/core/auth/jwt";
 import { logger } from "@/core/logging/logger";
+import { AppError } from "@/shared/errors/AppError";
 
 declare global {
   namespace Express {
@@ -18,10 +19,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
-    res.status(StatusCodes.UNAUTHORIZED).json({
-      success: false,
-      message: "No token provided",
-    });
+    next(new AppError(StatusCodes.UNAUTHORIZED, "No token provided"));
     return;
   }
 
@@ -33,9 +31,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     next();
   } catch (error) {
     logger.warn({ err: error }, "Invalid token");
-    res.status(StatusCodes.UNAUTHORIZED).json({
-      success: false,
-      message: "Invalid token",
-    });
+    next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token"));
   }
 }
