@@ -1,6 +1,4 @@
-import { StatusCodes } from "http-status-codes";
-
-import { AppError } from "@/shared/errors/AppError";
+import type { AuthenticatedRequest } from "@/core/http/types";
 import { created, ok } from "@/shared/http/api-response";
 
 import type { AuthService } from "./auth.service";
@@ -12,7 +10,6 @@ import type {
   RegisterBody,
   ResetPasswordBody,
 } from "./auth.types";
-import type { AuthenticatedRequest } from "@/core/http/types";
 import type { Request, Response } from "express";
 
 

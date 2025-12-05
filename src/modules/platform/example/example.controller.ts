@@ -1,9 +1,9 @@
 
 import type { TypedRequest } from "@/core/http/types";
 import { created, ok, okPaginated } from "@/shared/http/api-response";
+import type { IdParam } from "@/shared/schemas/common.schemas";
 import { generatePaginationLinks } from "@/shared/utils/pagination";
 
-import type { IdParam } from "@/shared/schemas/common.schemas";
 import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 import type { ExampleService } from "./example.service";
 import type { Request, Response } from "express";
@@ -14,7 +14,7 @@ export class ExampleController {
   async list(req: TypedRequest<unknown, ListExamplesQuery>, res: Response) {
     const query = req.query;
     const { data, meta } = await this.service.list(query);
-    const links = generatePaginationLinks(req as any, meta);
+    const links = generatePaginationLinks(req as unknown as Request, meta);
     return okPaginated(res, data, meta, links);
   }
 

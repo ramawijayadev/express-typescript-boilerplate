@@ -3,7 +3,7 @@ import type { PaginatedMeta } from "@/shared/types/pagination";
 import type { Request } from "express";
 
 export function generatePaginationLinks(
-  req: Request<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, Record<string, unknown>>,
+  req: Request,
   meta: PaginatedMeta,
 ): Record<string, string | null> {
   const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${req.path}`;
