@@ -4,7 +4,9 @@ import { authConfig } from "@/config/auth";
 import { generateAccessToken, generateRefreshToken, verifyToken } from "@/core/auth/jwt";
 import { hashPassword, verifyPassword } from "@/core/auth/password";
 import { hashToken } from "@/core/auth/hash";
+import { randomBytes } from "node:crypto";
 import { AppError } from "@/shared/errors/AppError";
+import { jobQueue } from "@/core/queue";
 import type { AuthRepository } from "./auth.repository";
 import type {
   AuthResponse,
@@ -28,6 +30,9 @@ export class AuthService {
 
     const passwordHash = await hashPassword(data.password);
     const user = await this.repo.create({ ...data, passwordHash });
+
+    // Send verification email
+    await this.sendVerificationEmail(user);
 
     return this.createSession(user, meta);
   }
@@ -169,5 +174,106 @@ export class AuthService {
         createdAt: user.createdAt,
       },
     };
+  }
+
+  async sendVerificationEmail(user: { id: number; email: string }) {
+    const token = randomBytes(32).toString("hex");
+    const tokenHash = hashToken(token);
+    const expiresAt = new Date(
+      Date.now() + authConfig.emailVerificationExpirationHours * 60 * 60 * 1000,
+    );
+
+    await this.repo.createEmailVerificationToken({
+      userId: user.id,
+      tokenHash,
+      expiresAt,
+    });
+
+    await jobQueue.enqueueEmailVerification({
+      userId: user.id,
+      email: user.email,
+      token,
+    });
+  }
+
+  async resendVerification(userId: number) {
+    const user = await this.repo.findById(userId);
+    if (!user) {
+      return; // Fail silently or returns 200 as per requirements
+    }
+
+    if (user.emailVerifiedAt) {
+      return; // Already verified
+    }
+
+    await this.sendVerificationEmail(user);
+  }
+
+  async verifyEmail(token: string) {
+    const tokenHash = hashToken(token);
+    const verificationToken = await this.repo.findEmailVerificationToken(tokenHash);
+
+    if (!verificationToken) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Invalid or expired verification token");
+    }
+
+    if (verificationToken.usedAt) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Token already used");
+    }
+
+    if (verificationToken.expiresAt < new Date()) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Token expired");
+    }
+
+    await this.repo.verifyUserEmail(verificationToken.userId);
+    await this.repo.markEmailVerificationTokenUsed(verificationToken.id);
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.repo.findByEmail(email);
+    if (!user || !user.isActive) {
+      return; // Always return success
+    }
+
+    const token = randomBytes(32).toString("hex");
+    const tokenHash = hashToken(token);
+    const expiresAt = new Date(
+      Date.now() + authConfig.passwordResetExpirationMinutes * 60 * 1000,
+    );
+
+    await this.repo.createPasswordResetToken({
+      userId: user.id,
+      tokenHash,
+      expiresAt,
+    });
+
+    await jobQueue.enqueuePasswordReset({
+      userId: user.id,
+      email: user.email,
+      token,
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const tokenHash = hashToken(token);
+    const resetToken = await this.repo.findPasswordResetToken(tokenHash);
+
+    if (!resetToken) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Invalid or expired reset token");
+    }
+
+    if (resetToken.usedAt) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Token already used");
+    }
+
+    if (resetToken.expiresAt < new Date()) {
+      throw new AppError(StatusCodes.BAD_REQUEST, "Token expired");
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+
+    await this.repo.updatePassword(resetToken.userId, passwordHash);
+    await this.repo.markPasswordResetTokenUsed(resetToken.id);
+    await this.repo.revokeAllUserSessions(resetToken.userId);
   }
 }

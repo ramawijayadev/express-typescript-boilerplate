@@ -64,3 +64,29 @@ export const refreshTokenResponseSchema = z
   .openapi("RefreshTokenResponse");
 
 export const logoutResponseSchema = z.object({}).openapi("LogoutResponse");
+
+export const emailVerificationSchema = z
+  .object({
+    token: z.string(),
+  })
+  .openapi("EmailVerificationInput");
+
+export const forgotPasswordSchema = z
+  .object({
+    email: z.string().email(),
+  })
+  .openapi("ForgotPasswordInput");
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string(),
+    newPassword: passwordSchema,
+  })
+  .openapi("ResetPasswordInput");
+
+export const successResponseSchema = z
+  .object({
+    message: z.string(),
+  })
+  .openapi("SuccessResponse");
+

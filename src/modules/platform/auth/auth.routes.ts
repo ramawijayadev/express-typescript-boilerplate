@@ -9,12 +9,16 @@ import { AuthController } from "./auth.controller";
 import { AuthRepository } from "./auth.repository";
 import {
   authResponseSchema,
+  emailVerificationSchema,
+  forgotPasswordSchema,
   loginSchema,
   logoutResponseSchema,
   profileResponseSchema,
   refreshTokenResponseSchema,
   refreshTokenSchema,
   registerSchema,
+  resetPasswordSchema,
+  successResponseSchema,
 } from "./auth.schemas";
 import { AuthService } from "./auth.service";
 
@@ -120,3 +124,74 @@ authRegistry.registerPath({
 });
 
 authRouter.get("/profile", authenticate, (req, res) => authController.getProfile(req, res));
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/verify-email",
+  tags: ["Auth"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: emailVerificationSchema,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(successResponseSchema, "Email verified"),
+});
+
+authRouter.post("/verify-email", validateBody(emailVerificationSchema), (req, res) =>
+  authController.verifyEmail(req, res),
+);
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/resend-verification",
+  tags: ["Auth"],
+  responses: createApiResponse(successResponseSchema, "Verification email resent"),
+});
+
+authRouter.post("/resend-verification", authenticate, (req, res) =>
+  authController.resendVerification(req, res),
+);
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/forgot-password",
+  tags: ["Auth"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: forgotPasswordSchema,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(successResponseSchema, "Password reset email sent"),
+});
+
+authRouter.post("/forgot-password", validateBody(forgotPasswordSchema), (req, res) =>
+  authController.forgotPassword(req, res),
+);
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/reset-password",
+  tags: ["Auth"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: resetPasswordSchema,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(successResponseSchema, "Password reset successfully"),
+});
+
+authRouter.post("/reset-password", validateBody(resetPasswordSchema), (req, res) =>
+  authController.resetPassword(req, res),
+);

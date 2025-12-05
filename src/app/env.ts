@@ -6,6 +6,7 @@ const envSchema = z.object({
   APP_PORT: z.coerce.number().default(3000),
   APP_BASE_PATH: z.string().default("/api/v1"),
   CORS_ORIGIN: z.string().default("*"),
+  FRONTEND_URL: z.string().default("http://localhost:3000"),
 
   // Database
   DATABASE_URL: z.string().optional(),
@@ -33,6 +34,20 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRATION: z.string().default("7d"),
   AUTH_MAX_LOGIN_ATTEMPTS: z.coerce.number().default(3),
   AUTH_LOCK_DURATION_MINUTES: z.coerce.number().default(30),
+  AUTH_EMAIL_VERIFICATION_EXPIRATION_HOURS: z.coerce.number().default(24),
+  AUTH_PASSWORD_RESET_EXPIRATION_MINUTES: z.coerce.number().default(60),
+
+  // Mail
+  SMTP_HOST: z.string().default("smtp.mailtrap.io"),
+  SMTP_PORT: z.coerce.number().default(2525),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().default("noreply@example.com"),
+
+  // Redis / Queue
+  REDIS_HOST: z.string().default("localhost"),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

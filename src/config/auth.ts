@@ -10,4 +10,6 @@ export const authConfig = {
     maxAttempts: env.AUTH_MAX_LOGIN_ATTEMPTS,
     durationMinutes: env.AUTH_LOCK_DURATION_MINUTES,
   },
+  emailVerificationExpirationHours: env.AUTH_EMAIL_VERIFICATION_EXPIRATION_HOURS,
+  passwordResetExpirationMinutes: env.AUTH_PASSWORD_RESET_EXPIRATION_MINUTES,
 };

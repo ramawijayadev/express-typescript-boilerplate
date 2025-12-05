@@ -102,4 +102,71 @@ export class AuthRepository {
       },
     });
   }
+
+  // Email Verification
+  async createEmailVerificationToken(data: { userId: number; tokenHash: string; expiresAt: Date }) {
+    return db().emailVerificationToken.create({
+      data: {
+        userId: data.userId,
+        tokenHash: data.tokenHash,
+        expiresAt: data.expiresAt,
+      },
+    });
+  }
+
+  async findEmailVerificationToken(tokenHash: string) {
+    return db().emailVerificationToken.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+  }
+
+  async verifyUserEmail(userId: number) {
+    return db().user.update({
+      where: { id: userId },
+      data: { emailVerifiedAt: new Date() },
+    });
+  }
+
+  async markEmailVerificationTokenUsed(id: number) {
+    return db().emailVerificationToken.update({
+      where: { id },
+      data: { usedAt: new Date() },
+    });
+  }
+
+  // Password Reset
+  async createPasswordResetToken(data: { userId: number; tokenHash: string; expiresAt: Date }) {
+    return db().passwordResetToken.create({
+      data: {
+        userId: data.userId,
+        tokenHash: data.tokenHash,
+        expiresAt: data.expiresAt,
+      },
+    });
+  }
+
+  async findPasswordResetToken(tokenHash: string) {
+    return db().passwordResetToken.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+  }
+
+  async markPasswordResetTokenUsed(id: number) {
+    return db().passwordResetToken.update({
+      where: { id },
+      data: { usedAt: new Date() },
+    });
+  }
+
+  async updatePassword(userId: number, passwordHash: string) {
+    return db().user.update({
+      where: { id: userId },
+      data: {
+        password: passwordHash,
+        passwordChangedAt: new Date(),
+      },
+    });
+  }
 }
