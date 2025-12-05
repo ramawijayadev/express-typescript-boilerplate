@@ -1,9 +1,8 @@
 import { created, ok, okPaginated } from "@/shared/http/api-response";
 import { generatePaginationLinks } from "@/shared/utils/pagination";
 
-import { ExampleService } from "./example.service";
-
 import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
+import type { ExampleService } from "./example.service";
 import type { Request, Response } from "express";
 
 export class ExampleController {

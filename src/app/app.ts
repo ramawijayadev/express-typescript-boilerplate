@@ -2,7 +2,6 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 
 import { swaggerSpec } from "@/config/swagger";
-
 import { errorHandler } from "@/core/http/error-handler";
 import { registerMiddlewares } from "@/core/http/middlewares";
 import { registerRoutes } from "@/core/http/router";

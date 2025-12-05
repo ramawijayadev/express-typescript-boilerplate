@@ -1,8 +1,8 @@
+import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 
-import { Router } from "express";
 
 import { createApp } from "@/app/app";
 import { AppError } from "@/shared/errors/AppError";

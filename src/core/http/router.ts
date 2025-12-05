@@ -2,7 +2,6 @@ import { Router } from "express";
 
 import { exampleRouter } from "@/modules/platform/example/example.routes";
 import { healthRouter } from "@/modules/platform/health/health.routes";
-import { ok } from "@/shared/http/api-response";
 
 import type { Express } from "express";
 

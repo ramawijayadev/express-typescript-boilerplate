@@ -2,8 +2,7 @@ import { StatusCodes } from "http-status-codes";
 
 import { AppError } from "@/shared/errors/AppError";
 
-import { ExampleRepository } from "./example.repository";
-
+import type { ExampleRepository } from "./example.repository";
 import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 import type { ExampleId } from "./example.types";
 

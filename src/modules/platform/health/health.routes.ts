@@ -2,8 +2,8 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { z } from "zod";
 
-import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 import { ok } from "@/shared/http/api-response";
+import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
 export const healthRegistry = new OpenAPIRegistry();
 export const healthRouter = Router();

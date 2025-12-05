@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
-import { Router } from "express";
 
 import { createApp } from "@/app/app";
 import { db } from "@/core/database";

@@ -11,8 +11,8 @@ import {
 import { ExampleController } from "./example.controller";
 import { ExampleRepository } from "./example.repository";
 import {
-  createExampleSchema,
   ExampleSchema,
+  createExampleSchema,
   exampleIdSchema,
   listExamplesQuerySchema,
   updateExampleSchema,

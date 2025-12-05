@@ -5,13 +5,14 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
 
+import { appConfig } from "@/config/app";
+
 import { authContextMiddleware } from "./auth-context.middleware";
 import { requestIdMiddleware } from "./request-id.middleware";
 import { requestLoggerMiddleware } from "./request-logger.middleware";
 
 import type { Express } from "express";
 
-import { appConfig } from "@/config/app";
 
 // ...
 

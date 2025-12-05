@@ -41,7 +41,7 @@ export function validateQuery<T extends ZodTypeAny>(schema: T): RequestHandler {
     try {
       const parsed = schema.parse(req.query);
       Object.defineProperty(req, "query", {
-        value: { ...req.query, ...(parsed as any) },
+        value: { ...req.query, ...(parsed as Record<string, unknown>) },
         writable: true,
         enumerable: true,
         configurable: true,
@@ -57,8 +57,7 @@ export function validateParams<T extends ZodTypeAny>(schema: T): RequestHandler 
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
       const parsed = schema.parse(req.params);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (req as any).params = parsed;
+      req.params = parsed as unknown as Request["params"];
       next();
     } catch (err) {
       handleZodError(err);
