@@ -2,7 +2,7 @@ import { db } from "@/core/database/connection";
 import { RegisterBody } from "./auth.types";
 
 export class AuthRepository {
-  async create(data: RegisterBody & { passwordHash: string }) {
+  async create(data: Omit<RegisterBody, "password"> & { passwordHash: string }) {
     return db().user.create({
       data: {
         name: data.name,
