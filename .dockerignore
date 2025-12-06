@@ -1,19 +1,55 @@
+# Dependencies
 node_modules
+
+# Build artifacts
 dist
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
 npm-debug.log
 yarn-error.log
 pnpm-debug.log*
+
+# Environment files (except example)
 .env
 .env.*
 !.env.example
+
+# Version control
 .git
 .github
+
+# IDE and editor files
 .vscode
 .idea
-logs
+*.swp
+*.swo
+*~
+
+# Test files and directories
+src/tests/
+**/*.spec.ts
+**/*.test.ts
 coverage
-*.md
-docker-compose.yml
-Dockerfile
-scripts
+test_output*.log
+
+# Documentation (except README)
 docs
+
+# Docker files (avoid recursive copying)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD and tooling configs
+.prettierignore
+.prettierrc
+.gitignore
+eslint.config.mjs
+
+# Misc
+scripts
+*.md
+!README.md
