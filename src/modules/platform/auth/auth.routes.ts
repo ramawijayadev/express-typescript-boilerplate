@@ -63,7 +63,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/register", registerRateLimiter, validateBody(registerSchema), 
-  typedHandler<RegisterBody>((req, res, next) => authController.register(req, res))
+  typedHandler<RegisterBody>((req, res) => authController.register(req, res))
 );
 
 authRegistry.registerPath({
@@ -83,7 +83,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/login", loginRateLimiter, validateBody(loginSchema), 
-  typedHandler<LoginBody>((req, res, next) => authController.login(req, res))
+  typedHandler<LoginBody>((req, res) => authController.login(req, res))
 );
 
 authRegistry.registerPath({
@@ -103,7 +103,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/refresh-token", validateBody(refreshTokenSchema), 
-  typedHandler<RefreshTokenBody>((req, res, next) => authController.refreshToken(req, res))
+  typedHandler<RefreshTokenBody>((req, res) => authController.refreshToken(req, res))
 );
 
 authRegistry.registerPath({
@@ -123,7 +123,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/logout", validateBody(refreshTokenSchema), 
-  typedHandler<RefreshTokenBody>((req, res, next) => authController.logout(req, res))
+  typedHandler<RefreshTokenBody>((req, res) => authController.logout(req, res))
 );
 
 authRegistry.registerPath({
@@ -135,7 +135,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/revoke-all", authenticate, 
-  authenticatedHandler((req, res, next) => authController.revokeAll(req, res))
+  authenticatedHandler((req, res) => authController.revokeAll(req, res))
 );
 
 authRegistry.registerPath({
@@ -147,7 +147,7 @@ authRegistry.registerPath({
 });
 
 authRouter.get("/profile", authenticate, 
-  authenticatedHandler((req, res, next) => authController.getProfile(req, res))
+  authenticatedHandler((req, res) => authController.getProfile(req, res))
 );
 
 authRegistry.registerPath({
@@ -167,7 +167,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/verify-email", verificationRateLimiter, validateBody(emailVerificationSchema), 
-  typedHandler<EmailVerificationBody>((req, res, next) => authController.verifyEmail(req, res))
+  typedHandler<EmailVerificationBody>((req, res) => authController.verifyEmail(req, res))
 );
 
 authRegistry.registerPath({
@@ -179,7 +179,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/resend-verification", verificationRateLimiter, authenticate, 
-  authenticatedHandler((req, res, next) => authController.resendVerification(req, res))
+  authenticatedHandler((req, res) => authController.resendVerification(req, res))
 );
 
 authRegistry.registerPath({
@@ -199,7 +199,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/forgot-password", passwordResetRateLimiter, validateBody(forgotPasswordSchema), 
-  typedHandler<ForgotPasswordBody>((req, res, next) => authController.forgotPassword(req, res))
+  typedHandler<ForgotPasswordBody>((req, res) => authController.forgotPassword(req, res))
 );
 
 authRegistry.registerPath({
@@ -219,5 +219,5 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/reset-password", verificationRateLimiter, validateBody(resetPasswordSchema), 
-  typedHandler<ResetPasswordBody>((req, res, next) => authController.resetPassword(req, res))
+  typedHandler<ResetPasswordBody>((req, res) => authController.resetPassword(req, res))
 );

@@ -28,7 +28,7 @@ export const usersRouter = Router();
 usersRouter.use(authenticate);
 
 usersRouter.get("/me", authenticate, 
-  authenticatedHandler((req, res, next) => controller.me(req, res))
+  authenticatedHandler((req, res) => controller.me(req, res))
 );
 
 userRegistry.registerPath({
@@ -40,7 +40,7 @@ userRegistry.registerPath({
 });
 
 usersRouter.patch("/me", authenticate, validateBody(updateUserSchema),
-  authenticatedHandler<UpdateUserBody>((req, res, next) => controller.updateMe(req, res))
+  authenticatedHandler<UpdateUserBody>((req, res) => controller.updateMe(req, res))
 );
 
 userRegistry.registerPath({

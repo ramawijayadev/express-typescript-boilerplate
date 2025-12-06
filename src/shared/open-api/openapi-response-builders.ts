@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import type { ResponseConfig, ZodType } from "@asteasolutions/zod-to-openapi";
+import type { ResponseConfig } from "@asteasolutions/zod-to-openapi";
+import type { ZodType } from "zod";
 
 export const ErrorSchema = z.object({
   success: z.boolean().default(false),
@@ -74,7 +75,7 @@ export function createApiResponse(
   description: string,
   statusCode = 200,
   extraStatusCodes: (keyof typeof errorResponses)[] = [],
-): ResponseConfig {
+): { [statusCode: string]: ResponseConfig } {
   const responses: Record<number, ResponseConfig> = {
     [statusCode]: {
       description,
@@ -106,7 +107,7 @@ export function createApiPaginatedResponse(
   description: string,
   statusCode = 200,
   extraStatusCodes: (keyof typeof errorResponses)[] = [],
-): ResponseConfig {
+): { [statusCode: string]: ResponseConfig } {
   const responses: Record<number, ResponseConfig> = {
     [statusCode]: {
       description,

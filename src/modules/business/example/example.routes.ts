@@ -43,7 +43,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema),
-  typedHandler<unknown, ListExamplesQuery>((req, res, next) => exampleController.list(req, res))
+  typedHandler<unknown, ListExamplesQuery>((req, res) => exampleController.list(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -57,7 +57,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/:id", validateParams(idParamSchema),
-  typedHandler<unknown, unknown, IdParam>((req, res, next) => exampleController.find(req, res))
+  typedHandler<unknown, unknown, IdParam>((req, res) => exampleController.find(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -77,7 +77,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.post("/", validateBody(createExampleSchema),
-  typedHandler<CreateExampleInput>((req, res, next) => exampleController.create(req, res))
+  typedHandler<CreateExampleInput>((req, res) => exampleController.create(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -101,7 +101,7 @@ exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  typedHandler<UpdateExampleInput, unknown, IdParam>((req, res, next) => exampleController.update(req, res))
+  typedHandler<UpdateExampleInput, unknown, IdParam>((req, res) => exampleController.update(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -115,5 +115,5 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.delete("/:id", validateParams(idParamSchema),
-  typedHandler<unknown, unknown, IdParam>((req, res, next) => exampleController.delete(req, res))
+  typedHandler<unknown, unknown, IdParam>((req, res) => exampleController.delete(req, res))
 );
