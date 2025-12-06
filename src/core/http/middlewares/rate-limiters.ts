@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit";
 
-import { rateLimitConfig } from "@/config";
+import { config } from "@/config";
 
 import type { RequestHandler } from "express";
 
@@ -16,8 +16,8 @@ const noOpMiddleware: RequestHandler = (_req, _res, next) => next();
 export const loginRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: rateLimitConfig.login.windowMs,
-      max: rateLimitConfig.login.max,
+      windowMs: config.security.rateLimit.login.windowMs,
+      max: config.security.rateLimit.login.max,
       message: "Too many login attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -31,8 +31,8 @@ export const loginRateLimiter = isTest
 export const registerRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: rateLimitConfig.register.windowMs,
-      max: rateLimitConfig.register.max,
+      windowMs: config.security.rateLimit.register.windowMs,
+      max: config.security.rateLimit.register.max,
       message: "Too many registration attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -45,8 +45,8 @@ export const registerRateLimiter = isTest
 export const passwordResetRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: rateLimitConfig.passwordReset.windowMs,
-      max: rateLimitConfig.passwordReset.max,
+      windowMs: config.security.rateLimit.passwordReset.windowMs,
+      max: config.security.rateLimit.passwordReset.max,
       message: "Too many password reset attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -58,8 +58,8 @@ export const passwordResetRateLimiter = isTest
 export const verificationRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: rateLimitConfig.verification.windowMs,
-      max: rateLimitConfig.verification.max,
+      windowMs: config.security.rateLimit.verification.windowMs,
+      max: config.security.rateLimit.verification.max,
       message: "Too many verification attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,

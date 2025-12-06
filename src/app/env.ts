@@ -71,8 +71,8 @@ const envSchema = z.object({
   AUTH_EMAIL_VERIFICATION_EXPIRATION_HOURS: z.coerce.number().default(24),
   AUTH_PASSWORD_RESET_EXPIRATION_MINUTES: z.coerce.number().default(60),
 
-  SMTP_HOST: z.string().default("smtp.mailtrap.io"),
-  SMTP_PORT: z.coerce.number().default(2525),
+  SMTP_HOST: z.string().default("localhost"),
+  SMTP_PORT: z.coerce.number().default(1025),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().default("noreply@example.com"),
@@ -88,6 +88,9 @@ const envSchema = z.object({
   QUEUE_FAILED_JOB_ALERT_THRESHOLD: z.coerce.number().default(100),
 
   ENABLE_BACKGROUND_JOBS: z.coerce.boolean().default(true),
+
+  TEST_MAILPIT_URL: z.string().default("http://localhost:8025"),
+  TEST_TIMEOUT_MS: z.coerce.number().default(20000),
 });
 
 /**

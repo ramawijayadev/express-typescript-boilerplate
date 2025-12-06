@@ -7,11 +7,12 @@ import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { config } from "@/config";
 import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
-const TEST_TIMEOUT = 20000;
+const TEST_TIMEOUT = config.test.timeout;
 const TOKEN_REGEX = /token=([a-f0-9]+)/i;
 
 interface MailpitMessage {
@@ -31,7 +32,7 @@ interface MailpitListResponse {
  */
 async function deleteAllEmails() {
   try {
-    await fetch("http://localhost:8025/api/v1/messages", { method: "DELETE" });
+    await fetch(`${config.test.mailpitUrl}/api/v1/messages`, { method: "DELETE" });
   } catch {
     //
   }
@@ -42,7 +43,7 @@ async function deleteAllEmails() {
  */
 async function fetchLatestEmail(recipient: string) {
   try {
-    const response = await fetch("http://localhost:8025/api/v1/messages");
+    const response = await fetch(`${config.test.mailpitUrl}/api/v1/messages`);
     if (!response.ok) return null;
 
     const data = (await response.json()) as MailpitListResponse;
@@ -54,7 +55,7 @@ async function fetchLatestEmail(recipient: string) {
 
     if (!email || typeof email !== "object") return null;
 
-    const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
+    const msgRes = await fetch(`${config.test.mailpitUrl}/api/v1/message/${email.ID}`);
     if (!msgRes.ok) return null;
     return (await msgRes.json()) as MailpitMessage;
   } catch {
