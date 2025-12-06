@@ -3,8 +3,7 @@ import { logger } from "@/core/logging/logger";
 import { jobQueue } from "@/core/queue";
 
 /**
- * Cleanup old failed jobs from the Dead Letter Queue.
- * Removes jobs older than the configured retention period.
+ * Prunes failed jobs older than the configured retention period.
  */
 export async function cleanupFailedJobs(): Promise<void> {
   const dlq = jobQueue.getDeadLetterQueue();

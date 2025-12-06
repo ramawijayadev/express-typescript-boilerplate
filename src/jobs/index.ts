@@ -10,7 +10,6 @@ let worker: Worker | undefined;
 
 /**
  * Initializes the background job system (BullMQ).
- * Sets up Redis connection and instantiates workers.
  */
 export function initJobs() {
   const redisOpts = {
