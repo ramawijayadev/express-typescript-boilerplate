@@ -37,7 +37,7 @@ export type ApiResponse<T = unknown> =
   | ClientErrorResponse
   | ServerErrorResponse;
 
-// 2xx helper -> DELETE
+// 2xx helper
 export type StatusCode = (typeof StatusCodes)[keyof typeof StatusCodes];
 
 /**
@@ -103,7 +103,6 @@ export function created<T>(res: Response, data: T, message = "Created"): Respons
 
 /**
  * Sends a standard client error response (HTTP 4xx).
- * Automatically attaches the request ID.
  */
 export function clientError(
   res: Response,

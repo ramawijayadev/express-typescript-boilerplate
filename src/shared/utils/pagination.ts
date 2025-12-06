@@ -4,9 +4,6 @@ import type { Request } from "express";
 
 /**
  * Generates HATEOAS-style pagination links (first, last, prev, next).
- * @param req - Express request object.
- * @param meta - Pagination metadata (page, limit, total).
- * @returns Object containing full URLs for navigation.
  */
 export function generatePaginationLinks(
   req: Request,

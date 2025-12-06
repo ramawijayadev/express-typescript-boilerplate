@@ -1,3 +1,6 @@
+/**
+ * Unit tests for API Response Helpers.
+ */
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it } from "vitest";
 

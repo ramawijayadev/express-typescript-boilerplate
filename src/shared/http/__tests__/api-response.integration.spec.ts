@@ -1,3 +1,6 @@
+/**
+ * Integration tests for API Response Formatter.
+ */
 import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
