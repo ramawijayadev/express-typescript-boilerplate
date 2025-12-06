@@ -25,19 +25,21 @@ export interface IFileStorage {
   getUrl(key: string): string;
 }
 
+import { logger } from "@/core/logging/logger";
+
 /**
  * Local file storage implementation (Default for Dev).
  */
 export class LocalFileStorage implements IFileStorage {
   async upload(key: string, body: Buffer, contentType: string): Promise<string> {
     // TODO: Implement actual fs.writeFile logic here
-    console.log(`[LocalFileStorage] Uploading ${key} (${body.length} bytes, ${contentType})`);
+    logger.info({ key, size: body.length, contentType }, "[LocalFileStorage] Uploading file");
     return `http://localhost:3000/uploads/${key}`;
   }
 
   async delete(key: string): Promise<void> {
     // TODO: Implement actual fs.unlink logic here
-    console.log(`[LocalFileStorage] Deleting ${key}`);
+    logger.info({ key }, "[LocalFileStorage] Deleting file");
   }
 
   getUrl(key: string): string {

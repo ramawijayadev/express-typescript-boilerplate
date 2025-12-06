@@ -1,8 +1,10 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 
+
 import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
 import { validateBody } from "@/core/http/middlewares/validation.middleware";
+import type { AuthenticatedRequest } from "@/core/http/types";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
 import { AuthController } from "./auth.controller";
@@ -21,6 +23,9 @@ import {
   successResponseSchema,
 } from "./auth.schemas";
 import { AuthService } from "./auth.service";
+
+import type { Request } from "express";
+import type { z } from "zod";
 
 export const authRegistry = new OpenAPIRegistry();
 export const authRouter = Router();
@@ -104,7 +109,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/logout", validateBody(refreshTokenSchema), (req, res) =>
-  authController.logout(req, res),
+  authController.logout(req as unknown as Request<unknown, unknown, z.infer<typeof refreshTokenSchema>>, res),
 );
 
 authRegistry.registerPath({
@@ -114,7 +119,7 @@ authRegistry.registerPath({
   responses: createApiResponse(logoutResponseSchema, "All sessions revoked"),
 });
 
-authRouter.post("/revoke-all", authenticate, (req, res) => authController.revokeAll(req as any, res));
+authRouter.post("/revoke-all", authenticate, (req, res) => authController.revokeAll(req as unknown as AuthenticatedRequest, res));
 
 authRegistry.registerPath({
   method: "get",
@@ -123,7 +128,7 @@ authRegistry.registerPath({
   responses: createApiResponse(profileResponseSchema, "User profile"),
 });
 
-authRouter.get("/profile", authenticate, (req, res) => authController.getProfile(req as any, res));
+authRouter.get("/profile", authenticate, (req, res) => authController.getProfile(req as unknown as AuthenticatedRequest, res));
 
 authRegistry.registerPath({
   method: "post",
@@ -153,7 +158,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/resend-verification", authenticate, (req, res) =>
-  authController.resendVerification(req as any, res),
+  authController.resendVerification(req as unknown as AuthenticatedRequest, res),
 );
 
 authRegistry.registerPath({

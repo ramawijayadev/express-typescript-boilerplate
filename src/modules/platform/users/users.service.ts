@@ -1,6 +1,9 @@
 import { StatusCodes } from "http-status-codes";
+
 import { AppError } from "@/shared/errors/AppError";
+
 import { toUserResponse } from "./users.mappers";
+
 import type { UsersRepository } from "./users.repository";
 import type { UpdateUserBody, UserResponse } from "./users.types";
 

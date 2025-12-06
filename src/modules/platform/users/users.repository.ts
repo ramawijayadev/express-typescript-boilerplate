@@ -1,6 +1,7 @@
-import { PrismaClient } from "@/generated/prisma/client";
 import type { User } from "@/generated/prisma";
-import type { UpdateUserBody, UserResponse } from "./users.types";
+import type { PrismaClient } from "@/generated/prisma/client";
+
+import type { UpdateUserBody } from "./users.types";
 
 export class UsersRepository {
   constructor(private readonly prisma: PrismaClient) {}

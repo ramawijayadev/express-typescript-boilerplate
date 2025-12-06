@@ -18,7 +18,7 @@ export interface IAccessControl {
 }
 
 export const accessControl: IAccessControl = {
-  can(roles, resource, action) {
+  can(roles, _resource, _action) {
     if (roles.includes('admin')) {
       return true; // Admin can do anything
     }

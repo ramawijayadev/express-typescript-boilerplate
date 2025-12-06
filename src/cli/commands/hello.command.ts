@@ -4,5 +4,6 @@ export const helloCommand = new Command("hello")
   .description("Prints a hello message")
   .option("-n, --name <name>", "Name to greet", "World")
   .action((options) => {
+    // eslint-disable-next-line no-console
     console.log(`Hello, ${options.name}!`);
   });

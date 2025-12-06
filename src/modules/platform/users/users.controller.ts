@@ -1,8 +1,9 @@
-import type { Request, Response } from "express";
 import type { AuthenticatedRequest } from "@/core/http/types";
 import { ok } from "@/shared/http/api-response";
+
 import type { UsersService } from "./users.service";
 import type { UpdateUserBody } from "./users.types";
+import type { Response } from "express";
 
 export class UsersController {
   constructor(private readonly service: UsersService) {}

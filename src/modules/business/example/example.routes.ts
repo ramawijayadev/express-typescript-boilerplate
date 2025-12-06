@@ -120,25 +120,24 @@ exampleRegistry.registerPath({
   },
   responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted"),
 });
+import type { Request } from "express"; // Import Request explicitly
 
+// Routes
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(req as any, res),
+  exampleController.list(req as unknown as Request<unknown, unknown, unknown, z.infer<typeof listExamplesQuerySchema>>, res),
 );
-
-// ... (Updating find)
 exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.find(req as any, res),
+  exampleController.find(req as unknown as Request<z.infer<typeof idParamSchema>>, res),
 );
-
-// ... (Updating update)
+exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
+  exampleController.create(req as unknown as Request<Record<string, string>, unknown, z.infer<typeof createExampleSchema>>, res),
+);
 exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  (req, res) => exampleController.update(req as any, res),
+  (req, res) => exampleController.update(req as unknown as Request<z.infer<typeof idParamSchema>, unknown, z.infer<typeof updateExampleSchema>>, res),
 );
-
-// ... (Updating delete)
 exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.delete(req as any, res),
+  exampleController.delete(req as unknown as Request<z.infer<typeof idParamSchema>>, res),
 );

@@ -1,9 +1,10 @@
-import request from "supertest";
 import { StatusCodes } from "http-status-codes";
+import request from "supertest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest"; // Import Vitest globals
+
 import { createApp } from "@/app/app"; // Import createApp instead of app
-import { db } from "@/core/database/connection";
 import { generateAccessToken } from "@/core/auth/jwt";
-import { describe, it, expect, beforeAll, afterAll } from "vitest"; // Import Vitest globals
+import { db } from "@/core/database/connection";
 
 describe("Users Routes Integration", () => {
   let token: string;
@@ -23,6 +24,7 @@ describe("Users Routes Integration", () => {
       userId = user.id;
       token = generateAccessToken({ userId });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Test setup failed:", error);
       throw error;
     }

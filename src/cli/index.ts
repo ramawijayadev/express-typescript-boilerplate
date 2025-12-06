@@ -1,4 +1,5 @@
 import { Command } from "commander";
+
 import { helloCommand } from "./commands/hello.command";
 
 const program = new Command();
