@@ -49,12 +49,7 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
 
 /**
  * Global application logger instance (Pino).
- * 
- * Features:
- * - Structured JSON logging.
- * - Automatic redaction of sensitive keys (passwords, tokens).
- * - Request context isolation (via AsyncLocalStorage).
- * - Multi-transport support (Console in Dev, File/Stream in Prod).
+ * Structured JSON logging with automatic redaction and request context isolation.
  */
 export const logger = pino({
   level: loggingConfig.level,

@@ -13,7 +13,6 @@ export interface SendEmailOptions {
 
 /**
  * Abstraction for Email Sending.
- * Allows swapping providers (SMTP, SendGrid, Amazon SES, Mock) easily.
  */
 export interface EmailSender {
   send(options: SendEmailOptions): Promise<void>;

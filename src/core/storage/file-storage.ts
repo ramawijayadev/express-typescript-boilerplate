@@ -1,26 +1,19 @@
 /**
  * Interface for File Storage operations.
- * Allows switching between Local and S3/Object Storage.
  */
 export interface FileStorage {
   /**
    * Upload a file buffer to storage.
-   * @param key - The unique path/key for the file.
-   * @param body - The file content buffer.
-   * @param contentType - MIME type.
-   * @returns The public URL of the uploaded file.
    */
   upload(key: string, body: Buffer, contentType: string): Promise<string>;
 
   /**
    * Delete a file from storage.
-   * @param key - The unique path/key of the file to delete.
    */
   delete(key: string): Promise<void>;
 
   /**
    * Get the public URL for a given key.
-   * @param key - The unique path/key.
    */
   getUrl(key: string): string;
 }

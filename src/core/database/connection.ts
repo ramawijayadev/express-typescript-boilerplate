@@ -34,8 +34,6 @@ function createClient(name: DatabaseConnectionName): PrismaClient {
 /**
  * Retrieves a singleton PrismaClient instance for the specified connection name.
  * Initializes the connection if it doesn't exist.
- *
- * @param name - Connection name (default: 'app').
  */
 export function connection(name?: DatabaseConnectionName): PrismaClient {
   const resolvedName = name ?? databaseConfig.default;

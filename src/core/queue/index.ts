@@ -12,8 +12,7 @@ export interface EmailJobData {
   text?: string;
 }
 
-// Separate interfaces for specific job types if needed, but for now generic email is fine for the worker
-// However, the abstraction requested specific methods.
+
 
 export interface JobQueue {
   enqueueEmailVerification(data: { userId: number; email: string; token: string }): Promise<void>;
