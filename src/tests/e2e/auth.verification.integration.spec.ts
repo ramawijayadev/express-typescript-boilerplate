@@ -1,3 +1,6 @@
+/**
+ * Integration tests for Auth Verification flows.
+ */
 import { type Server } from "http";
 
 import { StatusCodes } from "http-status-codes";
@@ -12,7 +15,7 @@ import type { User } from "@/generated/prisma";
 
 import type { Express } from "express";
 
-// Mock job queue to avoid Redis dependency and worker timing issues
+// Mock job queue to avoid Redis dependency
 vi.mock("@/core/queue", () => ({
   jobQueue: {
     enqueueEmailVerification: vi.fn(),
@@ -36,13 +39,13 @@ describe("Auth Verification & Password Reset Integration", () => {
   });
 
   beforeEach(async () => {
-    // Clean up
+
     await db().emailVerificationToken.deleteMany();
     await db().passwordResetToken.deleteMany();
     await db().userSession.deleteMany();
     await db().user.deleteMany();
 
-    // Create a base user
+
     testUser = await db().user.create({
       data: {
         name: "Test User",
@@ -57,7 +60,7 @@ describe("Auth Verification & Password Reset Integration", () => {
 
   describe("POST /auth/resend-verification", () => {
     it("should enqueue verification email for unverified user", async () => {
-      // Authenticate
+
       const { generateAccessToken } = await import("@/core/auth/jwt");
       const accessToken = generateAccessToken({ userId: testUser.id });
 
@@ -68,13 +71,13 @@ describe("Auth Verification & Password Reset Integration", () => {
       expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.data.message).toContain("verification email has been sent");
 
-      // Verify token created in DB
+
       const token = await db().emailVerificationToken.findFirst({
         where: { userId: testUser.id },
       });
       expect(token).toBeDefined();
 
-      // Verify job enqueued instead of checking email sender directly
+
       expect(jobQueue.enqueueEmailVerification).toHaveBeenCalledWith(expect.objectContaining({
          userId: testUser.id,
          email: testUser.email,
@@ -85,7 +88,7 @@ describe("Auth Verification & Password Reset Integration", () => {
 
   describe("POST /auth/verify-email", () => {
     it("should verify email with valid token", async () => {
-      // Create raw token
+
       const { randomBytes } = await import("node:crypto");
       const token = randomBytes(32).toString("hex");
       const tokenHash = hashToken(token);
@@ -157,7 +160,7 @@ describe("Auth Verification & Password Reset Integration", () => {
         },
       });
 
-      // valid password
+
       const newPassword = "NewPassword123";
 
       const res = await request(app)

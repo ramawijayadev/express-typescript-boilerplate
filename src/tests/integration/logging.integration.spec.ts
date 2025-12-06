@@ -7,7 +7,7 @@ import { logger } from "@/core/logging/logger";
 
 describe("Logging System Integration", () => {
   const app = createApp((app) => {
-    // Temporary route to test logging and errors
+
     app.get("/test-logging", (req, res) => {
       logger.info("Test log inside route");
       res.json({ message: "Hello", requestId: req.requestId });
@@ -23,7 +23,7 @@ describe("Logging System Integration", () => {
 
     expect(res.status).toBe(StatusCodes.OK);
     expect(res.body.requestId).toBeDefined();
-    // Validate UUID format
+
     expect(res.body.requestId).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
     );

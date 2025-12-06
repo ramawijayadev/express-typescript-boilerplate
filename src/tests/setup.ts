@@ -1,11 +1,10 @@
 /**
  * Global test setup file for Vitest.
- * Handles environment validation and global hook registration.
  */
 import { beforeAll } from "vitest";
 
 beforeAll(() => {
-  // GLOBAL DATABASE SAFETY CHECK
+
   const isLocal =
     process.env.DATABASE_URL?.includes("localhost") ||
     process.env.DATABASE_URL?.includes("127.0.0.1") ||
@@ -22,7 +21,7 @@ beforeAll(() => {
     );
   }
 
-  // Additional check for remote DBs (naive but helpful)
+
   if (!isLocal && !process.env.CI) {
     // Silent
   }

@@ -1,11 +1,15 @@
+/**
+ * K6 Soak Test.
+ * Validates system stability under sustained load.
+ */
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '2m', target: 50 }, // ramp-up to 50 users
-    { duration: '3h', target: 50 }, // stay at 50 users for 3 hours
-    { duration: '2m', target: 0 }, // ramp-down
+    { duration: '2m', target: 50 },
+    { duration: '3h', target: 50 },
+    { duration: '2m', target: 0 },
   ],
 };
 

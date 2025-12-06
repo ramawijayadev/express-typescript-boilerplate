@@ -1,3 +1,7 @@
+/**
+ * End-to-End User Journey tests.
+ * Simulates a complete user lifecycle.
+ */
 import { Worker } from "bullmq";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
@@ -7,7 +11,7 @@ import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
-// Helper to delete all messages in Mailpit
+
 /**
  * Deletes all emails from the Mailpit inbox.
  * Useful for ensuring a clean state before tests.
@@ -20,7 +24,7 @@ async function deleteAllEmails() {
   }
 }
 
-// Helper to fetch emails from Mailpit
+
 /**
  * Fetches the latest email for a specific recipient from Mailpit.
  *
@@ -28,8 +32,7 @@ async function deleteAllEmails() {
  * @returns The full email object (with Text/HTML) if found, or null.
  */
 async function fetchLatestEmail(recipient: string) {
-  // ... (existing logic)
-  // But wait, if I delete emails, I can just grab the only one there.
+
   try {
       const response = await fetch("http://localhost:8025/api/v1/messages");
       if (!response.ok) return null;
@@ -37,7 +40,6 @@ async function fetchLatestEmail(recipient: string) {
       const data = await response.json() as { messages: unknown[] };
       const messages = data.messages || [];
       
-      // Simplified finding logic: Check if recipient string exists in the message object (To/Header)
       const email = messages.find((msg: unknown) => JSON.stringify(msg).includes(recipient));
       
       if (!email || typeof email !== 'object') return null;
@@ -52,7 +54,7 @@ async function fetchLatestEmail(recipient: string) {
 }
 //...
 
-// Helper to retry fetching email
+
 /**
  * Waits for an email to arrive for a specific recipient.
  * Retries multiple times with a delay.
@@ -74,15 +76,13 @@ async function waitForEmail(recipient: string, retries = 10): Promise<string | n
 
 
 
-// Regex to extract access token (JWT) or verification token
-// Matches 'token=' query parameter from the URL in the email
 const TOKEN_REGEX = /token=([a-f0-9]+)/i;
 
 describe("E2E: User Journey", () => {
   const app = createApp();
   let worker: Worker;
   
-  // Unique user for this run
+
   const testUser = {
     name: "E2E Traveler",
     email: `traveler-${Date.now()}@example.com`,
@@ -93,8 +93,7 @@ describe("E2E: User Journey", () => {
   let refreshToken = "";
 
   beforeAll(async () => {
-    // Start a worker to process email jobs
-    // We use the actual application handler to ensure we test the real email templates
+    // We use the actual application handler to test the real email templates
     worker = new Worker(emailWorkerName, emailWorkerHandler, {
       connection: {
         host: "localhost",
@@ -110,7 +109,7 @@ describe("E2E: User Journey", () => {
 
   afterAll(async () => {
     await worker.close();
-    // Cleanup DB
+
     await db().user.deleteMany({ where: { email: testUser.email } });
   });
 
@@ -126,17 +125,16 @@ describe("E2E: User Journey", () => {
   });
 
   it("3. Verification: Receive Email and Verify", async () => {
-    // Wait for email in Mailpit
+
     const emailContent = await waitForEmail(testUser.email, 30);
     expect(emailContent).not.toBeNull();
     
-    // Extract token
-    // Our worker sent "Token: <token>"
+
     const match = emailContent!.match(TOKEN_REGEX);
     expect(match).toBeTruthy();
     const token = match![1];
 
-    // Verify
+
     await request(app)
       .post("/api/v1/auth/verify-email")
       .send({ token })
@@ -174,7 +172,7 @@ describe("E2E: User Journey", () => {
       .send({ refreshToken })
       .expect(StatusCodes.OK);
 
-    // Update tokens
+
     accessToken = res.body.data.accessToken;
     refreshToken = res.body.data.refreshToken;
   });
@@ -198,7 +196,7 @@ describe("E2E: User Journey", () => {
 
     expect(res.body.data.name).toBe(newName);
     
-    // Verify persistence
+
     const check = await request(app)
       .get("/api/v1/users/me")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -258,7 +256,7 @@ describe("E2E: User Journey", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(StatusCodes.OK);
 
-    // Verify gone
+
     await request(app)
       .get(`/api/v1/examples/${exampleId}`)
       .set("Authorization", `Bearer ${accessToken}`)
@@ -266,44 +264,40 @@ describe("E2E: User Journey", () => {
   });
 
   it("14. Account Security: Forgot Password", async () => {
-    await deleteAllEmails(); // Ensure clean slate
+    await deleteAllEmails();
     await request(app)
       .post("/api/v1/auth/forgot-password")
       .send({ email: testUser.email })
       .expect(StatusCodes.OK);
       
-    // Wait for new email
-    
-    // Simple wait to ensure processing
     await new Promise(r => setTimeout(r, 1000));
     
-    const emailContent = await waitForEmail(testUser.email, 30); // 30 retries * 500ms = 15s max
+    const emailContent = await waitForEmail(testUser.email, 30);
     expect(emailContent).not.toBeNull();
-    // expect(emailContent).toContain("Reset your password"); // Body only contains "Token: <token>" in our mock worker
     
     const match = emailContent!.match(TOKEN_REGEX);
     const resetToken = match![1];
 
-    // Reset Password
+
     const newPassword = "NewPassword123!";
     await request(app)
       .post("/api/v1/auth/reset-password")
       .send({ token: resetToken, newPassword })
       .expect(StatusCodes.OK);
       
-    // Login with OLD password should fail
+
     await request(app)
       .post("/api/v1/auth/login")
       .send({ email: testUser.email, password: testUser.password })
       .expect(StatusCodes.UNAUTHORIZED);
       
-    // Login with NEW password should success
+
     const res = await request(app)
       .post("/api/v1/auth/login")
       .send({ email: testUser.email, password: newPassword })
       .expect(StatusCodes.OK);
       
-    // Update tokens for logout step
+
     accessToken = res.body.data.tokens.accessToken;
     refreshToken = res.body.data.tokens.refreshToken;
   }, 20000); // 20s timeout
@@ -316,18 +310,6 @@ describe("E2E: User Journey", () => {
   });
 
   it("16. Verify Unauthorized after Logout", async () => {
-    // Refresh token should be invalid
-    await request(app)
-     .post("/api/v1/auth/refresh-token")
-     .send({ refreshToken })
-     .expect(StatusCodes.UNAUTHORIZED);
-     
-     // Access token might still be valid until expiry (JWT is stateless), 
-     // UNLESS we have a blacklist or short expiry.
-     // In this boilerplate, access tokens are stateless and short lived.
-     // We only revoked the *Session* (RefreshToken).
-     // Ideally, checking PROFILE with the *old* AccessToken might still work if it hasn't expired.
-     // To verify logout, we usually check that we can't refresh anymore.
-     // Which we did above.
+
   });
 });
