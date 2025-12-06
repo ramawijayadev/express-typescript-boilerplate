@@ -10,7 +10,7 @@ import {
   verificationRateLimiter,
 } from "@/core/http/middlewares/rate-limiters";
 import { validateBody } from "@/core/http/middlewares/validation.middleware";
-import type { AuthenticatedRequest, TypedRequest } from "@/core/http/types";
+import { authenticatedHandler, typedHandler } from "@/core/http/types";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
 import { AuthController } from "./auth.controller";
@@ -62,8 +62,8 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User registered", 201, [400, 422, 500]),
 });
 
-authRouter.post("/register", registerRateLimiter, validateBody(registerSchema), (req, res) =>
-  authController.register(req as TypedRequest<RegisterBody>, res),
+authRouter.post("/register", registerRateLimiter, validateBody(registerSchema), 
+  typedHandler<RegisterBody>((req, res, next) => authController.register(req, res))
 );
 
 authRegistry.registerPath({
@@ -82,8 +82,8 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User logged in", 200, [400, 422, 500]),
 });
 
-authRouter.post("/login", loginRateLimiter, validateBody(loginSchema), (req, res) =>
-  authController.login(req as TypedRequest<LoginBody>, res),
+authRouter.post("/login", loginRateLimiter, validateBody(loginSchema), 
+  typedHandler<LoginBody>((req, res, next) => authController.login(req, res))
 );
 
 authRegistry.registerPath({
@@ -102,8 +102,8 @@ authRegistry.registerPath({
   responses: createApiResponse(refreshTokenResponseSchema, "Token refreshed", 200, [400, 422, 500]),
 });
 
-authRouter.post("/refresh-token", validateBody(refreshTokenSchema), (req, res) =>
-  authController.refreshToken(req as TypedRequest<RefreshTokenBody>, res),
+authRouter.post("/refresh-token", validateBody(refreshTokenSchema), 
+  typedHandler<RefreshTokenBody>((req, res, next) => authController.refreshToken(req, res))
 );
 
 authRegistry.registerPath({
@@ -122,8 +122,8 @@ authRegistry.registerPath({
   responses: createApiResponse(logoutResponseSchema, "User logged out", 200, [400, 422, 500]),
 });
 
-authRouter.post("/logout", validateBody(refreshTokenSchema), (req, res) =>
-  authController.logout(req as TypedRequest<RefreshTokenBody>, res),
+authRouter.post("/logout", validateBody(refreshTokenSchema), 
+  typedHandler<RefreshTokenBody>((req, res, next) => authController.logout(req, res))
 );
 
 authRegistry.registerPath({
@@ -134,8 +134,8 @@ authRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.post("/revoke-all", authenticate, (req, res) =>
-  authController.revokeAll(req as AuthenticatedRequest, res),
+authRouter.post("/revoke-all", authenticate, 
+  authenticatedHandler((req, res, next) => authController.revokeAll(req, res))
 );
 
 authRegistry.registerPath({
@@ -146,8 +146,8 @@ authRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.get("/profile", authenticate, (req, res) =>
-  authController.getProfile(req as AuthenticatedRequest, res),
+authRouter.get("/profile", authenticate, 
+  authenticatedHandler((req, res, next) => authController.getProfile(req, res))
 );
 
 authRegistry.registerPath({
@@ -166,8 +166,8 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Email verified", 200, [400, 422, 500]),
 });
 
-authRouter.post("/verify-email", verificationRateLimiter, validateBody(emailVerificationSchema), (req, res) =>
-  authController.verifyEmail(req as TypedRequest<EmailVerificationBody>, res),
+authRouter.post("/verify-email", verificationRateLimiter, validateBody(emailVerificationSchema), 
+  typedHandler<EmailVerificationBody>((req, res, next) => authController.verifyEmail(req, res))
 );
 
 authRegistry.registerPath({
@@ -178,8 +178,8 @@ authRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.post("/resend-verification", verificationRateLimiter, authenticate, (req, res) =>
-  authController.resendVerification(req as AuthenticatedRequest, res),
+authRouter.post("/resend-verification", verificationRateLimiter, authenticate, 
+  authenticatedHandler((req, res, next) => authController.resendVerification(req, res))
 );
 
 authRegistry.registerPath({
@@ -198,8 +198,8 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Password reset email sent", 200, [400, 422, 500]),
 });
 
-authRouter.post("/forgot-password", passwordResetRateLimiter, validateBody(forgotPasswordSchema), (req, res) =>
-  authController.forgotPassword(req as TypedRequest<ForgotPasswordBody>, res),
+authRouter.post("/forgot-password", passwordResetRateLimiter, validateBody(forgotPasswordSchema), 
+  typedHandler<ForgotPasswordBody>((req, res, next) => authController.forgotPassword(req, res))
 );
 
 authRegistry.registerPath({
@@ -218,6 +218,6 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Password reset successfully", 200, [400, 422, 500]),
 });
 
-authRouter.post("/reset-password", verificationRateLimiter, validateBody(resetPasswordSchema), (req, res) =>
-  authController.resetPassword(req as TypedRequest<ResetPasswordBody>, res),
+authRouter.post("/reset-password", verificationRateLimiter, validateBody(resetPasswordSchema), 
+  typedHandler<ResetPasswordBody>((req, res, next) => authController.resetPassword(req, res))
 );

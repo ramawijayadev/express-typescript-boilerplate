@@ -98,6 +98,7 @@ export function createApiResponse(
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return responses as any;
 }
 
@@ -142,5 +143,6 @@ export function createApiPaginatedResponse(
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return responses as any;
 }

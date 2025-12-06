@@ -3,7 +3,7 @@ import { Router } from "express";
 import { z } from "zod";
 
 import { validateBody, validateParams, validateQuery } from "@/core/http/middlewares/validation.middleware";
-import type { TypedRequest } from "@/core/http/types";
+import { typedHandler } from "@/core/http/types";
 import {
   createApiPaginatedResponse,
   createApiResponse,
@@ -42,8 +42,9 @@ exampleRegistry.registerPath({
   responses: createApiPaginatedResponse(ExampleSchema, "List of examples", 200, [400, 422, 500]),
 });
 
-exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(req as unknown as TypedRequest<any, ListExamplesQuery>, res),
+exampleRouter.get("/", validateQuery(listExamplesQuerySchema),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
+  typedHandler<any, ListExamplesQuery>((req, res, next) => exampleController.list(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -56,8 +57,9 @@ exampleRegistry.registerPath({
   responses: createApiResponse(ExampleSchema, "Example details", 200, [400, 404, 500]),
 });
 
-exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.find(req as unknown as TypedRequest<any, any, IdParam>, res),
+exampleRouter.get("/:id", validateParams(idParamSchema),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
+  typedHandler<any, any, IdParam>((req, res, next) => exampleController.find(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -76,8 +78,8 @@ exampleRegistry.registerPath({
   responses: createApiResponse(ExampleSchema, "Example created", 201, [400, 422, 500]),
 });
 
-exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
-  exampleController.create(req as TypedRequest<CreateExampleInput>, res),
+exampleRouter.post("/", validateBody(createExampleSchema),
+  typedHandler<CreateExampleInput>((req, res, next) => exampleController.create(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -101,7 +103,8 @@ exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  (req, res) => exampleController.update(req as unknown as TypedRequest<UpdateExampleInput, any, IdParam>, res),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
+  typedHandler<UpdateExampleInput, any, IdParam>((req, res, next) => exampleController.update(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -114,6 +117,7 @@ exampleRegistry.registerPath({
   responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted", 200, [400, 404, 500]),
 });
 
-exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.delete(req as unknown as TypedRequest<any, any, IdParam>, res),
+exampleRouter.delete("/:id", validateParams(idParamSchema),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
+  typedHandler<any, any, IdParam>((req, res, next) => exampleController.delete(req, res))
 );

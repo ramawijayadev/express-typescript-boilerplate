@@ -1,15 +1,11 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
-import { z } from "zod";
 
 import { db } from "@/core/database/connection";
 import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
 import { validateBody } from "@/core/http/middlewares/validation.middleware";
-import type { AuthenticatedRequest } from "@/core/http/types";
-import {
-  createApiPaginatedResponse,
-  createApiResponse,
-} from "@/shared/open-api/openapi-response-builders";
+import { authenticatedHandler } from "@/core/http/types";
+import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
 import { UsersController } from "./users.controller";
 import { UsersRepository } from "./users.repository";
@@ -31,7 +27,9 @@ export const usersRouter = Router();
 
 usersRouter.use(authenticate);
 
-usersRouter.get("/me", authenticate, (req, res) => controller.me(req as AuthenticatedRequest, res));
+usersRouter.get("/me", authenticate, 
+  authenticatedHandler((req, res, next) => controller.me(req, res))
+);
 
 userRegistry.registerPath({
   method: "get",
@@ -41,8 +39,8 @@ userRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-usersRouter.patch("/me", authenticate, validateBody(updateUserSchema), (req, res) =>
-  controller.updateMe(req as AuthenticatedRequest<UpdateUserBody>, res),
+usersRouter.patch("/me", authenticate, validateBody(updateUserSchema),
+  authenticatedHandler<UpdateUserBody>((req, res, next) => controller.updateMe(req, res))
 );
 
 userRegistry.registerPath({
