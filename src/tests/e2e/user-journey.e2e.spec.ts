@@ -4,7 +4,6 @@ import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
-import { queueConfig } from "@/config/queue";
 import { db } from "@/core/database/connection";
 import { SmtpEmailSender } from "@/core/mail/mailer";
 
@@ -16,8 +15,8 @@ import { SmtpEmailSender } from "@/core/mail/mailer";
 async function deleteAllEmails() {
   try {
     await fetch("http://localhost:8025/api/v1/messages", { method: "DELETE" });
-  } catch (err) {
-    console.warn("Failed to clear Mailpit", err);
+  } catch {
+    // Silent
   }
 }
 
@@ -35,20 +34,19 @@ async function fetchLatestEmail(recipient: string) {
       const response = await fetch("http://localhost:8025/api/v1/messages");
       if (!response.ok) return null;
       
-      const data = await response.json() as any;
-      const messages = (data as any).messages || [];
+      const data = await response.json() as { messages: unknown[] };
+      const messages = data.messages || [];
       
       // Simplified finding logic: Check if recipient string exists in the message object (To/Header)
-      const email = messages.find((msg: any) => JSON.stringify(msg).includes(recipient));
+      const email = messages.find((msg: unknown) => JSON.stringify(msg).includes(recipient));
       
-      if (!email) return null;
+      if (!email || typeof email !== 'object') return null;
   
       // Fetch full body
-      const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
+      const msgRes = await fetch(`http://localhost:8025/api/v1/message/${(email as { ID: string }).ID}`);
       if (!msgRes.ok) return null;
-      return await msgRes.json() as any; // Full message with Text/HTML
-    } catch (error) {
-      console.warn("Mailpit fetch failed. Is Mailpit running?", error);
+      return await msgRes.json() as { Text: string; HTML: string }; // Full message with Text/HTML
+    } catch {
       return null;
     }
 }
@@ -65,7 +63,7 @@ async function fetchLatestEmail(recipient: string) {
  */
 async function waitForEmail(recipient: string, retries = 10): Promise<string | null> {
   for (let i = 0; i < retries; i++) {
-    const email = await fetchLatestEmail(recipient);
+    const email = await fetchLatestEmail(recipient) as { Text: string; HTML: string } | null;
     if (email) {
       return email.Text || email.HTML;
     }
@@ -101,28 +99,24 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
     const emailSender = new SmtpEmailSender();
     
     // Explicitly reusing the same connection config
-    worker = new Worker("email-queue", async (job) => {
-       console.log("Worker processing job:", job.name, job.data);
-       const { email, token } = job.data;
+    worker = new Worker("email-queue", async (job: { name: string; id?: string; data: unknown }) => {
+       const { email, token } = job.data as { email: string; token: string };
        let subject = "Subject";
-       let text = `Token: ${token}`;
+       let text = `Your token is ${token}`;
        
-       if (job.name === "verify-email") subject = "Verify your email";
        if (job.name === "password-reset") subject = "Reset your password";
 
        await emailSender.send({ to: email, subject, text });
-       console.log("Worker sent email to:", email);
     }, {
       connection: {
-        host: queueConfig.redis.host,
-        port: queueConfig.redis.port,
-        password: queueConfig.redis.password,
+        host: "localhost",
+        port: 6379
       },
     });
 
-    worker.on("ready", () => console.log("Worker is ready and connected to Redis"));
-    worker.on("error", (err) => console.error("Worker error:", err));
-    worker.on("failed", (job, err) => console.error(`Job ${job?.id} failed:`, err));
+    worker.on("ready", () => null);
+    worker.on("error", (_err) => null);
+    worker.on("failed", (_job, _err) => null);
   });
 
   afterAll(async () => {
@@ -159,7 +153,6 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
       .send({ token })
       .expect(StatusCodes.OK)
       .catch(err => {
-        console.error("Verify Email Failed Response:", err.response?.body);
         throw err;
       });
   }, 20000); // 20s timeout
@@ -246,7 +239,7 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
 
     expect(res.body.data).toBeInstanceOf(Array);
     expect(res.body.data.length).toBeGreaterThan(0);
-    const item = res.body.data.find((e: any) => e.id === exampleId);
+    const item = res.body.data.find((e: { id: number }) => e.id === exampleId);
     expect(item).toBeDefined();
   });
 

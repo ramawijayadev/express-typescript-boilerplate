@@ -26,12 +26,17 @@ export class BullmqJobQueue implements JobQueue {
   private connection: IORedis;
 
   constructor() {
-    this.connection = new IORedis({
+    const redisOpts = {
       host: queueConfig.redis.host,
-      port: queueConfig.redis.port,
-      password: queueConfig.redis.password,
+      port: Number(queueConfig.redis.port),
       maxRetriesPerRequest: null,
-    });
+    };
+    // Proper handling for exactOptionalPropertyTypes
+    if (queueConfig.redis.password) {
+      Object.assign(redisOpts, { password: queueConfig.redis.password });
+    }
+
+    this.connection = new IORedis(redisOpts);
 
     this.emailQueue = new Queue("email-queue", {
       connection: this.connection,

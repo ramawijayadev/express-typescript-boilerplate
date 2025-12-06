@@ -1,16 +1,20 @@
 import type { NextFunction, Request, Response } from "express";
 
-// ESLint: Using 'any' is intentional here to match Express's type system
+// Safe definition for Express Query Parameters ensuring no explicit 'any'
+export interface SafeParsedQs {
+  [key: string]: undefined | string | string[] | SafeParsedQs | SafeParsedQs[];
+}
+
 // Express uses 'any' for Params/Query/ResBody, and strict 'unknown' causes type incompatibility
 export type TypedRequest<
   Body = unknown,
-  Query = any,
+  Query = SafeParsedQs,
   Params = Record<string, string>,
 > = Request<Params, unknown, Body, Query>;
 
 export interface AuthenticatedRequest<
   Body = unknown,
-  Query = any,
+  Query = SafeParsedQs,
   Params = Record<string, string>,
 > extends TypedRequest<Body, Query, Params> {
   user: {
@@ -27,7 +31,7 @@ export interface AuthenticatedRequest<
  *   typedHandler<LoginBody>(authController.login)
  * );
  */
-export function typedHandler<Body = unknown, Query = any, Params = Record<string, string>>(
+export function typedHandler<Body = unknown, Query = SafeParsedQs, Params = Record<string, string>>(
   handler: (
     req: TypedRequest<Body, Query, Params>,
     res: Response,
@@ -52,7 +56,7 @@ export function typedHandler<Body = unknown, Query = any, Params = Record<string
  *   authenticatedHandler<UpdateProfileBody>(authController.updateProfile)
  * );
  */
-export function authenticatedHandler<Body = unknown, Query = any, Params = Record<string, string>>(
+export function authenticatedHandler<Body = unknown, Query = SafeParsedQs, Params = Record<string, string>>(
   handler: (
     req: AuthenticatedRequest<Body, Query, Params>,
     res: Response,

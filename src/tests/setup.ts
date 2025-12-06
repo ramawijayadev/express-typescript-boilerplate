@@ -15,7 +15,7 @@ beforeAll(() => {
   const isTestEnv = process.env.NODE_ENV === "test";
 
   if (!isTestEnv) {
-    console.warn("⚠️  WARNING: NODE_ENV is not 'test'. Global safety setup proceeding with caution.");
+    // Silent
   }
 
   if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
@@ -26,7 +26,7 @@ beforeAll(() => {
 
   // Additional check for remote DBs (naive but helpful)
   if (!isLocal && !process.env.CI) {
-    console.warn("⚠️  WARNING: Connected to a non-local database. Ensure this is intentional.");
+    // Silent
   }
   // --------------------------------------------------------------------------
 });

@@ -16,21 +16,16 @@ describe("Users Routes Integration", () => {
   const app = createApp(); // Instantiate app
 
   beforeAll(async () => {
-    try {
-      // Create a test user
-      const user = await db().user.create({
-        data: {
-          name: "Test User",
-          email: `test-${Date.now()}@example.com`,
-          password: "hashed_password", // Schema uses 'password', not 'passwordHash'
-        },
-      });
-      userId = user.id;
-      token = generateAccessToken({ userId });
-    } catch (error) {
-      console.error("Test setup failed:", error);
-      throw error;
-    }
+    // Create a test user
+    const user = await db().user.create({
+      data: {
+        name: "Test User",
+        email: `test-users-${Date.now()}@example.com`,
+        password: "hashed_password", // Schema uses 'password', not 'passwordHash'
+      },
+    });
+    userId = user.id;
+    token = generateAccessToken({ userId });
   });
 
   afterAll(async () => {

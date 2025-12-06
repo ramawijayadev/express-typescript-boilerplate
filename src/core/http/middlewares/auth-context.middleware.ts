@@ -9,7 +9,7 @@ export interface AuthContext {
 declare global {
   namespace Express {
     interface Request {
-      auth?: AuthContext;
+      auth: AuthContext | undefined;
     }
   }
 }

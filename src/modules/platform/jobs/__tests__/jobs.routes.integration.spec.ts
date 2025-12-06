@@ -17,7 +17,6 @@ describe("Jobs Routes Integration", () => {
   const app = createApp();
 
   beforeAll(async () => {
-    try {
       // Create a test user
       const user = await db().user.create({
         data: {
@@ -28,10 +27,6 @@ describe("Jobs Routes Integration", () => {
       });
       userId = user.id;
       token = generateAccessToken({ userId });
-    } catch (error) {
-      console.error("Test setup failed:", error);
-      throw error;
-    }
   });
 
   afterAll(async () => {

@@ -64,9 +64,9 @@ describe("JobsService", () => {
 
       expect(result.total).toBe(2);
       expect(result.jobs).toHaveLength(2);
-      expect(result.jobs[0].id).toBe("1");
-      expect(result.jobs[0].jobName).toBe("verify-email");
-      expect(result.jobs[1].id).toBe("2");
+      expect(result.jobs[0]?.id).toBe("1");
+      expect(result.jobs[0]?.jobName).toBe("verify-email");
+      expect(result.jobs[1]?.id).toBe("2");
       expect(mockRepo.getFailedJobs).toHaveBeenCalledTimes(1);
     });
 

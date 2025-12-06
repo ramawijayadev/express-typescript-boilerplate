@@ -76,7 +76,7 @@ export class ExampleRepository {
     return db().example.create({
       data: {
         name: data.name,
-        description: data.description,
+        description: data.description ?? null,
       },
     });
   }

@@ -29,16 +29,16 @@ export class AuthRepository {
     userId: number;
     refreshTokenHash: string;
     expiresAt: Date;
-    userAgent?: string;
-    ipAddress?: string;
+    userAgent?: string | null;
+    ipAddress?: string | null;
   }) {
     return db().userSession.create({
       data: {
         userId: data.userId,
         refreshTokenHash: data.refreshTokenHash,
         expiresAt: data.expiresAt,
-        userAgent: data.userAgent,
-        ipAddress: data.ipAddress,
+        userAgent: data.userAgent ?? null,
+        ipAddress: data.ipAddress ?? null,
       },
     });
   }

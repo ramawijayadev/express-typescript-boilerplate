@@ -20,7 +20,8 @@ export interface TokenPayload {
  */
 export function generateAccessToken(payload: TokenPayload): string {
   return jwt.sign({ ...payload }, authConfig.jwt.secret as jwt.Secret, {
-    expiresIn: authConfig.jwt.accessExpiration as jwt.SignOptions["expiresIn"],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expiresIn: authConfig.jwt.accessExpiration as any,
   });
 }
 
@@ -33,7 +34,8 @@ export function generateAccessToken(payload: TokenPayload): string {
 export function generateRefreshToken(payload: TokenPayload): string {
   const jti = randomUUID();
   return jwt.sign({ ...payload, jti }, authConfig.jwt.secret as jwt.Secret, {
-    expiresIn: authConfig.jwt.refreshExpiration as jwt.SignOptions["expiresIn"],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expiresIn: authConfig.jwt.refreshExpiration as any,
   });
 }
 

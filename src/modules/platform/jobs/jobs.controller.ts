@@ -33,7 +33,7 @@ export class JobsController {
    * @returns A promise that resolves to the response.
    */
   async retryFailedJob(req: Request, res: Response) {
-    await this.service.retryFailedJob(req.params.id);
+    await this.service.retryFailedJob(req.params.id!);
     return ok(res, { message: "Job retry enqueued successfully" });
   }
 
@@ -45,7 +45,7 @@ export class JobsController {
    * @returns A promise that resolves to the response.
    */
   async removeFailedJob(req: Request, res: Response) {
-    await this.service.removeFailedJob(req.params.id);
+    await this.service.removeFailedJob(req.params.id!);
     return ok(res, { message: "Failed job removed successfully" });
   }
 

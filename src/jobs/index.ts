@@ -13,12 +13,16 @@ let worker: Worker | undefined;
  * Sets up Redis connection and instantiates workers.
  */
 export function initJobs() {
-  const connection = new IORedis({
+  const redisOpts = {
     host: queueConfig.redis.host,
-    port: queueConfig.redis.port,
-    password: queueConfig.redis.password,
+    port: Number(queueConfig.redis.port),
     maxRetriesPerRequest: null,
-  });
+  };
+  if (queueConfig.redis.password) {
+    Object.assign(redisOpts, { password: queueConfig.redis.password });
+  }
+
+  const connection = new IORedis(redisOpts);
 
   worker = new Worker(emailWorkerName, emailWorkerHandler, {
     connection,

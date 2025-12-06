@@ -127,8 +127,8 @@ export class AuthService {
       userId: user.id,
       refreshTokenHash,
       expiresAt,
-      userAgent: meta?.userAgent,
-      ipAddress: meta?.ip,
+      userAgent: meta?.userAgent ?? null,
+      ipAddress: meta?.ip ?? null,
     });
 
     return {

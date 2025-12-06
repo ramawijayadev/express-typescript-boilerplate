@@ -27,8 +27,8 @@ export class AuthController {
    */
   async register(req: Request<unknown, unknown, RegisterBody>, res: Response) {
     const meta = {
-      ip: req.ip,
-      userAgent: req.get("User-Agent"),
+      ip: req.ip ?? "127.0.0.1",
+      userAgent: req.get("User-Agent") ?? "unknown",
     };
     const result = await this.service.register(req.body, meta);
     return created(res, result);
@@ -41,8 +41,8 @@ export class AuthController {
    */
   async login(req: Request<unknown, unknown, LoginBody>, res: Response) {
     const meta = {
-      ip: req.ip,
-      userAgent: req.get("User-Agent"),
+      ip: req.ip ?? "127.0.0.1",
+      userAgent: req.get("User-Agent") ?? "unknown",
     };
     const result = await this.service.login(req.body, meta);
     return ok(res, result);

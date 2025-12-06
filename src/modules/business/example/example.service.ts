@@ -23,7 +23,11 @@ export class ExampleService {
    * @returns A promise that resolves to a paginated result of examples.
    */
   async list(query: ListExamplesQuery) {
-    return this.repo.findAll({ search: query.search }, { page: query.page, limit: query.limit });
+    const filter: { search?: string } = {};
+    if (query.search) {
+      filter.search = query.search;
+    }
+    return this.repo.findAll(filter, { page: query.page ?? 1, limit: query.limit ?? 10 });
   }
 
   /**
@@ -54,7 +58,7 @@ export class ExampleService {
   async create(input: CreateExampleInput) {
     return this.repo.create({
       name: input.name,
-      description: input.description,
+      description: input.description ?? null,
     });
   }
 
@@ -69,10 +73,11 @@ export class ExampleService {
    * @throws {AppError} 404 - If the example is not found.
    */
   async update(id: ExampleId, input: UpdateExampleInput) {
-    const updated = await this.repo.update(id, {
-      name: input.name,
-      description: input.description,
-    });
+    const data: { name?: string; description?: string | null } = {};
+    if (input.name !== undefined) data.name = input.name;
+    if (input.description !== undefined) data.description = input.description;
+
+    const updated = await this.repo.update(id, data);
 
     if (!updated) {
       throw new AppError(StatusCodes.NOT_FOUND, "Example not found");

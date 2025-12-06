@@ -22,7 +22,7 @@ declare global {
  * Throws 401 if token is missing or invalid.
  */
 export function authenticate(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization as string | undefined;
 
   if (!authHeader?.startsWith("Bearer ")) {
     next(new AppError(StatusCodes.UNAUTHORIZED, "No token provided"));
@@ -30,6 +30,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 
   const token = authHeader.split(" ")[1];
+  if (!token) {
+     next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token format"));
+     return;
+  }
 
   try {
     // Payload has userId as number from jwt verify
