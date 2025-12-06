@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
+import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
 // Helper to delete all messages in Mailpit
 /**
@@ -71,7 +72,7 @@ async function waitForEmail(recipient: string, retries = 10): Promise<string | n
   return null;
 }
 
-import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
+
 
 // Regex to extract access token (JWT) or verification token
 // Matches 'token=' query parameter from the URL in the email
