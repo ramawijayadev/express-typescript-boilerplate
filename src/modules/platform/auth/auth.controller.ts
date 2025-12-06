@@ -14,16 +14,10 @@ import type { Request, Response } from "express";
 
 
 export class AuthController {
-  /**
-   * Creates an instance of AuthController.
-   * @param service - The auth service.
-   */
   constructor(private readonly service: AuthService) {}
 
   /**
    * Registers a new user.
-   * @param req - Request with register body.
-   * @param res - Response.
    */
   async register(req: Request<unknown, unknown, RegisterBody>, res: Response) {
     const meta = {
@@ -36,8 +30,6 @@ export class AuthController {
 
   /**
    * Logs in a user.
-   * @param req - Request with login body.
-   * @param res - Response.
    */
   async login(req: Request<unknown, unknown, LoginBody>, res: Response) {
     const meta = {
@@ -50,8 +42,6 @@ export class AuthController {
 
   /**
    * Refreshes the access token.
-   * @param req - Request with refresh token in body.
-   * @param res - Response.
    */
   async refreshToken(req: Request<unknown, unknown, RefreshTokenBody>, res: Response) {
     const result = await this.service.refreshToken(req.body.refreshToken);
@@ -60,8 +50,6 @@ export class AuthController {
 
   /**
    * Gets the authenticated user's profile.
-   * @param req - Authenticated request.
-   * @param res - Response.
    */
   async getProfile(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
@@ -72,8 +60,6 @@ export class AuthController {
 
   /**
    * Logs out the user (revokes refresh token).
-   * @param req - Request with refresh token in body.
-   * @param res - Response.
    */
   async logout(req: Request<unknown, unknown, RefreshTokenBody>, res: Response) {
     await this.service.logout(req.body.refreshToken);
@@ -82,8 +68,6 @@ export class AuthController {
 
   /**
    * Revokes all sessions for the authenticated user.
-   * @param req - Authenticated request.
-   * @param res - Response.
    */
   async revokeAll(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
@@ -93,8 +77,6 @@ export class AuthController {
 
   /**
    * Verifies a user's email.
-   * @param req - Request with verification token.
-   * @param res - Response.
    */
   async verifyEmail(req: Request<unknown, unknown, EmailVerificationBody>, res: Response) {
     await this.service.verifyEmail(req.body.token);
@@ -103,8 +85,6 @@ export class AuthController {
 
   /**
    * Resends the verification email.
-   * @param req - Authenticated request (user is logged in but not verified).
-   * @param res - Response.
    */
   async resendVerification(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
@@ -116,8 +96,6 @@ export class AuthController {
 
   /**
    * Requests a password reset email.
-   * @param req - Request with email.
-   * @param res - Response.
    */
   async forgotPassword(req: Request<unknown, unknown, ForgotPasswordBody>, res: Response) {
     await this.service.forgotPassword(req.body.email);
@@ -126,8 +104,6 @@ export class AuthController {
 
   /**
    * Resets the password using a token.
-   * @param req - Request with token and new password.
-   * @param res - Response.
    */
   async resetPassword(req: Request<unknown, unknown, ResetPasswordBody>, res: Response) {
     await this.service.resetPassword(req.body.token, req.body.newPassword);

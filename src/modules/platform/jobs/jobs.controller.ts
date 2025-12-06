@@ -7,18 +7,10 @@ import type { Request, Response } from "express";
  * Controller for handling job management requests.
  */
 export class JobsController {
-  /**
-   * Creates an instance of JobsController.
-   * @param service - The jobs service.
-   */
   constructor(private readonly service: JobsService) {}
 
   /**
    * Lists all failed jobs.
-   *
-   * @param _req - The request object.
-   * @param res - The response object.
-   * @returns A promise that resolves to the response.
    */
   async listFailedJobs(_req: Request, res: Response) {
     const result = await this.service.listFailedJobs();
@@ -27,10 +19,6 @@ export class JobsController {
 
   /**
    * Retries a specific failed job.
-   *
-   * @param req - The request object.
-   * @param res - The response object.
-   * @returns A promise that resolves to the response.
    */
   async retryFailedJob(req: Request, res: Response) {
     await this.service.retryFailedJob(req.params.id!);
@@ -39,10 +27,6 @@ export class JobsController {
 
   /**
    * Removes a specific failed job.
-   *
-   * @param req - The request object.
-   * @param res - The response object.
-   * @returns A promise that resolves to the response.
    */
   async removeFailedJob(req: Request, res: Response) {
     await this.service.removeFailedJob(req.params.id!);
@@ -51,10 +35,6 @@ export class JobsController {
 
   /**
    * Cleans up old failed jobs.
-   *
-   * @param _req - The request object.
-   * @param res - The response object.
-   * @returns A promise that resolves to the response.
    */
   async cleanupOldFailedJobs(_req: Request, res: Response) {
     const result = await this.service.cleanupOldFailedJobs();

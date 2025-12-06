@@ -1,6 +1,5 @@
 /**
  * Integration tests for User Session management.
- * Verifies session creation, rotation, and revocation directly against the database.
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
@@ -18,7 +17,7 @@ describe("Auth Session Management (Integrations)", () => {
   const authRepository = new AuthRepository();
 
   beforeEach(async () => {
-    // Clean up DB before each test
+
     await db().userSession.deleteMany();
     await db().user.deleteMany();
   });
@@ -64,7 +63,6 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const oldRefreshToken = loginRes.body.data.tokens.refreshToken;
 
-      // Use refresh token
       const refreshRes = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: oldRefreshToken });
@@ -91,12 +89,12 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const firstRefreshToken = loginRes.body.data.tokens.refreshToken;
 
-      // Rotate once
+
       await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: firstRefreshToken });
 
-      // Try to use old token again
+
       const reuseRes = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: firstRefreshToken });
@@ -206,30 +204,30 @@ describe("Auth Session Management (Integrations)", () => {
     it("should support independent multi-device sessions", async () => {
       await createUser();
 
-      // Device A Login
+
       const loginA = await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
         password: "Password123",
       });
       const tokenA = loginA.body.data.tokens.refreshToken;
 
-      // Device B Login
+
       const loginB = await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
         password: "Password123",
       });
       const tokenB = loginB.body.data.tokens.refreshToken;
 
-      // Logout Device A
+
       await request(app).post("/api/v1/auth/logout").send({ refreshToken: tokenA });
 
-      // Device A Refresh -> Fail
+
       const refreshA = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: tokenA });
       expect(refreshA.status).toBe(StatusCodes.UNAUTHORIZED);
 
-      // Device B Refresh -> OK
+
       const refreshB = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: tokenB });

@@ -1,6 +1,5 @@
 /**
  * Integration tests for Jobs Routes.
- * Tests the complete flow of managing failed jobs via API endpoints.
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
@@ -17,7 +16,7 @@ describe("Jobs Routes Integration", () => {
   const app = createApp();
 
   beforeAll(async () => {
-      // Create a test user
+
       const user = await db().user.create({
         data: {
           name: "Test User",
@@ -32,7 +31,7 @@ describe("Jobs Routes Integration", () => {
   afterAll(async () => {
     await db().user.deleteMany({ where: { email: { contains: "test-jobs-" } } });
     
-    // Clean up any test jobs
+
     const dlq = jobQueue.getDeadLetterQueue();
     const jobs = await dlq.getJobs(["completed", "failed", "waiting", "active"], 0, -1);
     for (const job of jobs) {

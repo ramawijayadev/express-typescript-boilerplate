@@ -1,7 +1,5 @@
 /**
  * Integration tests for Account Locking mechanism.
- * Verifies that the system correctly locks accounts after failed login attempts
- * and unlocks them after the duration expires.
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
@@ -54,7 +52,7 @@ describe("Auth Account Locking (Integration)", () => {
   it(`should lock account after ${authConfig.locking.maxAttempts} failed attempts`, async () => {
     await createUser();
 
-    // Fail maxAttempts times
+
     for (let i = 0; i < authConfig.locking.maxAttempts; i++) {
       const response = await request(app).post("/api/v1/auth/login").send({
         email: "lock_test@example.com",
@@ -66,14 +64,14 @@ describe("Auth Account Locking (Integration)", () => {
     const user = await db().user.findUnique({ where: { email: "lock_test@example.com" } });
     expect(user?.failedLoginAttempts).toBe(authConfig.locking.maxAttempts);
     expect(user?.lockedUntil).not.toBeNull();
-    // Verify it's in the future
+
     expect(new Date(user!.lockedUntil!).getTime()).toBeGreaterThan(Date.now());
   });
 
   it("should reject login when account is locked even with correct password", async () => {
     const user = await createUser();
 
-    // Manually lock the user
+
     await db().user.update({
       where: { id: user.id },
       data: {
@@ -84,7 +82,7 @@ describe("Auth Account Locking (Integration)", () => {
 
     const response = await request(app).post("/api/v1/auth/login").send({
       email: "lock_test@example.com",
-      password: "Password123", // Correct password
+      password: "Password123",
     });
 
     expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
@@ -94,7 +92,7 @@ describe("Auth Account Locking (Integration)", () => {
   it("should allow login after lock expires", async () => {
     const user = await createUser();
 
-    // Lock user but with expiry in the past
+
     await db().user.update({
       where: { id: user.id },
       data: {
@@ -110,7 +108,7 @@ describe("Auth Account Locking (Integration)", () => {
 
     expect(response.status).toBe(StatusCodes.OK);
 
-    // Verify stats reset
+
     const updatedUser = await db().user.findUnique({ where: { id: user.id } });
     expect(updatedUser?.failedLoginAttempts).toBe(0);
     expect(updatedUser?.lockedUntil).toBeNull();
@@ -120,7 +118,7 @@ describe("Auth Account Locking (Integration)", () => {
   it("should reset failed attempts on successful login before limit", async () => {
     const user = await createUser();
 
-    // 1 failed attempt
+
     await request(app).post("/api/v1/auth/login").send({
       email: "lock_test@example.com",
       password: "WrongPassword",
@@ -129,7 +127,7 @@ describe("Auth Account Locking (Integration)", () => {
     const userBefore = await db().user.findUnique({ where: { id: user.id } });
     expect(userBefore?.failedLoginAttempts).toBe(1);
 
-    // Success
+
     const response = await request(app).post("/api/v1/auth/login").send({
       email: "lock_test@example.com",
       password: "Password123",

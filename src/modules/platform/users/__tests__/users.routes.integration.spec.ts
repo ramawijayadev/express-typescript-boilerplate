@@ -1,27 +1,26 @@
 /**
  * Integration tests for Users Routes.
- * Verifies user profile retrieval and updates.
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeAll, describe, expect, it } from "vitest"; // Import Vitest globals
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { createApp } from "@/app/app"; // Import createApp instead of app
+import { createApp } from "@/app/app";
 import { generateAccessToken } from "@/core/auth/jwt";
 import { db } from "@/core/database/connection";
 
 describe("Users Routes Integration", () => {
   let token: string;
   let userId: number;
-  const app = createApp(); // Instantiate app
+  const app = createApp();
 
   beforeAll(async () => {
-    // Create a test user
+
     const user = await db().user.create({
       data: {
         name: "Test User",
         email: `test-users-${Date.now()}@example.com`,
-        password: "hashed_password", // Schema uses 'password', not 'passwordHash'
+        password: "hashed_password",
       },
     });
     userId = user.id;
@@ -61,7 +60,7 @@ describe("Users Routes Integration", () => {
       expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.data.name).toBe(newName);
 
-      // Verify DB
+
       const updated = await db().user.findUnique({ where: { id: userId } });
       expect(updated?.name).toBe(newName);
     });

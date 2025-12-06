@@ -1,6 +1,5 @@
 /**
  * Unit tests for AuthService.
- * Tests checking business logic in isolation, mocking dependencies.
  */
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";
@@ -11,10 +10,10 @@ import { AppError } from "@/shared/errors/AppError";
 import { AuthRepository } from "../auth.repository";
 import { AuthService } from "../auth.service";
 
-// Mock the repository
+
 vi.mock("../auth.repository");
 
-// Mock dependencies
+
 vi.mock("@/core/auth/jwt", () => ({
   generateAccessToken: vi.fn(() => "access_token"),
   generateRefreshToken: vi.fn(() => "valid_refresh_token"),
@@ -32,7 +31,7 @@ vi.mock("@/core/auth/password", () => ({
 describe("Auth service (unit)", () => {
   const makeService = () => {
     const repo = new AuthRepository();
-    // Mock methods
+
     repo.create = vi.fn();
     repo.findByEmail = vi.fn();
     repo.findById = vi.fn();

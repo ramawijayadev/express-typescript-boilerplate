@@ -10,8 +10,6 @@ import type { Job } from "bullmq";
 export class JobsRepository {
   /**
    * Gets all failed jobs from the Dead Letter Queue.
-   *
-   * @returns A promise that resolves to an array of failed jobs.
    */
   async getFailedJobs(): Promise<Job[]> {
     const dlq = jobQueue.getDeadLetterQueue();
@@ -21,9 +19,6 @@ export class JobsRepository {
 
   /**
    * Gets a specific failed job by ID.
-   *
-   * @param id - The ID of the failed job.
-   * @returns A promise that resolves to the job or null if not found.
    */
   async getFailedJobById(id: string): Promise<Job | null> {
     const dlq = jobQueue.getDeadLetterQueue();
@@ -33,9 +28,6 @@ export class JobsRepository {
 
   /**
    * Retries a failed job by re-enqueueing it to the original queue.
-   *
-   * @param job - The job to retry.
-   * @returns A promise that resolves when the job is re-enqueued.
    */
   async retryJob(job: Job): Promise<void> {
     const _originalQueue = (job.data as FailedJob).originalQueue;
@@ -47,9 +39,6 @@ export class JobsRepository {
 
   /**
    * Removes a failed job from the Dead Letter Queue.
-   *
-   * @param job - The job to remove.
-   * @returns A promise that resolves when the job is removed.
    */
   async removeJob(job: Job): Promise<void> {
     await job.remove();
@@ -57,8 +46,6 @@ export class JobsRepository {
 
   /**
    * Cleans up old failed jobs based on retention policy.
-   *
-   * @returns A promise that resolves to the number of removed jobs.
    */
   async cleanupOldJobs(): Promise<number> {
     const dlq = jobQueue.getDeadLetterQueue();

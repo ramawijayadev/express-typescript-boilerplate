@@ -1,6 +1,5 @@
 /**
  * Unit tests for ExampleService.
- * Verifies business logic for Example resource management.
  */
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";
@@ -10,13 +9,13 @@ import { AppError } from "@/shared/errors/AppError";
 import { ExampleRepository } from "../example.repository";
 import { ExampleService } from "../example.service";
 
-// Mock the repository
+
 vi.mock("../example.repository");
 
 describe("Example service (unit)", () => {
   const makeService = () => {
     const repo = new ExampleRepository();
-    // Mock methods
+
     repo.findAll = vi.fn();
     repo.findById = vi.fn();
     repo.create = vi.fn();

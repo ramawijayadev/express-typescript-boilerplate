@@ -1,6 +1,5 @@
 /**
  * Integration tests for Auth Routes.
- * Covers registration, login, token refresh, and other auth endpoints.
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
@@ -12,7 +11,7 @@ import { db } from "@/core/database/connection";
 
 import { AuthRepository } from "../auth.repository";
 
-// Mock job queue to prevent Redis connection
+
 vi.mock("@/core/queue", () => ({
   jobQueue: {
     enqueueEmailVerification: vi.fn(),
@@ -285,10 +284,7 @@ describe("Auth routes (integration)", () => {
         .post("/api/v1/auth/logout")
         .send({ refreshToken: "invalid_token" });
 
-      // Note: Depending on implementation, this might be 204 or 401.
-      // Requirement says "Any refresh attempt using a revoked / expired / unknown session must fail".
-      // Logout usually just requires checking the token owner.
-      // If the provided refresh token for logout is invalid, it should probably be 401 or 400.
+
       expect(response.status).not.toBe(StatusCodes.OK);
     });
   });
