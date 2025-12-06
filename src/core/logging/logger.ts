@@ -5,10 +5,8 @@ import pino from "pino";
 
 import { loggingConfig } from "@/config/logging";
 
-// Request Context Store
 export const requestContext = new AsyncLocalStorage<Map<string, unknown>>();
 
-// Redaction Keys
 const redacts = [
   "req.headers.authorization",
   "req.body.password",
@@ -19,7 +17,6 @@ const redacts = [
   "refreshToken",
 ];
 
-// Transport Configuration
 const transports = [];
 
 if (loggingConfig.isDevelopment) {
@@ -50,7 +47,6 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
   });
 }
 
-// Create Logger
 /**
  * Global application logger instance (Pino).
  * 
@@ -72,7 +68,6 @@ export const logger = pino({
   },
 });
 
-// Helper to run with context
 /**
  * Executes a callback within a distinct logging context.
  * Any logs written during the callback will get the `context` fields attached automatically.

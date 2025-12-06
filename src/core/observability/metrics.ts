@@ -12,7 +12,5 @@ import type { Express } from "express";
  * This acts as a hook to attach metrics middleware to the Express app.
  */
 export function initMetrics(_app: Express) {
-  // Placeholder for metrics initialization (Prometheus, etc.)
-  // app.use(metricsMiddleware)
   logger.info("Metrics initialized");
 }

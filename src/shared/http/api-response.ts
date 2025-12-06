@@ -37,9 +37,8 @@ export type ApiResponse<T = unknown> =
   | ClientErrorResponse
   | ServerErrorResponse;
 
+// 2xx helper -> DELETE
 export type StatusCode = (typeof StatusCodes)[keyof typeof StatusCodes];
-
-// 2xx helper
 
 /**
  * Sends a standard success response (HTTP 200).
@@ -102,8 +101,6 @@ export function created<T>(res: Response, data: T, message = "Created"): Respons
   return res.status(body.statusCode).json(body);
 }
 
-// 4xx helper
-
 /**
  * Sends a standard client error response (HTTP 4xx).
  * Automatically attaches the request ID.
@@ -133,7 +130,6 @@ export function validationError(
   return clientError(res, StatusCodes.UNPROCESSABLE_ENTITY, message, errors);
 }
 
-// 5xx helper
 export function serverError(
   res: Response,
   message = "Internal server error",

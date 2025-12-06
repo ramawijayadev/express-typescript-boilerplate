@@ -13,7 +13,6 @@ program
   .description("CLI for the Express TypeScript Boilerplate")
   .version("1.0.0");
 
-// Register commands
 program.addCommand(helloCommand);
 
 program.parse(process.argv);

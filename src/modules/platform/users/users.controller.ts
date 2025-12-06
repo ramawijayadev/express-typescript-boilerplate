@@ -6,17 +6,10 @@ import type { UpdateUserBody } from "./users.types";
 import type { Response } from "express";
 
 export class UsersController {
-  /**
-   * Creates an instance of UsersController.
-   * @param service - The users service.
-   */
   constructor(private readonly service: UsersService) {}
 
   /**
-   * Gets the authenticated user's profile.
-   *
-   * @param req - Authenticated request.
-   * @param res - Response.
+   * Get authenticated user profile.
    */
   async me(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
@@ -25,10 +18,7 @@ export class UsersController {
   }
 
   /**
-   * Updates the authenticated user's profile.
-   *
-   * @param req - Authenticated request containing update data.
-   * @param res - Response.
+   * Update authenticated user profile.
    */
   async updateMe(req: AuthenticatedRequest<UpdateUserBody>, res: Response) {
     const userId = req.user.id;

@@ -24,37 +24,30 @@ const envSchema = z.object({
     ),
   FRONTEND_URL: z.string().default("http://localhost:3000"),
 
-  // Database
   DATABASE_URL: z.string().optional(),
   DATABASE_URL_OTHER: z.string().optional(),
 
-  // Rate Limiting (Global)
-  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000), // 15 minutes
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000),
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(1000),
 
-  // Rate Limiting (Auth Specific)
-  RATE_LIMIT_LOGIN_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000), // 15 minutes
+  RATE_LIMIT_LOGIN_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000),
   RATE_LIMIT_LOGIN_MAX: z.coerce.number().default(5),
-  RATE_LIMIT_REGISTER_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000), // 1 hour
+  RATE_LIMIT_REGISTER_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000),
   RATE_LIMIT_REGISTER_MAX: z.coerce.number().default(3),
-  RATE_LIMIT_PASSWORD_RESET_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000), // 1 hour
+  RATE_LIMIT_PASSWORD_RESET_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000),
   RATE_LIMIT_PASSWORD_RESET_MAX: z.coerce.number().default(3),
-  RATE_LIMIT_VERIFICATION_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000), // 1 hour
+  RATE_LIMIT_VERIFICATION_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000),
   RATE_LIMIT_VERIFICATION_MAX: z.coerce.number().default(10),
 
-  // Pagination
   PAGINATION_DEFAULT_LIMIT: z.coerce.number().default(10),
 
-  // Swagger
   SWAGGER_SERVER_URL: z.string().optional(),
 
-  // Logging
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error", "fatal"]).default("info"),
   LOG_DRIVER: z.enum(["file", "stdout", "stack"]).default("file"),
   LOG_FILE_PATH: z.string().default("logs"),
   ERROR_REPORTING: z.enum(["none", "sentry", "honeybadger"]).default("none"),
 
-  // Auth
   JWT_SECRET: z
     .string()
     .min(32, "JWT_SECRET must be at least 32 characters")
@@ -78,14 +71,12 @@ const envSchema = z.object({
   AUTH_EMAIL_VERIFICATION_EXPIRATION_HOURS: z.coerce.number().default(24),
   AUTH_PASSWORD_RESET_EXPIRATION_MINUTES: z.coerce.number().default(60),
 
-  // Mail
   SMTP_HOST: z.string().default("smtp.mailtrap.io"),
   SMTP_PORT: z.coerce.number().default(2525),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().default("noreply@example.com"),
 
-  // Redis / Queue
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_PASSWORD: z.string().optional(),
@@ -96,7 +87,6 @@ const envSchema = z.object({
   QUEUE_FAILED_JOB_RETENTION_DAYS: z.coerce.number().default(7),
   QUEUE_FAILED_JOB_ALERT_THRESHOLD: z.coerce.number().default(100),
   
-  // Feature Flags
   ENABLE_BACKGROUND_JOBS: z.coerce.boolean().default(true),
 });
 
