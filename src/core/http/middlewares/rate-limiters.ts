@@ -1,19 +1,28 @@
 import rateLimit from "express-rate-limit";
 
+import type { RequestHandler } from "express";
+
+const isTest = process.env.NODE_ENV === "test";
+
+// Helper to create a no-op middleware for tests
+const noOpMiddleware: RequestHandler = (_req, _res, next) => next();
+
 /**
  * Strict rate limiter for login endpoint.
  * Prevents brute-force password attacks.
  * 
  * Limits: 5 attempts per IP per 15 minutes
  */
-export const loginRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per IP
-  message: "Too many login attempts, please try again later",
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: false,
-});
+export const loginRateLimiter = isTest
+  ? noOpMiddleware
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 5, // 5 attempts per IP
+      message: "Too many login attempts, please try again later",
+      standardHeaders: true,
+      legacyHeaders: false,
+      skipSuccessfulRequests: false,
+    });
 
 /**
  * Strict rate limiter for registration endpoint.
@@ -21,13 +30,15 @@ export const loginRateLimiter = rateLimit({
  * 
  * Limits: 3 registrations per IP per hour
  */
-export const registerRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 registrations per IP per hour
-  message: "Too many registration attempts, please try again later",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+export const registerRateLimiter = isTest
+  ? noOpMiddleware
+  : rateLimit({
+      windowMs: 60 * 60 * 1000, // 1 hour
+      max: 3, // 3 registrations per IP per hour
+      message: "Too many registration attempts, please try again later",
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
 
 /**
  * Strict rate limiter for password reset requests.
@@ -35,13 +46,15 @@ export const registerRateLimiter = rateLimit({
  * 
  * Limits: 3 reset requests per IP per hour
  */
-export const passwordResetRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 reset requests per IP per hour
-  message: "Too many password reset attempts, please try again later",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+export const passwordResetRateLimiter = isTest
+  ? noOpMiddleware
+  : rateLimit({
+      windowMs: 60 * 60 * 1000, // 1 hour
+      max: 3, // 3 reset requests per IP per hour
+      message: "Too many password reset attempts, please try again later",
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
 
 /**
  * Moderate rate limiter for email verification endpoints.
@@ -49,10 +62,12 @@ export const passwordResetRateLimiter = rateLimit({
  * 
  * Limits: 10 attempts per IP per hour
  */
-export const verificationRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10,
-  message: "Too many verification attempts, please try again later",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+export const verificationRateLimiter = isTest
+  ? noOpMiddleware
+  : rateLimit({
+      windowMs: 60 * 60 * 1000, // 1 hour
+      max: 10,
+      message: "Too many verification attempts, please try again later",
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
