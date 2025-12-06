@@ -10,12 +10,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
+
 const TEST_TIMEOUT = 20000;
 const TOKEN_REGEX = /token=([a-f0-9]+)/i;
-/**
- * Deletes all emails from the Mailpit inbox.
- * Useful for ensuring a clean state before tests.
- */
+
 interface MailpitMessage {
   ID: string;
   Text?: string;
@@ -27,6 +25,10 @@ interface MailpitListResponse {
   messages: MailpitMessage[];
 }
 
+/**
+ * Deletes all emails from the Mailpit inbox.
+ * Useful for ensuring a clean state before tests.
+ */
 async function deleteAllEmails() {
   try {
     await fetch("http://localhost:8025/api/v1/messages", { method: "DELETE" });
@@ -52,7 +54,6 @@ async function fetchLatestEmail(recipient: string) {
 
     if (!email || typeof email !== "object") return null;
 
-    // Fetch full body
     const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
     if (!msgRes.ok) return null;
     return (await msgRes.json()) as MailpitMessage;
@@ -78,6 +79,7 @@ async function waitForEmail(recipient: string, retries = 10): Promise<string | n
 
 describe("User Journey E2E", () => {
   const app = createApp();
+
   let worker: Worker;
 
   const testUser = {
@@ -85,31 +87,39 @@ describe("User Journey E2E", () => {
     email: `traveler-${Date.now()}@example.com`,
     password: "Password123!",
   };
+
   let accessToken = "";
+
   let refreshToken = "";
+
+  let exampleId: number;
+
   beforeAll(async () => {
-    // We use the actual application handler to test the real email templates
     worker = new Worker(emailWorkerName, emailWorkerHandler, {
       connection: {
         host: "localhost",
         port: 6379,
       },
-      concurrency: 1, // Minimize race conditions
+      concurrency: 1,
     });
     worker.on("ready", () => null);
     worker.on("error", (_err) => null);
     worker.on("failed", (_job, _err) => null);
   });
+
   afterAll(async () => {
     await worker.close();
     await db().user.deleteMany({ where: { email: testUser.email } });
   });
+
   it("Public Access Health Check", async () => {
     await request(app).get("/api/v1/health").expect(StatusCodes.OK);
   });
+
   it("Registration", async () => {
     await request(app).post("/api/v1/auth/register").send(testUser).expect(StatusCodes.CREATED);
   });
+
   it(
     "Verification Receive Email and Verify",
     async () => {
@@ -124,6 +134,7 @@ describe("User Journey E2E", () => {
     },
     TEST_TIMEOUT,
   );
+
   it("Authentication Login", async () => {
     const res = await request(app)
       .post("/api/v1/auth/login")
@@ -134,6 +145,7 @@ describe("User Journey E2E", () => {
     expect(accessToken).toBeDefined();
     expect(refreshToken).toBeDefined();
   });
+
   it("Protected Resource Get Profile", async () => {
     const res = await request(app)
       .get("/api/v1/auth/profile")
@@ -141,8 +153,8 @@ describe("User Journey E2E", () => {
       .expect(StatusCodes.OK);
     expect(res.body.data.user.email).toBe(testUser.email);
   });
+
   it("Token Refresh", async () => {
-    // Wait a bit to ensure 'exp' changes if resolution is low? No need for most tests.
     const res = await request(app)
       .post("/api/v1/auth/refresh-token")
       .send({ refreshToken })
@@ -151,6 +163,7 @@ describe("User Journey E2E", () => {
     accessToken = res.body.data.accessToken;
     refreshToken = res.body.data.refreshToken;
   });
+
   it("User Management Get Me", async () => {
     const res = await request(app)
       .get("/api/v1/users/me")
@@ -158,6 +171,7 @@ describe("User Journey E2E", () => {
       .expect(StatusCodes.OK);
     expect(res.body.data.email).toBe(testUser.email);
   });
+
   it("User Management Update Me", async () => {
     const newName = "Updated Traveler";
     const res = await request(app)
@@ -173,7 +187,7 @@ describe("User Journey E2E", () => {
       .expect(StatusCodes.OK);
     expect(check.body.data.name).toBe(newName);
   });
-  let exampleId: number;
+
   it("Business Logic Create Example", async () => {
     const res = await request(app)
       .post("/api/v1/examples")
@@ -183,6 +197,7 @@ describe("User Journey E2E", () => {
     expect(res.body.data.id).toBeDefined();
     exampleId = res.body.data.id;
   });
+
   it("Business Logic List Examples", async () => {
     const res = await request(app)
       .get("/api/v1/examples")
@@ -194,6 +209,7 @@ describe("User Journey E2E", () => {
     const item = res.body.data.find((e: { id: number }) => e.id === exampleId);
     expect(item).toBeDefined();
   });
+
   it("Business Logic Get Example Details", async () => {
     const res = await request(app)
       .get(`/api/v1/examples/${exampleId}`)
@@ -202,6 +218,7 @@ describe("User Journey E2E", () => {
     expect(res.body.data.id).toBe(exampleId);
     expect(res.body.data.name).toBe("Journey Example");
   });
+
   it("Business Logic Update Example", async () => {
     const res = await request(app)
       .put(`/api/v1/examples/${exampleId}`)
@@ -210,6 +227,7 @@ describe("User Journey E2E", () => {
       .expect(StatusCodes.OK);
     expect(res.body.data.name).toBe("Updated Journey Example");
   });
+
   it("Business Logic Delete Example", async () => {
     await request(app)
       .delete(`/api/v1/examples/${exampleId}`)
@@ -221,6 +239,7 @@ describe("User Journey E2E", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(StatusCodes.NOT_FOUND);
   });
+
   it(
     "Account Security Forgot Password",
     async () => {
@@ -257,15 +276,12 @@ describe("User Journey E2E", () => {
     },
     TEST_TIMEOUT,
   );
+
   it("Logout", async () => {
     await request(app).post("/api/v1/auth/logout").send({ refreshToken }).expect(StatusCodes.OK);
   });
+
   it("Verify Unauthorized after Logout", async () => {
-    // The previous test revoked both Session and RefreshToken.
-    // However, access tokens are stateless JWTs. They remain valid until expiry (usually 15m).
-    // The boilerplate might not check blacklist for access tokens on every request for performance.
-    // BUT, the test requirement says: "Verify Unauthorized after Logout".
-    // Let's try to use the RefreshToken again - that MUST fail.
     await request(app)
       .post("/api/v1/auth/refresh-token")
       .send({ refreshToken })
