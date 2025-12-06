@@ -59,14 +59,38 @@ export class AuthService {
    */
   async login(data: LoginBody, meta?: { ip?: string; userAgent?: string }): Promise<AuthResponse> {
     const user = await this.repo.findByEmail(data.email);
-    if (!user || !user.password) {
+
+    // SECURITY: Always verify password to prevent timing attacks that could reveal valid emails
+    // Use a dummy hash if user doesn't exist to maintain constant-time response
+    const passwordHash =
+      user?.password ||
+      "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHR2YWx1ZQ$dummy"; // dummy argon2 hash
+
+    const isValidPassword = await verifyPassword(passwordHash, data.password);
+
+    // Check user existence and validity AFTER password verification
+    if (!user || !user.password || !isValidPassword) {
+      // Increment failed login attempts if user exists
+      if (user) {
+        const updatedUser = await this.repo.incrementFailedLogin(user.id);
+
+        // Lock account if too many failed attempts
+        if (updatedUser.failedLoginAttempts >= authConfig.locking.maxAttempts) {
+          const lockDurationMs = authConfig.locking.durationMinutes * 60 * 1000;
+          const lockedUntil = new Date(Date.now() + lockDurationMs);
+          await this.repo.lockUser(user.id, lockedUntil);
+        }
+      }
+
       this.throwInvalidCredentials();
     }
 
+    // Check if account is active
     if (!user.isActive) {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
     }
 
+    // Check if account is locked
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       throw new AppError(
         StatusCodes.UNAUTHORIZED,
@@ -74,19 +98,7 @@ export class AuthService {
       );
     }
 
-    const isValidPassword = await verifyPassword(user.password, data.password);
-    if (!isValidPassword) {
-      const updatedUser = await this.repo.incrementFailedLogin(user.id);
-
-      if (updatedUser.failedLoginAttempts >= authConfig.locking.maxAttempts) {
-        const lockDurationMs = authConfig.locking.durationMinutes * 60 * 1000;
-        const lockedUntil = new Date(Date.now() + lockDurationMs);
-        await this.repo.lockUser(user.id, lockedUntil);
-      }
-
-      this.throwInvalidCredentials();
-    }
-
+    // Reset failed login attempts on successful login
     await this.repo.resetLoginStats(user.id);
 
     return this.createSession(user, meta);
@@ -149,6 +161,12 @@ export class AuthService {
       if (!session) {
         // Token is valid JWT but not in DB -> possibly revoked or rotated
         throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid refresh token");
+      }
+
+      // SECURITY: Check if session has expired based on database timestamp
+      if (session.expiresAt < new Date()) {
+        await this.repo.revokeSession(session.id); // Clean up expired session
+        throw new AppError(StatusCodes.UNAUTHORIZED, "Session expired");
       }
 
       if (!session.user.isActive) {

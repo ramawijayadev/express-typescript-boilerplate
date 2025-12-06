@@ -5,7 +5,23 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   APP_PORT: z.coerce.number().default(3000),
   APP_BASE_PATH: z.string().default("/api/v1"),
-  CORS_ORIGIN: z.string().default("*"),
+  CORS_ORIGIN: z
+    .string()
+    .default("*")
+    .refine(
+      (val) => {
+        // In production, CORS_ORIGIN cannot be '*' because we use credentials: true
+        // This would allow any website to make authenticated requests to our API
+        if (process.env.NODE_ENV === "production" && val === "*") {
+          return false;
+        }
+        return true;
+      },
+      {
+        message:
+          "CORS_ORIGIN cannot be '*' in production when using credentials. Please specify allowed origins (e.g., 'https://yourdomain.com')",
+      },
+    ),
   FRONTEND_URL: z.string().default("http://localhost:3000"),
 
   // Database
@@ -29,7 +45,22 @@ const envSchema = z.object({
   ERROR_REPORTING: z.enum(["none", "sentry", "honeybadger"]).default("none"),
 
   // Auth
-  JWT_SECRET: z.string(),
+  JWT_SECRET: z
+    .string()
+    .min(32, "JWT_SECRET must be at least 32 characters")
+    .refine(
+      (val) => {
+        // In production, require strong secrets (64+ characters recommended)
+        if (process.env.NODE_ENV === "production" && val.length < 64) {
+          return false;
+        }
+        return true;
+      },
+      {
+        message:
+          "JWT_SECRET must be at least 64 characters in production. Generate with: openssl rand -base64 64",
+      },
+    ),
   JWT_ACCESS_EXPIRATION: z.string().default("15m"),
   JWT_REFRESH_EXPIRATION: z.string().default("7d"),
   AUTH_MAX_LOGIN_ATTEMPTS: z.coerce.number().default(3),

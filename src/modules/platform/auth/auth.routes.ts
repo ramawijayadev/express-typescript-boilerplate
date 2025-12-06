@@ -3,6 +3,12 @@ import { Router } from "express";
 
 
 import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
+import {
+  loginRateLimiter,
+  passwordResetRateLimiter,
+  registerRateLimiter,
+  verificationRateLimiter,
+} from "@/core/http/middlewares/rate-limiters";
 import { validateBody } from "@/core/http/middlewares/validation.middleware";
 import type { AuthenticatedRequest, TypedRequest } from "@/core/http/types";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
@@ -56,7 +62,7 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User registered", 201, [400, 422, 500]),
 });
 
-authRouter.post("/register", validateBody(registerSchema), (req, res) =>
+authRouter.post("/register", registerRateLimiter, validateBody(registerSchema), (req, res) =>
   authController.register(req as TypedRequest<RegisterBody>, res),
 );
 
@@ -76,7 +82,7 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User logged in", 200, [400, 422, 500]),
 });
 
-authRouter.post("/login", validateBody(loginSchema), (req, res) =>
+authRouter.post("/login", loginRateLimiter, validateBody(loginSchema), (req, res) =>
   authController.login(req as TypedRequest<LoginBody>, res),
 );
 
@@ -160,7 +166,7 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Email verified", 200, [400, 422, 500]),
 });
 
-authRouter.post("/verify-email", validateBody(emailVerificationSchema), (req, res) =>
+authRouter.post("/verify-email", verificationRateLimiter, validateBody(emailVerificationSchema), (req, res) =>
   authController.verifyEmail(req as TypedRequest<EmailVerificationBody>, res),
 );
 
@@ -172,7 +178,7 @@ authRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.post("/resend-verification", authenticate, (req, res) =>
+authRouter.post("/resend-verification", verificationRateLimiter, authenticate, (req, res) =>
   authController.resendVerification(req as AuthenticatedRequest, res),
 );
 
@@ -192,7 +198,7 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Password reset email sent", 200, [400, 422, 500]),
 });
 
-authRouter.post("/forgot-password", validateBody(forgotPasswordSchema), (req, res) =>
+authRouter.post("/forgot-password", passwordResetRateLimiter, validateBody(forgotPasswordSchema), (req, res) =>
   authController.forgotPassword(req as TypedRequest<ForgotPasswordBody>, res),
 );
 
@@ -212,6 +218,6 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Password reset successfully", 200, [400, 422, 500]),
 });
 
-authRouter.post("/reset-password", validateBody(resetPasswordSchema), (req, res) =>
+authRouter.post("/reset-password", verificationRateLimiter, validateBody(resetPasswordSchema), (req, res) =>
   authController.resetPassword(req as TypedRequest<ResetPasswordBody>, res),
 );

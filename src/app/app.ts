@@ -1,6 +1,7 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 
+import { env } from "@/app/env";
 import { swaggerSpec } from "@/config/swagger";
 import { errorHandler } from "@/core/http/error-handler";
 import { registerMiddlewares } from "@/core/http/middlewares";
@@ -24,15 +25,23 @@ export function createApp(configure?: (app: express.Express) => void) {
 
   registerMiddlewares(app);
 
-  app.get(
-    "/",
-    swaggerUi.setup(swaggerSpec, {
-      swaggerOptions: {
-        defaultModelsExpandDepth: -1,
-      },
-    })
-  );
-  app.use("/", swaggerUi.serve);
+  // Swagger API documentation (disabled in production)
+  if (env.NODE_ENV !== "production") {
+    app.get(
+      "/",
+      swaggerUi.setup(swaggerSpec, {
+        swaggerOptions: {
+          defaultModelsExpandDepth: -1,
+        },
+      })
+    );
+    app.use("/", swaggerUi.serve);
+  } else {
+    // In production, return a simple message at root
+    app.get("/", (_req, res) => {
+      res.json({ message: "API is running. Documentation available in development mode." });
+    });
+  }
 
   registerRoutes(app);
   if (configure) {

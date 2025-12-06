@@ -8,7 +8,7 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.spec.ts"],
     env: {
-      JWT_SECRET: "test-secret",
+      JWT_SECRET: "test-secret-key-min-32-characters-for-validation-requirements",
       JWT_ACCESS_EXPIRATION: "1m",
       JWT_REFRESH_EXPIRATION: "5m",
     },
