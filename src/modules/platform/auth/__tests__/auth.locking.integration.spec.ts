@@ -1,3 +1,8 @@
+/**
+ * Integration tests for Account Locking mechanism.
+ * Verifies that the system correctly locks accounts after failed login attempts
+ * and unlocks them after the duration expires.
+ */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";

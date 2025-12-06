@@ -1,3 +1,7 @@
+/**
+ * Integration tests for User Session management.
+ * Verifies session creation, rotation, and revocation directly against the database.
+ */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";

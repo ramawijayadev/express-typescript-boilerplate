@@ -1,3 +1,7 @@
+/**
+ * Unit tests for AuthService.
+ * Tests checking business logic in isolation, mocking dependencies.
+ */
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";
 

@@ -22,8 +22,8 @@ export const usersRouter = Router();
 usersRouter.use(authenticate); // Protect all routes
 
 usersRouter.get("/me", authenticate, (req, res) =>
-  controller.me(req as unknown as AuthenticatedRequest, res),
+  controller.me(req as AuthenticatedRequest, res),
 );
 usersRouter.patch("/me", authenticate, validateBody(updateUserSchema), (req, res) =>
-  controller.updateMe(req as unknown as AuthenticatedRequest<UpdateUserBody>, res),
+  controller.updateMe(req as AuthenticatedRequest<UpdateUserBody>, res),
 );

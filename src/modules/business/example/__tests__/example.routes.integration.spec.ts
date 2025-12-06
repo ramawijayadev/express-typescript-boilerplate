@@ -1,3 +1,7 @@
+/**
+ * Integration tests for Example Routes.
+ * Verifies CRUD operations for the Example resource.
+ */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";

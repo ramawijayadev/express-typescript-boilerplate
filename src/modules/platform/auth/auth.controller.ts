@@ -14,8 +14,17 @@ import type { Request, Response } from "express";
 
 
 export class AuthController {
+  /**
+   * Creates an instance of AuthController.
+   * @param service - The auth service.
+   */
   constructor(private readonly service: AuthService) {}
 
+  /**
+   * Registers a new user.
+   * @param req - Request with register body.
+   * @param res - Response.
+   */
   async register(req: Request<unknown, unknown, RegisterBody>, res: Response) {
     const meta = {
       ip: req.ip,
@@ -25,6 +34,11 @@ export class AuthController {
     return created(res, result);
   }
 
+  /**
+   * Logs in a user.
+   * @param req - Request with login body.
+   * @param res - Response.
+   */
   async login(req: Request<unknown, unknown, LoginBody>, res: Response) {
     const meta = {
       ip: req.ip,
@@ -34,11 +48,21 @@ export class AuthController {
     return ok(res, result);
   }
 
+  /**
+   * Refreshes the access token.
+   * @param req - Request with refresh token in body.
+   * @param res - Response.
+   */
   async refreshToken(req: Request<unknown, unknown, RefreshTokenBody>, res: Response) {
     const result = await this.service.refreshToken(req.body.refreshToken);
     return ok(res, result);
   }
 
+  /**
+   * Gets the authenticated user's profile.
+   * @param req - Authenticated request.
+   * @param res - Response.
+   */
   async getProfile(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
 
@@ -46,39 +70,65 @@ export class AuthController {
     return ok(res, result);
   }
 
+  /**
+   * Logs out the user (revokes refresh token).
+   * @param req - Request with refresh token in body.
+   * @param res - Response.
+   */
   async logout(req: Request<unknown, unknown, RefreshTokenBody>, res: Response) {
     await this.service.logout(req.body.refreshToken);
     return ok(res, { message: "Logged out successfully" });
   }
 
+  /**
+   * Revokes all sessions for the authenticated user.
+   * @param req - Authenticated request.
+   * @param res - Response.
+   */
   async revokeAll(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
     await this.service.revokeAllSessions(userId);
     return ok(res, { message: "All sessions revoked" });
   }
 
+  /**
+   * Verifies a user's email.
+   * @param req - Request with verification token.
+   * @param res - Response.
+   */
   async verifyEmail(req: Request<unknown, unknown, EmailVerificationBody>, res: Response) {
     await this.service.verifyEmail(req.body.token);
     return ok(res, { message: "Email verified successfully" });
   }
 
+  /**
+   * Resends the verification email.
+   * @param req - Authenticated request (user is logged in but not verified).
+   * @param res - Response.
+   */
   async resendVerification(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
     if (userId) {
       await this.service.resendVerification(userId);
     }
-    // Always return success to prevent user enumeration if we were taking email as input,
-    // though here we use authenticated user.
-    // If not authenticated (which is weird for resend, but maybe they lost session),
-    // we would need email input. Existing generic message:
     return ok(res, { message: "If your account exists and is not verified, a verification email has been sent." });
   }
 
+  /**
+   * Requests a password reset email.
+   * @param req - Request with email.
+   * @param res - Response.
+   */
   async forgotPassword(req: Request<unknown, unknown, ForgotPasswordBody>, res: Response) {
     await this.service.forgotPassword(req.body.email);
     return ok(res, { message: "If your account exists, a password reset email has been sent." });
   }
 
+  /**
+   * Resets the password using a token.
+   * @param req - Request with token and new password.
+   * @param res - Response.
+   */
   async resetPassword(req: Request<unknown, unknown, ResetPasswordBody>, res: Response) {
     await this.service.resetPassword(req.body.token, req.body.newPassword);
     return ok(res, { message: "Password reset successfully" });

@@ -10,6 +10,10 @@ import { SmtpEmailSender } from "@/core/mail/mailer";
 import { db } from "@/core/database/connection";
 
 // Helper to delete all messages in Mailpit
+/**
+ * Deletes all emails from the Mailpit inbox.
+ * Useful for ensuring a clean state before tests.
+ */
 async function deleteAllEmails() {
   try {
     await fetch("http://localhost:8025/api/v1/messages", { method: "DELETE" });
@@ -19,6 +23,12 @@ async function deleteAllEmails() {
 }
 
 // Helper to fetch emails from Mailpit
+/**
+ * Fetches the latest email for a specific recipient from Mailpit.
+ *
+ * @param recipient - The email address of the recipient.
+ * @returns The full email object (with Text/HTML) if found, or null.
+ */
 async function fetchLatestEmail(recipient: string) {
   // ... (existing logic)
   // But wait, if I delete emails, I can just grab the only one there.
@@ -46,6 +56,14 @@ async function fetchLatestEmail(recipient: string) {
 //...
 
 // Helper to retry fetching email
+/**
+ * Waits for an email to arrive for a specific recipient.
+ * Retries multiple times with a delay.
+ *
+ * @param recipient - The email address of the recipient.
+ * @param retries - Number of retries (default 10).
+ * @returns The email content (Text or HTML) if found, or null.
+ */
 async function waitForEmail(recipient: string, retries = 10): Promise<string | null> {
   for (let i = 0; i < retries; i++) {
     const email = await fetchLatestEmail(recipient);

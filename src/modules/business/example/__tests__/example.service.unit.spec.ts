@@ -1,3 +1,7 @@
+/**
+ * Unit tests for ExampleService.
+ * Verifies business logic for Example resource management.
+ */
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";
 

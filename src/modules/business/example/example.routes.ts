@@ -3,11 +3,13 @@ import { Router } from "express";
 import { z } from "zod";
 
 import { validateBody, validateParams, validateQuery } from "@/core/http/middlewares/validation.middleware";
+import type { TypedRequest } from "@/core/http/types";
 import {
   createApiPaginatedResponse,
   createApiResponse,
 } from "@/shared/open-api/openapi-response-builders";
 import { idParamSchema } from "@/shared/schemas/common.schemas";
+import type { IdParam } from "@/shared/schemas/common.schemas";
 
 import { ExampleController } from "./example.controller";
 import { ExampleRepository } from "./example.repository";
@@ -18,6 +20,7 @@ import {
   listExamplesQuerySchema,
   updateExampleSchema,
 } from "./example.schemas";
+import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 import { ExampleService } from "./example.service";
 
 export const exampleRegistry = new OpenAPIRegistry();
@@ -40,8 +43,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exampleController.list(req as any, res),
+  exampleController.list(req as TypedRequest<unknown, ListExamplesQuery>, res),
 );
 
 exampleRegistry.registerPath({
@@ -55,8 +57,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exampleController.find(req as any, res),
+  exampleController.find(req as TypedRequest<unknown, unknown, IdParam>, res),
 );
 
 exampleRegistry.registerPath({
@@ -76,7 +77,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
-  exampleController.create(req, res),
+  exampleController.create(req as TypedRequest<CreateExampleInput>, res),
 );
 
 exampleRegistry.registerPath({
@@ -100,8 +101,7 @@ exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (req, res) => exampleController.update(req as any, res),
+  (req, res) => exampleController.update(req as TypedRequest<UpdateExampleInput, unknown, IdParam>, res),
 );
 
 exampleRegistry.registerPath({
@@ -120,24 +120,7 @@ exampleRegistry.registerPath({
   },
   responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted"),
 });
-import type { Request } from "express"; // Import Request explicitly
 
-// Routes
-exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(req as unknown as Request<unknown, unknown, unknown, z.infer<typeof listExamplesQuerySchema>>, res),
-);
-exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.find(req as unknown as Request<z.infer<typeof idParamSchema>>, res),
-);
-exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
-  exampleController.create(req as unknown as Request<Record<string, string>, unknown, z.infer<typeof createExampleSchema>>, res),
-);
-exampleRouter.put(
-  "/:id",
-  validateParams(idParamSchema),
-  validateBody(updateExampleSchema),
-  (req, res) => exampleController.update(req as unknown as Request<z.infer<typeof idParamSchema>, unknown, z.infer<typeof updateExampleSchema>>, res),
-);
 exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.delete(req as unknown as Request<z.infer<typeof idParamSchema>>, res),
+  exampleController.delete(req as TypedRequest<unknown, unknown, IdParam>, res),
 );

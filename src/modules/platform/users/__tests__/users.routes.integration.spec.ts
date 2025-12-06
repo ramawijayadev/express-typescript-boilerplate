@@ -1,3 +1,7 @@
+/**
+ * Integration tests for Users Routes.
+ * Verifies user profile retrieval and updates.
+ */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest"; // Import Vitest globals

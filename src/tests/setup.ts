@@ -1,3 +1,7 @@
+/**
+ * Global test setup file for Vitest.
+ * Handles environment validation and global hook registration.
+ */
 import { beforeAll } from "vitest";
 
 beforeAll(() => {

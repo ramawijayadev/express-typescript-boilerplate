@@ -4,7 +4,7 @@ import { Router } from "express";
 
 import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
 import { validateBody } from "@/core/http/middlewares/validation.middleware";
-import type { AuthenticatedRequest } from "@/core/http/types";
+import type { AuthenticatedRequest, TypedRequest } from "@/core/http/types";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
 import { AuthController } from "./auth.controller";
@@ -24,8 +24,14 @@ import {
 } from "./auth.schemas";
 import { AuthService } from "./auth.service";
 
-import type { Request } from "express";
-import type { z } from "zod";
+import type {
+  EmailVerificationBody,
+  ForgotPasswordBody,
+  LoginBody,
+  RefreshTokenBody,
+  RegisterBody,
+  ResetPasswordBody,
+} from "./auth.types";
 
 export const authRegistry = new OpenAPIRegistry();
 export const authRouter = Router();
@@ -51,7 +57,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/register", validateBody(registerSchema), (req, res) =>
-  authController.register(req, res),
+  authController.register(req as TypedRequest<RegisterBody>, res),
 );
 
 authRegistry.registerPath({
@@ -70,7 +76,9 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User logged in"),
 });
 
-authRouter.post("/login", validateBody(loginSchema), (req, res) => authController.login(req, res));
+authRouter.post("/login", validateBody(loginSchema), (req, res) =>
+  authController.login(req as TypedRequest<LoginBody>, res),
+);
 
 authRegistry.registerPath({
   method: "post",
@@ -89,7 +97,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/refresh-token", validateBody(refreshTokenSchema), (req, res) =>
-  authController.refreshToken(req, res),
+  authController.refreshToken(req as TypedRequest<RefreshTokenBody>, res),
 );
 
 authRegistry.registerPath({
@@ -109,7 +117,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/logout", validateBody(refreshTokenSchema), (req, res) =>
-  authController.logout(req as unknown as Request<unknown, unknown, z.infer<typeof refreshTokenSchema>>, res),
+  authController.logout(req as TypedRequest<RefreshTokenBody>, res),
 );
 
 authRegistry.registerPath({
@@ -119,7 +127,9 @@ authRegistry.registerPath({
   responses: createApiResponse(logoutResponseSchema, "All sessions revoked"),
 });
 
-authRouter.post("/revoke-all", authenticate, (req, res) => authController.revokeAll(req as unknown as AuthenticatedRequest, res));
+authRouter.post("/revoke-all", authenticate, (req, res) =>
+  authController.revokeAll(req as AuthenticatedRequest, res),
+);
 
 authRegistry.registerPath({
   method: "get",
@@ -128,7 +138,9 @@ authRegistry.registerPath({
   responses: createApiResponse(profileResponseSchema, "User profile"),
 });
 
-authRouter.get("/profile", authenticate, (req, res) => authController.getProfile(req as unknown as AuthenticatedRequest, res));
+authRouter.get("/profile", authenticate, (req, res) =>
+  authController.getProfile(req as AuthenticatedRequest, res),
+);
 
 authRegistry.registerPath({
   method: "post",
@@ -147,7 +159,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/verify-email", validateBody(emailVerificationSchema), (req, res) =>
-  authController.verifyEmail(req, res),
+  authController.verifyEmail(req as TypedRequest<EmailVerificationBody>, res),
 );
 
 authRegistry.registerPath({
@@ -158,7 +170,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/resend-verification", authenticate, (req, res) =>
-  authController.resendVerification(req as unknown as AuthenticatedRequest, res),
+  authController.resendVerification(req as AuthenticatedRequest, res),
 );
 
 authRegistry.registerPath({
@@ -178,7 +190,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/forgot-password", validateBody(forgotPasswordSchema), (req, res) =>
-  authController.forgotPassword(req, res),
+  authController.forgotPassword(req as TypedRequest<ForgotPasswordBody>, res),
 );
 
 authRegistry.registerPath({
@@ -198,5 +210,5 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/reset-password", validateBody(resetPasswordSchema), (req, res) =>
-  authController.resetPassword(req, res),
+  authController.resetPassword(req as TypedRequest<ResetPasswordBody>, res),
 );

@@ -1,3 +1,7 @@
+/**
+ * Integration tests for Auth Routes.
+ * Covers registration, login, token refresh, and other auth endpoints.
+ */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
