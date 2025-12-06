@@ -180,7 +180,93 @@ describe("E2E: User Journey", () => {
     refreshToken = res.body.data.refreshToken;
   });
 
-  it("7. Account Security: Forgot Password", async () => {
+  it("7. User Management: Get Me", async () => {
+    const res = await request(app)
+      .get("/api/v1/users/me")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(StatusCodes.OK);
+
+    expect(res.body.data.email).toBe(testUser.email);
+  });
+
+  it("8. User Management: Update Me", async () => {
+    const newName = "Updated Traveler";
+    const res = await request(app)
+      .patch("/api/v1/users/me")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ name: newName })
+      .expect(StatusCodes.OK);
+
+    expect(res.body.data.name).toBe(newName);
+    
+    // Verify persistence
+    const check = await request(app)
+      .get("/api/v1/users/me")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(StatusCodes.OK);
+    expect(check.body.data.name).toBe(newName);
+  });
+
+  let exampleId: number;
+
+  it("9. Business Logic: Create Example", async () => {
+    const res = await request(app)
+      .post("/api/v1/examples")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ name: "Journey Example", description: "Created during E2E" })
+      .expect(StatusCodes.CREATED);
+
+    expect(res.body.data.id).toBeDefined();
+    exampleId = res.body.data.id;
+  });
+
+  it("10. Business Logic: List Examples", async () => {
+    const res = await request(app)
+      .get("/api/v1/examples")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .query({ page: 1, limit: 10 })
+      .expect(StatusCodes.OK);
+
+    expect(res.body.data).toBeInstanceOf(Array);
+    expect(res.body.data.length).toBeGreaterThan(0);
+    const item = res.body.data.find((e: any) => e.id === exampleId);
+    expect(item).toBeDefined();
+  });
+
+  it("11. Business Logic: Get Example Details", async () => {
+    const res = await request(app)
+      .get(`/api/v1/examples/${exampleId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(StatusCodes.OK);
+
+    expect(res.body.data.id).toBe(exampleId);
+    expect(res.body.data.name).toBe("Journey Example");
+  });
+
+  it("12. Business Logic: Update Example", async () => {
+    const res = await request(app)
+      .put(`/api/v1/examples/${exampleId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ name: "Updated Journey Example" })
+      .expect(StatusCodes.OK);
+
+    expect(res.body.data.name).toBe("Updated Journey Example");
+  });
+
+  it("13. Business Logic: Delete Example", async () => {
+    await request(app)
+      .delete(`/api/v1/examples/${exampleId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(StatusCodes.OK);
+
+    // Verify gone
+    await request(app)
+      .get(`/api/v1/examples/${exampleId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(StatusCodes.NOT_FOUND);
+  });
+
+  it("14. Account Security: Forgot Password", async () => {
     await deleteAllEmails(); // Ensure clean slate
     await request(app)
       .post("/api/v1/auth/forgot-password")
@@ -223,14 +309,14 @@ describe("E2E: User Journey", () => {
     refreshToken = res.body.data.tokens.refreshToken;
   }, 20000); // 20s timeout
 
-  it("8. Logout", async () => {
+  it("15. Logout", async () => {
     await request(app)
       .post("/api/v1/auth/logout")
       .send({ refreshToken })
       .expect(StatusCodes.OK);
   });
 
-  it("9. Verify Unauthorized after Logout", async () => {
+  it("16. Verify Unauthorized after Logout", async () => {
     // Refresh token should be invalid
     await request(app)
      .post("/api/v1/auth/refresh-token")
