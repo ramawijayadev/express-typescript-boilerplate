@@ -20,8 +20,9 @@ import {
   listExamplesQuerySchema,
   updateExampleSchema,
 } from "./example.schemas";
-import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 import { ExampleService } from "./example.service";
+
+import type { CreateExampleInput, ListExamplesQuery, UpdateExampleInput } from "./example.schemas";
 
 export const exampleRegistry = new OpenAPIRegistry();
 export const exampleRouter = Router();

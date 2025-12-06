@@ -15,6 +15,7 @@ beforeAll(() => {
   const isTestEnv = process.env.NODE_ENV === "test";
 
   if (!isTestEnv) {
+    // eslint-disable-next-line no-console
     console.warn("⚠️  WARNING: NODE_ENV is not 'test'. Global safety setup proceeding with caution.");
   }
 
@@ -26,6 +27,7 @@ beforeAll(() => {
 
   // Additional check for remote DBs (naive but helpful)
   if (!isLocal && !process.env.CI) {
+    // eslint-disable-next-line no-console
     console.warn("⚠️  WARNING: Connected to a non-local database. Ensure this is intentional.");
   }
   // --------------------------------------------------------------------------

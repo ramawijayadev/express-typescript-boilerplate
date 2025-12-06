@@ -1,13 +1,12 @@
 import { Worker } from "bullmq";
 import { StatusCodes } from "http-status-codes";
-import nodemailer from "nodemailer";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { queueConfig } from "@/config/queue";
-import { SmtpEmailSender } from "@/core/mail/mailer";
 import { db } from "@/core/database/connection";
+import { SmtpEmailSender } from "@/core/mail/mailer";
 
 // Helper to delete all messages in Mailpit
 /**
@@ -18,6 +17,7 @@ async function deleteAllEmails() {
   try {
     await fetch("http://localhost:8025/api/v1/messages", { method: "DELETE" });
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.warn("Failed to clear Mailpit", err);
   }
 }
@@ -36,10 +36,13 @@ async function fetchLatestEmail(recipient: string) {
       const response = await fetch("http://localhost:8025/api/v1/messages");
       if (!response.ok) return null;
       
-      const data = await response.json();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = await response.json() as any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const messages = (data as any).messages || [];
       
       // Simplified finding logic: Check if recipient string exists in the message object (To/Header)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const email = messages.find((msg: any) => JSON.stringify(msg).includes(recipient));
       
       if (!email) return null;
@@ -47,8 +50,10 @@ async function fetchLatestEmail(recipient: string) {
       // Fetch full body
       const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
       if (!msgRes.ok) return null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return await msgRes.json() as any; // Full message with Text/HTML
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn("Mailpit fetch failed. Is Mailpit running?", error);
       return null;
     }
@@ -81,7 +86,7 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
 // If valid email templates are not yet implemented, the SmtpEmailSender might send standard text.
 // Let's assume standard template for now or check previous learnings.
 
-describe("E2E: User Journey", () => {
+ describe("E2E: User Journey", () => {
   const app = createApp();
   let worker: Worker;
   
@@ -103,6 +108,7 @@ describe("E2E: User Journey", () => {
     
     // Explicitly reusing the same connection config
     worker = new Worker("email-queue", async (job) => {
+       // eslint-disable-next-line no-console
        console.log("Worker processing job:", job.name, job.data);
        const { email, token } = job.data;
        let subject = "Subject";
@@ -112,6 +118,7 @@ describe("E2E: User Journey", () => {
        if (job.name === "password-reset") subject = "Reset your password";
 
        await emailSender.send({ to: email, subject, text });
+       // eslint-disable-next-line no-console
        console.log("Worker sent email to:", email);
     }, {
       connection: {
@@ -121,8 +128,11 @@ describe("E2E: User Journey", () => {
       },
     });
 
+    // eslint-disable-next-line no-console
     worker.on("ready", () => console.log("Worker is ready and connected to Redis"));
+    // eslint-disable-next-line no-console
     worker.on("error", (err) => console.error("Worker error:", err));
+    // eslint-disable-next-line no-console
     worker.on("failed", (job, err) => console.error(`Job ${job?.id} failed:`, err));
   });
 
@@ -160,6 +170,7 @@ describe("E2E: User Journey", () => {
       .send({ token })
       .expect(StatusCodes.OK)
       .catch(err => {
+        // eslint-disable-next-line no-console
         console.error("Verify Email Failed Response:", err.response?.body);
         throw err;
       });
@@ -247,6 +258,7 @@ describe("E2E: User Journey", () => {
 
     expect(res.body.data).toBeInstanceOf(Array);
     expect(res.body.data.length).toBeGreaterThan(0);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const item = res.body.data.find((e: any) => e.id === exampleId);
     expect(item).toBeDefined();
   });
