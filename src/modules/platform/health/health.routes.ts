@@ -16,7 +16,7 @@ export const HealthSchema = z.object({
 
 healthRegistry.registerPath({
   method: "get",
-  path: "/api/v1/health",
+  path: "/health",
   tags: ["Health"],
   responses: createApiResponse(HealthSchema, "Server health status"),
 });

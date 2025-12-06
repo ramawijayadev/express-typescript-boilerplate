@@ -35,7 +35,7 @@ const exampleController = new ExampleController(exampleService);
 
 exampleRegistry.registerPath({
   method: "get",
-  path: "/examples",
+  path: "/business/examples",
   tags: ["Example"],
   request: {
     query: listExamplesQuerySchema,
@@ -49,7 +49,7 @@ exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
 
 exampleRegistry.registerPath({
   method: "get",
-  path: "/examples/{id}",
+  path: "/business/examples/{id}",
   tags: ["Example"],
   request: {
     params: exampleIdSchema,
@@ -63,7 +63,7 @@ exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
 
 exampleRegistry.registerPath({
   method: "post",
-  path: "/examples",
+  path: "/business/examples",
   tags: ["Example"],
   request: {
     body: {
@@ -83,7 +83,7 @@ exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
 
 exampleRegistry.registerPath({
   method: "put",
-  path: "/examples/{id}",
+  path: "/business/examples/{id}",
   tags: ["Example"],
   request: {
     params: exampleIdSchema,
@@ -107,7 +107,7 @@ exampleRouter.put(
 
 exampleRegistry.registerPath({
   method: "delete",
-  path: "/examples/{id}",
+  path: "/business/examples/{id}",
   tags: ["Example"],
   request: {
     params: exampleIdSchema,
