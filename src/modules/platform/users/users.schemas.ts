@@ -9,6 +9,12 @@ export const userIdSchema = z.object({
 
 export const updateUserSchema = z.object({
   name: z.string().min(2).optional().openapi({ example: "John Doe" }),
-  // Email update might require verification flow, kept simple for now
   email: z.string().email().optional().openapi({ example: "john@example.com" }),
 });
+
+export const UserSchema = z
+  .object({
+    id: z.number().openapi({ description: "The auto-generated id of the example" }),
+    name: z.string().openapi({ description: "The name of the example" }),
+  })
+  .openapi("Example");

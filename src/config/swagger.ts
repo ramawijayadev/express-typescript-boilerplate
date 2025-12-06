@@ -4,6 +4,7 @@ import { env } from "@/app/env";
 import { exampleRegistry } from "@/modules/business/example/example.routes";
 import { authRegistry } from "@/modules/platform/auth/auth.routes";
 import { healthRegistry } from "@/modules/platform/health/health.routes";
+import { userRegistry } from "@/modules/platform/users/users.routes";
 
 import { appConfig } from "./app";
 
@@ -19,9 +20,10 @@ registry.registerComponent("securitySchemes", "bearerAuth", {
 const getOpenApiDocumentation = () => {
   const generator = new OpenApiGeneratorV3([
     ...registry.definitions,
-    ...authRegistry.definitions,
-    ...exampleRegistry.definitions,
     ...healthRegistry.definitions,
+    ...authRegistry.definitions,
+    ...userRegistry.definitions,
+    ...exampleRegistry.definitions,
   ]);
 
   return generator.generateDocument({

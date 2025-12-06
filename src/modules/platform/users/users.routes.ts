@@ -1,29 +1,52 @@
+import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
+import { z } from "zod";
 
 import { db } from "@/core/database/connection";
 import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
 import { validateBody } from "@/core/http/middlewares/validation.middleware";
 import type { AuthenticatedRequest } from "@/core/http/types";
+import {
+  createApiPaginatedResponse,
+  createApiResponse,
+} from "@/shared/open-api/openapi-response-builders";
 
 import { UsersController } from "./users.controller";
 import { UsersRepository } from "./users.repository";
-import { updateUserSchema } from "./users.schemas";
+import { UserSchema, updateUserSchema } from "./users.schemas";
 import { UsersService } from "./users.service";
 
 import type { UpdateUserBody } from "./users.types";
 
-// DI Setup
+export const userRegistry = new OpenAPIRegistry();
+export const userRouter = Router();
+
+userRegistry.register("User", UserSchema);
+
 const repo = new UsersRepository(db());
 const service = new UsersService(repo);
 const controller = new UsersController(service);
 
 export const usersRouter = Router();
 
-usersRouter.use(authenticate); // Protect all routes
+usersRouter.use(authenticate);
 
-usersRouter.get("/me", authenticate, (req, res) =>
-  controller.me(req as AuthenticatedRequest, res),
-);
+usersRouter.get("/me", authenticate, (req, res) => controller.me(req as AuthenticatedRequest, res));
+
+userRegistry.registerPath({
+  method: "get",
+  path: "/platform/users/me",
+  tags: ["User"],
+  responses: createApiResponse(UserSchema, "User"),
+});
+
 usersRouter.patch("/me", authenticate, validateBody(updateUserSchema), (req, res) =>
   controller.updateMe(req as AuthenticatedRequest<UpdateUserBody>, res),
 );
+
+userRegistry.registerPath({
+  method: "patch",
+  path: "/platform/users/me",
+  tags: ["User"],
+  responses: createApiResponse(UserSchema, "User"),
+});
