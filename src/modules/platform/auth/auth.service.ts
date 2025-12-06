@@ -19,19 +19,11 @@ import type {
 } from "./auth.types";
 
 export class AuthService {
-  /**
-   * Creates an instance of AuthService.
-   * @param repo - The auth repository.
-   */
   constructor(private readonly repo: AuthRepository) {}
 
   /**
-   * Registers a new user.
-   *
-   * @param data - The registration data (name, email, password).
-   * @param meta - Metadata about the request (IP, User Agent).
-   * @returns A promise that resolves to the auth response (tokens and user info).
-   * @throws {AppError} 409 - If the email is already registered.
+   * Registers a new user and sends verification email.
+   * Throws 409 if email exists.
    */
   async register(
     data: RegisterBody,
@@ -50,12 +42,8 @@ export class AuthService {
   }
 
   /**
-   * Authenticates a user.
-   *
-   * @param data - The login credentials (email, password).
-   * @param meta - Metadata about the request (IP, User Agent).
-   * @returns A promise that resolves to the auth response.
-   * @throws {AppError} 401 - If credentials are invalid, account is disabled, or locked.
+   * Authenticates a user and issues tokens.
+   * Throws 401 for invalid credentials/locked/disabled accounts.
    */
   async login(data: LoginBody, meta?: { ip?: string; userAgent?: string }): Promise<AuthResponse> {
     const user = await this.repo.findByEmail(data.email);
@@ -106,10 +94,6 @@ export class AuthService {
 
   /**
    * Creates a new session using user details.
-   *
-   * @param user - The user object.
-   * @param meta - Metadata about the request (IP, User Agent).
-   * @returns The generated auth tokens and user info.
    */
   private async createSession(
     user: { id: number; name: string; email: string },
@@ -147,10 +131,6 @@ export class AuthService {
   /**
    * Refreshes the access token using a valid refresh token.
    * Rotates the refresh token for security.
-   *
-   * @param token - The current refresh token.
-   * @returns A promise that resolves to the new access and refresh tokens.
-   * @throws {AppError} 401 - If the token is invalid, used, or revoked.
    */
   async refreshToken(token: string): Promise<RefreshTokenResponse> {
     try {
@@ -192,9 +172,6 @@ export class AuthService {
 
   /**
    * Logs out a user by revoking the refresh token session.
-   *
-   * @param refreshToken - The refresh token to revoke.
-   * @throws {AppError} 401 - If the token is invalid or not found.
    */
   async logout(refreshToken: string): Promise<void> {
     const tokenHash = hashToken(refreshToken);
@@ -207,19 +184,13 @@ export class AuthService {
 
   /**
    * Revokes all sessions for a specific user.
-   *
-   * @param userId - The ID of the user.
-   */
+  */
   async revokeAllSessions(userId: number): Promise<void> {
     await this.repo.revokeAllUserSessions(userId);
   }
 
   /**
    * Retrieves the profile of a user.
-   *
-   * @param userId - The ID of the user.
-   * @returns A promise that resolves to the user profile.
-   * @throws {AppError} 404 - If the user is not found.
    */
   async getProfile(userId: number): Promise<ProfileResponse> {
     const user = await this.repo.findById(userId);
@@ -239,8 +210,6 @@ export class AuthService {
 
   /**
    * Sends a verification email to the user.
-   *
-   * @param user - The user to send the email to.
    */
   async sendVerificationEmail(user: { id: number; email: string }) {
     const token = randomBytes(32).toString("hex");
@@ -264,8 +233,6 @@ export class AuthService {
 
   /**
    * Resends the verification email if not already verified.
-   *
-   * @param userId - The ID of the user.
    */
   async resendVerification(userId: number) {
     const user = await this.repo.findById(userId);
@@ -282,9 +249,6 @@ export class AuthService {
 
   /**
    * Verifies a user's email using a token.
-   *
-   * @param token - The verification token.
-   * @throws {AppError} 400 - If token is invalid, expired, or used.
    */
   async verifyEmail(token: string) {
     const tokenHash = hashToken(token);
@@ -308,8 +272,6 @@ export class AuthService {
 
   /**
    * Initiates the password reset process.
-   *
-   * @param email - The email of the user who forgot their password.
    */
   async forgotPassword(email: string) {
     const user = await this.repo.findByEmail(email);
@@ -338,10 +300,6 @@ export class AuthService {
 
   /**
    * Resets the user's password using a valid token.
-   *
-   * @param token - The password reset token.
-   * @param newPassword - The new password.
-   * @throws {AppError} 400 - If token is invalid, expired, or used.
    */
   async resetPassword(token: string, newPassword: string) {
     const tokenHash = hashToken(token);
