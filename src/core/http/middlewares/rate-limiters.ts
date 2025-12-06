@@ -10,14 +10,12 @@ const noOpMiddleware: RequestHandler = (_req, _res, next) => next();
 /**
  * Strict rate limiter for login endpoint.
  * Prevents brute-force password attacks.
- * 
- * Limits: 5 attempts per IP per 15 minutes
  */
 export const loginRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 5, // 5 attempts per IP
+      windowMs: 15 * 60 * 1000,
+      max: 5,
       message: "Too many login attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -27,14 +25,12 @@ export const loginRateLimiter = isTest
 /**
  * Strict rate limiter for registration endpoint.
  * Prevents spam registrations and email enumeration.
- * 
- * Limits: 3 registrations per IP per hour
  */
 export const registerRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: 60 * 60 * 1000, // 1 hour
-      max: 3, // 3 registrations per IP per hour
+      windowMs: 60 * 60 * 1000,
+      max: 3,
       message: "Too many registration attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -43,14 +39,12 @@ export const registerRateLimiter = isTest
 /**
  * Strict rate limiter for password reset requests.
  * Prevents email bombing and DoS attacks.
- * 
- * Limits: 3 reset requests per IP per hour
  */
 export const passwordResetRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: 60 * 60 * 1000, // 1 hour
-      max: 3, // 3 reset requests per IP per hour
+      windowMs: 60 * 60 * 1000,
+      max: 3,
       message: "Too many password reset attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -58,14 +52,11 @@ export const passwordResetRateLimiter = isTest
 
 /**
  * Moderate rate limiter for email verification endpoints.
- * Allows more attempts than critical endpoints but still prevents abuse.
- * 
- * Limits: 10 attempts per IP per hour
  */
 export const verificationRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: 60 * 60 * 1000, // 1 hour
+      windowMs: 60 * 60 * 1000,
       max: 10,
       message: "Too many verification attempts, please try again later",
       standardHeaders: true,

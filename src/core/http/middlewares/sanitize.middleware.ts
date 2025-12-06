@@ -28,12 +28,10 @@ export function sanitizeInput(req: Request, _res: Response, next: NextFunction) 
  * Recursively sanitizes an object by removing dangerous patterns.
  */
 function sanitizeObject(obj: unknown): unknown {
-  // Handle primitives
   if (obj === null || obj === undefined) {
     return obj;
   }
 
-  // Handle strings - remove dangerous characters
   if (typeof obj === "string") {
     // Remove NoSQL operators and common SQL injection patterns
     return obj
@@ -42,12 +40,10 @@ function sanitizeObject(obj: unknown): unknown {
       .trim();
   }
 
-  // Handle arrays
   if (Array.isArray(obj)) {
     return obj.map(sanitizeObject);
   }
 
-  // Handle objects
   if (typeof obj === "object") {
     const sanitized: Record<string, unknown> = {};
 
@@ -62,13 +58,11 @@ function sanitizeObject(obj: unknown): unknown {
         continue;
       }
 
-      // Recursively sanitize the value
       sanitized[key] = sanitizeObject(value);
     }
 
     return sanitized;
   }
 
-  // Return other types as-is (numbers, booleans, etc.)
   return obj;
 }
