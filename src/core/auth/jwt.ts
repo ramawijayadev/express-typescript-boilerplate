@@ -11,15 +11,15 @@ export interface TokenPayload {
 }
 
 export function generateAccessToken(payload: TokenPayload): string {
-  return jwt.sign(payload, authConfig.jwt.secret as jwt.Secret, {
-    expiresIn: authConfig.jwt.accessExpiration,
+  return jwt.sign({ ...payload }, authConfig.jwt.secret as jwt.Secret, {
+    expiresIn: authConfig.jwt.accessExpiration as any,
   });
 }
 
 export function generateRefreshToken(payload: TokenPayload): string {
   const jti = randomUUID();
   return jwt.sign({ ...payload, jti }, authConfig.jwt.secret as jwt.Secret, {
-    expiresIn: authConfig.jwt.refreshExpiration,
+    expiresIn: authConfig.jwt.refreshExpiration as any,
   });
 }
 

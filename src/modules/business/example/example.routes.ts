@@ -2,7 +2,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { z } from "zod";
 
-import { validateBody, validateParams, validateQuery } from "@/core/http/validation.middleware";
+import { validateBody, validateParams, validateQuery } from "@/core/http/middlewares/validation.middleware";
 import {
   createApiPaginatedResponse,
   createApiResponse,
@@ -121,7 +121,24 @@ exampleRegistry.registerPath({
   responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted"),
 });
 
+exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
+  exampleController.list(req as any, res),
+);
+
+// ... (Updating find)
+exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
+  exampleController.find(req as any, res),
+);
+
+// ... (Updating update)
+exampleRouter.put(
+  "/:id",
+  validateParams(idParamSchema),
+  validateBody(updateExampleSchema),
+  (req, res) => exampleController.update(req as any, res),
+);
+
+// ... (Updating delete)
 exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   exampleController.delete(req as any, res),
 );

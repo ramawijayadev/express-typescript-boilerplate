@@ -1,8 +1,8 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 
-import { authenticate } from "@/core/http/middlewares/authenticate";
-import { validateBody } from "@/core/http/validation.middleware";
+import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
+import { validateBody } from "@/core/http/middlewares/validation.middleware";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
 import { AuthController } from "./auth.controller";
@@ -114,7 +114,7 @@ authRegistry.registerPath({
   responses: createApiResponse(logoutResponseSchema, "All sessions revoked"),
 });
 
-authRouter.post("/revoke-all", authenticate, (req, res) => authController.revokeAll(req, res));
+authRouter.post("/revoke-all", authenticate, (req, res) => authController.revokeAll(req as any, res));
 
 authRegistry.registerPath({
   method: "get",
@@ -123,7 +123,7 @@ authRegistry.registerPath({
   responses: createApiResponse(profileResponseSchema, "User profile"),
 });
 
-authRouter.get("/profile", authenticate, (req, res) => authController.getProfile(req, res));
+authRouter.get("/profile", authenticate, (req, res) => authController.getProfile(req as any, res));
 
 authRegistry.registerPath({
   method: "post",
@@ -153,7 +153,7 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/resend-verification", authenticate, (req, res) =>
-  authController.resendVerification(req, res),
+  authController.resendVerification(req as any, res),
 );
 
 authRegistry.registerPath({
