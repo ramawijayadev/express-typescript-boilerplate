@@ -28,9 +28,19 @@ const envSchema = z.object({
   DATABASE_URL: z.string().optional(),
   DATABASE_URL_OTHER: z.string().optional(),
 
-  // Rate Limiting
+  // Rate Limiting (Global)
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000), // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(1000),
+
+  // Rate Limiting (Auth Specific)
+  RATE_LIMIT_LOGIN_WINDOW_MS: z.coerce.number().default(15 * 60 * 1000), // 15 minutes
+  RATE_LIMIT_LOGIN_MAX: z.coerce.number().default(5),
+  RATE_LIMIT_REGISTER_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000), // 1 hour
+  RATE_LIMIT_REGISTER_MAX: z.coerce.number().default(3),
+  RATE_LIMIT_PASSWORD_RESET_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000), // 1 hour
+  RATE_LIMIT_PASSWORD_RESET_MAX: z.coerce.number().default(3),
+  RATE_LIMIT_VERIFICATION_WINDOW_MS: z.coerce.number().default(60 * 60 * 1000), // 1 hour
+  RATE_LIMIT_VERIFICATION_MAX: z.coerce.number().default(10),
 
   // Pagination
   PAGINATION_DEFAULT_LIMIT: z.coerce.number().default(10),
