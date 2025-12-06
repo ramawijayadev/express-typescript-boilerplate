@@ -17,7 +17,6 @@ async function deleteAllEmails() {
   try {
     await fetch("http://localhost:8025/api/v1/messages", { method: "DELETE" });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.warn("Failed to clear Mailpit", err);
   }
 }
@@ -36,13 +35,10 @@ async function fetchLatestEmail(recipient: string) {
       const response = await fetch("http://localhost:8025/api/v1/messages");
       if (!response.ok) return null;
       
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data = await response.json() as any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const messages = (data as any).messages || [];
       
       // Simplified finding logic: Check if recipient string exists in the message object (To/Header)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const email = messages.find((msg: any) => JSON.stringify(msg).includes(recipient));
       
       if (!email) return null;
@@ -50,10 +46,8 @@ async function fetchLatestEmail(recipient: string) {
       // Fetch full body
       const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
       if (!msgRes.ok) return null;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return await msgRes.json() as any; // Full message with Text/HTML
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.warn("Mailpit fetch failed. Is Mailpit running?", error);
       return null;
     }
@@ -108,7 +102,6 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
     
     // Explicitly reusing the same connection config
     worker = new Worker("email-queue", async (job) => {
-       // eslint-disable-next-line no-console
        console.log("Worker processing job:", job.name, job.data);
        const { email, token } = job.data;
        let subject = "Subject";
@@ -118,7 +111,6 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
        if (job.name === "password-reset") subject = "Reset your password";
 
        await emailSender.send({ to: email, subject, text });
-       // eslint-disable-next-line no-console
        console.log("Worker sent email to:", email);
     }, {
       connection: {
@@ -128,11 +120,8 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
       },
     });
 
-    // eslint-disable-next-line no-console
     worker.on("ready", () => console.log("Worker is ready and connected to Redis"));
-    // eslint-disable-next-line no-console
     worker.on("error", (err) => console.error("Worker error:", err));
-    // eslint-disable-next-line no-console
     worker.on("failed", (job, err) => console.error(`Job ${job?.id} failed:`, err));
   });
 
@@ -170,7 +159,6 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
       .send({ token })
       .expect(StatusCodes.OK)
       .catch(err => {
-        // eslint-disable-next-line no-console
         console.error("Verify Email Failed Response:", err.response?.body);
         throw err;
       });
@@ -258,7 +246,6 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
 
     expect(res.body.data).toBeInstanceOf(Array);
     expect(res.body.data.length).toBeGreaterThan(0);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const item = res.body.data.find((e: any) => e.id === exampleId);
     expect(item).toBeDefined();
   });

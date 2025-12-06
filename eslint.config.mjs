@@ -29,8 +29,10 @@ export default defineConfig([
     rules: {
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
+      "no-console": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
       "no-redeclare": "off",
-      "no-console": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
@@ -38,8 +40,6 @@ export default defineConfig([
           varsIgnorePattern: "^_",
         },
       ],
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/no-namespace": "off",
       "import/order": [
         "warn",

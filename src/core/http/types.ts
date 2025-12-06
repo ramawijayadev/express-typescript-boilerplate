@@ -4,14 +4,12 @@ import type { NextFunction, Request, Response } from "express";
 // Express uses 'any' for Params/Query/ResBody, and strict 'unknown' causes type incompatibility
 export type TypedRequest<
   Body = unknown,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Query = any,
   Params = Record<string, string>,
 > = Request<Params, unknown, Body, Query>;
 
 export interface AuthenticatedRequest<
   Body = unknown,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Query = any,
   Params = Record<string, string>,
 > extends TypedRequest<Body, Query, Params> {
@@ -29,7 +27,6 @@ export interface AuthenticatedRequest<
  *   typedHandler<LoginBody>(authController.login)
  * );
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function typedHandler<Body = unknown, Query = any, Params = Record<string, string>>(
   handler: (
     req: TypedRequest<Body, Query, Params>,
@@ -55,7 +52,6 @@ export function typedHandler<Body = unknown, Query = any, Params = Record<string
  *   authenticatedHandler<UpdateProfileBody>(authController.updateProfile)
  * );
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function authenticatedHandler<Body = unknown, Query = any, Params = Record<string, string>>(
   handler: (
     req: AuthenticatedRequest<Body, Query, Params>,

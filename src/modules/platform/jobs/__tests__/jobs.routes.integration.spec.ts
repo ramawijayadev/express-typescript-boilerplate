@@ -29,7 +29,6 @@ describe("Jobs Routes Integration", () => {
       userId = user.id;
       token = generateAccessToken({ userId });
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error("Test setup failed:", error);
       throw error;
     }
