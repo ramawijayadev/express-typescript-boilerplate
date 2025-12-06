@@ -7,7 +7,7 @@ export type Role = 'admin' | 'user';
  * Interface for Access Control Logic (RBAC).
  * Determines if a user can perform an action on a resource.
  */
-export interface IAccessControl {
+export interface AccessControl {
   /**
    * Check if a user with given roles can perform the action.
    * @param roles - List of roles the user has.
@@ -17,7 +17,7 @@ export interface IAccessControl {
   can(roles: Role[], resource: string, action: string): boolean;
 }
 
-export const accessControl: IAccessControl = {
+export const accessControl: AccessControl = {
   can(roles, _resource, _action) {
     if (roles.includes('admin')) {
       return true; // Admin can do anything

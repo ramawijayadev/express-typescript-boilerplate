@@ -2,7 +2,7 @@
  * Interface for File Storage operations.
  * Allows switching between Local and S3/Object Storage.
  */
-export interface IFileStorage {
+export interface FileStorage {
   /**
    * Upload a file buffer to storage.
    * @param key - The unique path/key for the file.
@@ -30,7 +30,7 @@ import { logger } from "@/core/logging/logger";
 /**
  * Local file storage implementation (Default for Dev).
  */
-export class LocalFileStorage implements IFileStorage {
+export class LocalFileStorage implements FileStorage {
   async upload(key: string, body: Buffer, contentType: string): Promise<string> {
     // TODO: Implement actual fs.writeFile logic here
     logger.info({ key, size: body.length, contentType }, "[LocalFileStorage] Uploading file");
