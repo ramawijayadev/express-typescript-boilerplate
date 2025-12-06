@@ -35,7 +35,7 @@ usersRouter.get("/me", authenticate, (req, res) => controller.me(req as Authenti
 
 userRegistry.registerPath({
   method: "get",
-  path: "/platform/users/me",
+  path: "/users/me",
   tags: ["User"],
   responses: createApiResponse(UserSchema, "User"),
 });
@@ -46,7 +46,7 @@ usersRouter.patch("/me", authenticate, validateBody(updateUserSchema), (req, res
 
 userRegistry.registerPath({
   method: "patch",
-  path: "/platform/users/me",
+  path: "/users/me",
   tags: ["User"],
   responses: createApiResponse(UserSchema, "User"),
 });

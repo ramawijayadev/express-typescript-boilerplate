@@ -24,7 +24,14 @@ export function createApp(configure?: (app: express.Express) => void) {
 
   registerMiddlewares(app);
 
-  app.get("/", swaggerUi.setup(swaggerSpec));
+  app.get(
+    "/",
+    swaggerUi.setup(swaggerSpec, {
+      swaggerOptions: {
+        defaultModelsExpandDepth: -1,
+      },
+    })
+  );
   app.use("/", swaggerUi.serve);
 
   registerRoutes(app);
