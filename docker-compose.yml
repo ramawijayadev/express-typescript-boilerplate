@@ -52,6 +52,17 @@ services:
     networks:
       - app-network
 
+  k6:
+    image: grafana/k6:latest
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_OUT=json=test_results.json
+    volumes:
+      - ./src/tests/perf:/scripts
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

@@ -152,11 +152,19 @@ pnpm test:e2e
 
 ### Performance (k6, opsional)
 
-- Lokasi: `tests/perf/*.js`
-- Contoh:
+- Lokasi: `src/tests/perf/*.js`
 
+#### Option 1: Local (Mac/Linux)
+Install k6: `brew install k6`
+Run:
 ```bash
-k6 run tests/perf/k6-smoke.js
+k6 run src/tests/perf/k6-stress.js
+```
+
+#### Option 2: Docker
+Run via Docker Compose (no local install needed):
+```bash
+docker-compose run --rm k6 run /scripts/k6-stress.js
 ```
 
 ---
