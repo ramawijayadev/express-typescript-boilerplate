@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TypeScript Clean Code Constitution</title>
+    <meta name="description"
+        content="Strict coding standards and conventions for TypeScript development using Feature-Based Architecture.">
+</head>
+
+<body>
+
+    <main>
+        <header>
+            <h1>TypeScript Clean Code Constitution</h1>
+            <dl>
+                <dt>Version</dt>
+                <dd>1.0.0</dd>
+                <dt>Context</dt>
+                <dd>Feature-Based Architecture (Controller-Service-Repository)</dd>
+                <dt>Enforcement</dt>
+                <dd>Strict / Non-Negotiable</dd>
+                <dt>Target Audience</dt>
+                <dd>Human Developers & AI Agents</dd>
+            </dl>
+            <hr>
+        </header>
+
+        <section id="core-philosophy">
+            <h2>I. The Core Narrative</h2>
+            <p><strong>Definition:</strong> Clean Code in TypeScript is defined by Predictability and Type Integrity.
+            </p>
+            <p>Code is not merely a set of instructions for the machine; it is a communication contract. In this
+                project, we adhere to the following philosophy:</p>
+            <ol>
+                <li>
+                    <strong>Type Safety is Documentation:</strong> Do not write comments explaining <em>what</em> a
+                    variable is. Define a Type/Interface that makes it self-evident.
+                </li>
+                <li>
+                    <strong>Predictability Over Cleverness:</strong> Logic must flow linearly. We prefer "boring" code
+                    over complex, nested logic.
+                </li>
+                <li>
+                    <strong>The "Sterile Zone" Principle:</strong> The application core (Service/Repository) is a
+                    sterile environment. Data from the outside world (HTTP requests, APIs) must be sanitized, validated,
+                    and typed immediately upon entry (at the Controller level).
+                </li>
+                <li>
+                    <strong>Honesty:</strong> The code must be honest about its state. We do not hide errors, and we do
+                    not lie about types using <code>any</code>.
+                </li>
+            </ol>
+        </section>
+
+        <hr>
+
+        <section id="architecture">
+            <h2>II. Architectural Implementation</h2>
+            <p>The codebase follows a strict <strong>Feature-Based Module</strong> pattern. Data flow is unidirectional.
+            </p>
+
+            <h3>1. The Data Flow</h3>
+            <ul>
+                <li><strong>Route:</strong> Defines the endpoint URL only.</li>
+                <li><strong>Controller (The Gatekeeper):</strong> Accepts <code>Request</code>, validates inputs using
+                    <strong>Zod</strong>, calls the Service. <strong>MUST</strong> return HTTP Responses.
+                </li>
+                <li><strong>Service (The Brain):</strong> Contains pure business logic. Accepts strictly typed DTOs.
+                    <strong>MUST NOT</strong> interact with HTTP objects (req/res).
+                </li>
+                <li><strong>Repository (The Storage):</strong> Direct database interaction via ORM.
+                    <strong>MUST</strong> return Entities.
+                </li>
+            </ul>
+
+            <h3>2. File Structure Standard</h3>
+            <pre><code>
+src/features/&lt;feature_name&gt;/
+├── &lt;feature&gt;.controller.ts  // Handles HTTP, Validates Input
+├── &lt;feature&gt;.service.ts     // Business Logic
+├── &lt;feature&gt;.repository.ts  // Database Queries
+├── &lt;feature&gt;.routes.ts      // Router Definitions
+└── &lt;feature&gt;.types.ts       // Shared Interfaces & DTOs
+            </code></pre>
+        </section>
+
+        <hr>
+
+        <section id="primary-directives">
+            <h2>III. The Primary Directives (Mandatory Rules)</h2>
+
+            <article id="zero-any-policy">
+                <h3>A. The "Zero Any" Policy 🚫</h3>
+                <ul>
+                    <li><strong>FORBIDDEN:</strong> The explicit usage of <code>any</code> is strictly prohibited.</li>
+                    <li><strong>FORBIDDEN:</strong> Using <code>// @ts-ignore</code>, <code>// @ts-nocheck</code>, or
+                        <code>eslint-disable</code> to bypass type errors.
+                    </li>
+                    <li><strong>REQUIRED:</strong> If a data structure is genuinely unknown, use <code>unknown</code>
+                        and perform Type Narrowing.</li>
+                </ul>
+            </article>
+
+            <article id="input-validation">
+                <h3>B. Input Validation (The Border Patrol) 🛡️</h3>
+                <ul>
+                    <li><strong>REQUIRED:</strong> All external inputs (API bodies, params) must be validated using
+                        <strong>Zod</strong> schemas at the Controller level.
+                    </li>
+                    <li><strong>REQUIRED:</strong> Controllers must pass parsed/typed objects (DTOs) to Services, never
+                        raw <code>req.body</code>.</li>
+                </ul>
+            </article>
+
+            <article id="function-signatures">
+                <h3>C. Function Signatures</h3>
+                <ul>
+                    <li><strong>REQUIRED:</strong> Explicit return types for all exported functions.</li>
+                    <li><strong>REQUIRED:</strong> Use <strong>Named Arguments</strong> (Interfaces) for functions with
+                        more than 2 parameters.</li>
+                </ul>
+                <p>Example:</p>
+                <pre><code>
+// Bad
+createUser(name, email, age)
+
+// Good
+createUser({ name, email, age }: CreateUserDTO)
+                </code></pre>
+            </article>
+
+            <article id="naming-conventions">
+                <h3>D. Naming Conventions</h3>
+                <ul>
+                    <li><strong>Variables/Functions:</strong> <code>camelCase</code> (e.g.,
+                        <code>getUserProfile</code>).
+                    </li>
+                    <li><strong>Types/Interfaces:</strong> <code>PascalCase</code> (e.g., <code>UserResponse</code>). Do
+                        not use "I" prefix (e.g., <code>IUser</code> is forbidden).</li>
+                    <li><strong>Booleans:</strong> Must have a verb prefix (e.g., <code>isActive</code>,
+                        <code>hasPermission</code>, <code>shouldRetry</code>).
+                    </li>
+                    <li><strong>Files:</strong> <code>kebab-case</code> with type suffix (e.g.,
+                        <code>auth.service.ts</code>).
+                    </li>
+                </ul>
+            </article>
+        </section>
+
+        <hr>
+
+        <section id="edge-case-protocols">
+            <h2>IV. Edge Case Protocols (Handling Uncertainty)</h2>
+            <p>When encountering ambiguous scenarios, adhere to these protocols to maintain type safety.</p>
+
+            <article>
+                <h3>Protocol 1: Handling Dynamic Objects</h3>
+                <p>If an object has dynamic keys but consistent values, use <code>Record</code>.</p>
+                <pre><code>const config: Record&lt;string, string&gt; = { ... }</code></pre>
+            </article>
+
+            <article>
+                <h3>Protocol 2: Handling 3rd Party "any" return</h3>
+                <p>If an external library returns <code>any</code>, establish a "Casting Boundary" immediately.</p>
+                <pre><code>const result = library.getData() as ExpectedType;</code></pre>
+                <p><strong>Constraint:</strong> Casting is allowed ONLY on the line of data assignment.</p>
+            </article>
+
+            <article>
+                <h3>Protocol 3: Generic Utilities</h3>
+                <p>For shared helper functions that handle multiple data types, use <strong>Generics
+                        (&lt;T&gt;)</strong>.</p>
+                <pre><code>function wrapResponse&lt;T&gt;(data: T): ApiResponse&lt;T&gt; { ... }</code></pre>
+            </article>
+
+            <article>
+                <h3>Protocol 4: Error Handling</h3>
+                <p>Do not treat <code>catch(err)</code> as <code>any</code>. Check the instance.</p>
+                <pre><code>
+try { ... }
+catch (err: unknown) {
+  if (err instanceof Error) { ... }
+}
+                </code></pre>
+            </article>
+        </section>
+
+        <hr>
+
+        <section id="modern-syntax">
+            <h2>V. Modern Syntax & Style</h2>
+            <ul>
+                <li><strong>Null Checks:</strong> Use Optional Chaining (<code>?.</code>) and Nullish Coalescing
+                    (<code>??</code>). Avoid nested <code>if</code> checks for nulls.</li>
+                <li><strong>Immutability:</strong> Prefer spread operator (<code>...</code>) over mutation (e.g.,
+                    <code>array.push</code>).
+                </li>
+                <li><strong>Async/Await:</strong> No floating promises. All promises must be <code>awaited</code> or
+                    strictly handled with <code>.catch()</code>.</li>
+                <li><strong>Enums:</strong> Prefer <strong>String Union Types</strong>
+                    (<code>type Role = 'admin' | 'user'</code>) over TypeScript <code>enum</code>.</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="autonomy">
+            <h2>VI. Developer/Agent Autonomy</h2>
+            <p>Within the constraints above, the Developer/Agent has autonomy to:</p>
+            <ol>
+                <li><strong>Logic Implementation:</strong> Choose the most efficient algorithm (loop vs. map vs. reduce)
+                    provided the complexity remains O(n) or better where possible.</li>
+                <li><strong>Refactoring:</strong> Extract repeated logic into private helper functions to adhere to DRY
+                    (Don't Repeat Yourself).</li>
+                <li><strong>Variable Naming:</strong> Choose descriptive variable names that fit the context, strictly
+                    adhering to <code>camelCase</code>.</li>
+                <li><strong>Error Strategy:</strong> Decide whether to throw custom Errors in the Service layer,
+                    provided they are caught and formatted in the Controller or a Global Error Handler.</li>
+            </ol>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

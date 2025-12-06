@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { ZodType } from "zod";
+import type { ResponseConfig, ZodType } from "@asteasolutions/zod-to-openapi";
 
 export const ErrorSchema = z.object({
   success: z.boolean().default(false),
@@ -18,7 +18,7 @@ export const ValidationErrorSchema = ErrorSchema.extend({
   ),
 });
 
-const errorResponses = {
+const errorResponses: Record<number, ResponseConfig> = {
   400: {
     description: "Bad Request",
     content: {
@@ -74,8 +74,8 @@ export function createApiResponse(
   description: string,
   statusCode = 200,
   extraStatusCodes: (keyof typeof errorResponses)[] = [],
-) {
-  const responses: Record<number, unknown> = {
+): ResponseConfig {
+  const responses: Record<number, ResponseConfig> = {
     [statusCode]: {
       description,
       content: {
@@ -98,8 +98,7 @@ export function createApiResponse(
     }
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return responses as any;
+  return responses;
 }
 
 export function createApiPaginatedResponse(
@@ -107,8 +106,8 @@ export function createApiPaginatedResponse(
   description: string,
   statusCode = 200,
   extraStatusCodes: (keyof typeof errorResponses)[] = [],
-) {
-  const responses: Record<number, unknown> = {
+): ResponseConfig {
+  const responses: Record<number, ResponseConfig> = {
     [statusCode]: {
       description,
       content: {
@@ -143,6 +142,5 @@ export function createApiPaginatedResponse(
     }
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return responses as any;
+  return responses;
 }
