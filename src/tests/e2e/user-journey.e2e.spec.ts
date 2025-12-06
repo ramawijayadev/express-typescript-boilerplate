@@ -6,6 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { queueConfig } from "@/config/queue";
+import { SmtpEmailSender } from "@/core/mail/mailer";
 import { db } from "@/core/database/connection";
 
 // Helper to delete all messages in Mailpit
@@ -78,14 +79,9 @@ describe("E2E: User Journey", () => {
 
   beforeAll(async () => {
     // Start a temporary worker to process email jobs
-    // We use a direct nodemailer transporter pointing to Mailpit (localhost:1025)
-    // to avoid using the project's default SMTP config (which might be Mailtrap/Sendgrid).
-    const testTransporter = nodemailer.createTransport({
-      host: "localhost",
-      port: 1025,
-      secure: false,
-      ignoreTLS: true
-    });
+    // We use the application's SmtpEmailSender, which now defaults to Mailpit (localhost:1025) in .env
+    // This validates our standardized configuration.
+    const emailSender = new SmtpEmailSender();
     
     // Explicitly reusing the same connection config
     worker = new Worker("email-queue", async (job) => {
@@ -97,12 +93,7 @@ describe("E2E: User Journey", () => {
        if (job.name === "verify-email") subject = "Verify your email";
        if (job.name === "password-reset") subject = "Reset your password";
 
-       await testTransporter.sendMail({
-         from: "test@example.com",
-         to: email,
-         subject,
-         text
-       });
+       await emailSender.send({ to: email, subject, text });
        console.log("Worker sent email to:", email);
     }, {
       connection: {
