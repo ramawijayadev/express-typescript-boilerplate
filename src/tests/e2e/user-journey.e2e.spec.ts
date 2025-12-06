@@ -5,7 +5,6 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
-import { SmtpEmailSender } from "@/core/mail/mailer";
 
 // Helper to delete all messages in Mailpit
 /**
@@ -72,13 +71,13 @@ async function waitForEmail(recipient: string, retries = 10): Promise<string | n
   return null;
 }
 
-// Regex to extract access token (JWT) or verification token
-// Assuming token in email is like "Token: <hex>" or link
-const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but we need to match what EmailTemplate sends.
-// If valid email templates are not yet implemented, the SmtpEmailSender might send standard text.
-// Let's assume standard template for now or check previous learnings.
+import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
- describe("E2E: User Journey", () => {
+// Regex to extract access token (JWT) or verification token
+// Matches 'token=' query parameter from the URL in the email
+const TOKEN_REGEX = /token=([a-f0-9]+)/i;
+
+describe("E2E: User Journey", () => {
   const app = createApp();
   let worker: Worker;
   
@@ -93,25 +92,14 @@ const TOKEN_REGEX = /Token:\s+([a-f0-9]+)/; // As seen in InMemoryJobQueue, but 
   let refreshToken = "";
 
   beforeAll(async () => {
-    // Start a temporary worker to process email jobs
-    // We use the application's SmtpEmailSender, which now defaults to Mailpit (localhost:1025) in .env
-    // This validates our standardized configuration.
-    const emailSender = new SmtpEmailSender();
-    
-    // Explicitly reusing the same connection config
-    worker = new Worker("email-queue", async (job: { name: string; id?: string; data: unknown }) => {
-       const { email, token } = job.data as { email: string; token: string };
-       let subject = "Subject";
-       let text = `Your token is ${token}`;
-       
-       if (job.name === "password-reset") subject = "Reset your password";
-
-       await emailSender.send({ to: email, subject, text });
-    }, {
+    // Start a worker to process email jobs
+    // We use the actual application handler to ensure we test the real email templates
+    worker = new Worker(emailWorkerName, emailWorkerHandler, {
       connection: {
         host: "localhost",
         port: 6379
       },
+      concurrency: 1, // Minimize race conditions
     });
 
     worker.on("ready", () => null);
