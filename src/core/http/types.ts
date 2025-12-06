@@ -1,10 +1,10 @@
 import type { Request } from "express";
 
 export type TypedRequest<
-  Body = unknown,
-  Query = unknown,
-  Params = unknown,
-> = Request<Params, unknown, Body, Query>;
+  Body = any,
+  Query = any,
+  Params = any,
+> = Request<Params, any, Body, Query>;
 
 export interface AuthenticatedRequest<
   Body = unknown,

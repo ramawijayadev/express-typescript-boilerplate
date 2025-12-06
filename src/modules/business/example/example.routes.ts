@@ -43,7 +43,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
-  exampleController.list(req as TypedRequest<unknown, ListExamplesQuery>, res),
+  exampleController.list(req as unknown as TypedRequest<any, ListExamplesQuery>, res),
 );
 
 exampleRegistry.registerPath({
@@ -57,7 +57,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.find(req as TypedRequest<unknown, unknown, IdParam>, res),
+  exampleController.find(req as unknown as TypedRequest<any, any, IdParam>, res),
 );
 
 exampleRegistry.registerPath({
@@ -101,7 +101,7 @@ exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  (req, res) => exampleController.update(req as TypedRequest<UpdateExampleInput, unknown, IdParam>, res),
+  (req, res) => exampleController.update(req as unknown as TypedRequest<UpdateExampleInput, any, IdParam>, res),
 );
 
 exampleRegistry.registerPath({
@@ -115,5 +115,5 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>
-  exampleController.delete(req as TypedRequest<unknown, unknown, IdParam>, res),
+  exampleController.delete(req as unknown as TypedRequest<any, any, IdParam>, res),
 );
