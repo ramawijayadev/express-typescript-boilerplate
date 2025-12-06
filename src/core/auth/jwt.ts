@@ -20,8 +20,7 @@ export interface TokenPayload {
  */
 export function generateAccessToken(payload: TokenPayload): string {
   return jwt.sign({ ...payload }, authConfig.jwt.secret as jwt.Secret, {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expiresIn: authConfig.jwt.accessExpiration as any,
+    expiresIn: authConfig.jwt.accessExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
   });
 }
 
@@ -34,8 +33,7 @@ export function generateAccessToken(payload: TokenPayload): string {
 export function generateRefreshToken(payload: TokenPayload): string {
   const jti = randomUUID();
   return jwt.sign({ ...payload, jti }, authConfig.jwt.secret as jwt.Secret, {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expiresIn: authConfig.jwt.refreshExpiration as any,
+    expiresIn: authConfig.jwt.refreshExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
   });
 }
 
@@ -44,5 +42,9 @@ export function generateRefreshToken(payload: TokenPayload): string {
  * Throws if the token is invalid or expired.
  */
 export function verifyToken(token: string): TokenPayload {
-  return jwt.verify(token, authConfig.jwt.secret as jwt.Secret) as TokenPayload;
+  const decoded = jwt.verify(token, authConfig.jwt.secret as jwt.Secret);
+  if (typeof decoded === "string") {
+    throw new Error("Invalid token payload");
+  }
+  return decoded as TokenPayload;
 }
