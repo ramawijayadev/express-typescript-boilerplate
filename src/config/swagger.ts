@@ -4,6 +4,7 @@ import { env } from "@/app/env";
 import { exampleRegistry } from "@/modules/business/example/example.routes";
 import { authRegistry } from "@/modules/platform/auth/auth.routes";
 import { healthRegistry } from "@/modules/platform/health/health.routes";
+import { jobsRegistry } from "@/modules/platform/jobs/jobs.routes";
 import { userRegistry } from "@/modules/platform/users/users.routes";
 
 import { appConfig } from "./app";
@@ -23,6 +24,7 @@ const getOpenApiDocumentation = () => {
     ...healthRegistry.definitions,
     ...authRegistry.definitions,
     ...userRegistry.definitions,
+    ...jobsRegistry.definitions,
     ...exampleRegistry.definitions,
   ]);
 

@@ -22,9 +22,11 @@ export interface JobQueue {
 
 export class BullmqJobQueue implements JobQueue {
   private emailQueue: Queue;
+  private deadLetterQueue: Queue;
+  private connection: IORedis;
 
   constructor() {
-    const connection = new IORedis({
+    this.connection = new IORedis({
       host: queueConfig.redis.host,
       port: queueConfig.redis.port,
       password: queueConfig.redis.password,
@@ -32,8 +34,18 @@ export class BullmqJobQueue implements JobQueue {
     });
 
     this.emailQueue = new Queue("email-queue", {
-      connection,
+      connection: this.connection,
       defaultJobOptions: queueConfig.defaultJobOptions,
+    });
+
+    this.deadLetterQueue = new Queue("dead-letter-queue", {
+      connection: this.connection,
+      defaultJobOptions: {
+        removeOnComplete: {
+          age: queueConfig.failedJobRetentionDays * 24 * 60 * 60, // Convert days to seconds
+        },
+        removeOnFail: false,
+      },
     });
   }
 
@@ -53,6 +65,10 @@ export class BullmqJobQueue implements JobQueue {
 
   getQueue(): Queue {
     return this.emailQueue;
+  }
+
+  getDeadLetterQueue(): Queue {
+    return this.deadLetterQueue;
   }
 }
 

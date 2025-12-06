@@ -33,8 +33,30 @@ export function initJobs() {
     logger.info({ jobId: job.id, jobName: job.name }, "Job completed successfully");
   });
 
-  worker.on("failed", (job, err) => {
+  worker.on("failed", async (job, err) => {
     logger.error({ jobId: job?.id, jobName: job?.name, error: err }, "Job failed");
+    
+    // If job has exhausted all retries, move to Dead Letter Queue
+    if (job && job.attemptsMade >= (job.opts.attempts ?? 3)) {
+      const { jobQueue } = await import("@/core/queue");
+      const dlq = jobQueue.getDeadLetterQueue();
+      
+      await dlq.add("failed-job", {
+        originalQueue: job.queueName,
+        originalJobId: job.id,
+        jobName: job.name,
+        data: job.data,
+        error: err.message,
+        errorStack: err.stack,
+        failedAt: new Date().toISOString(),
+        attemptsMade: job.attemptsMade,
+      });
+      
+      logger.warn(
+        { jobId: job.id, jobName: job.name, attempts: job.attemptsMade },
+        "Job exhausted all retries, moved to Dead Letter Queue",
+      );
+    }
   });
   
   logger.info("Background jobs initialized");
