@@ -51,6 +51,15 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
 }
 
 // Create Logger
+/**
+ * Global application logger instance (Pino).
+ * 
+ * Features:
+ * - Structured JSON logging.
+ * - Automatic redaction of sensitive keys (passwords, tokens).
+ * - Request context isolation (via AsyncLocalStorage).
+ * - Multi-transport support (Console in Dev, File/Stream in Prod).
+ */
 export const logger = pino({
   level: loggingConfig.level,
   redact: redacts,
@@ -64,6 +73,13 @@ export const logger = pino({
 });
 
 // Helper to run with context
+/**
+ * Executes a callback within a distinct logging context.
+ * Any logs written during the callback will get the `context` fields attached automatically.
+ * 
+ * @param context - Key-value pairs to attach to logs.
+ * @param callback - Function to execute.
+ */
 export function runWithContext(context: Record<string, unknown>, callback: () => void) {
   const store = new Map(Object.entries(context));
   requestContext.run(store, callback);

@@ -8,6 +8,10 @@ import { emailWorkerHandler, emailWorkerName } from "./handlers/send-email.job";
 
 let worker: Worker | undefined;
 
+/**
+ * Initializes the background job system (BullMQ).
+ * Sets up Redis connection and instantiates workers.
+ */
 export function initJobs() {
   const connection = new IORedis({
     host: queueConfig.redis.host,
@@ -36,6 +40,10 @@ export function initJobs() {
   logger.info("Background jobs initialized");
 }
 
+/**
+ * Gracefully shuts down all job workers.
+ * Ensures active jobs are not abruptly interrupted if possible.
+ */
 export async function shutdownJobs() {
   if (worker) {
     await worker.close();

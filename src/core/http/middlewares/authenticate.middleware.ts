@@ -16,6 +16,11 @@ declare global {
   }
 }
 
+/**
+ * Middleware to protect routes using JWT Bearer Authentication.
+ * Verifies the token and attaches the user identity to `req.user`.
+ * Throws 401 if token is missing or invalid.
+ */
 export function authenticate(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 

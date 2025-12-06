@@ -1,5 +1,9 @@
 import { env } from "@/app/env";
 
+/**
+ * Authentication and Security configuration.
+ * Defines strict policies for JWT expiration, login locking, and token management.
+ */
 export const authConfig = {
   jwt: {
     secret: env.JWT_SECRET,

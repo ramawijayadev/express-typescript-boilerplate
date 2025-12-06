@@ -40,6 +40,10 @@ export type ApiResponse<T = unknown> =
 export type StatusCode = (typeof StatusCodes)[keyof typeof StatusCodes];
 
 // 2xx helper
+
+/**
+ * Sends a standard success response (HTTP 200).
+ */
 export function ok<T>(res: Response, data: T, message = "OK"): Response<ApiResponse<T>> {
   const body: SuccessResponse<T> = {
     success: true,
@@ -99,6 +103,11 @@ export function created<T>(res: Response, data: T, message = "Created"): Respons
 }
 
 // 4xx helper
+
+/**
+ * Sends a standard client error response (HTTP 4xx).
+ * Automatically attaches the request ID.
+ */
 export function clientError(
   res: Response,
   statusCode: StatusCode,

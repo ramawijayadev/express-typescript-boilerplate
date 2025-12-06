@@ -1,5 +1,9 @@
 import { env } from "@/app/env";
 
+/**
+ * Mail server configuration.
+ * Contains SMTP credentials and default sender information.
+ */
 export const mailConfig = {
   host: env.SMTP_HOST,
   port: env.SMTP_PORT,

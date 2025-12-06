@@ -57,4 +57,11 @@ const envSchema = z.object({
   ENABLE_BACKGROUND_JOBS: z.coerce.boolean().default(true),
 });
 
+/**
+ * Type-safe environment variables.
+ *
+ * Validated by Zod to ensure all required variables are present and correctly typed.
+ * This object serves as the SINGLE SOURCE OF TRUTH for all configuration values.
+ * Do NOT use `process.env` directly in application code; import `env` from here instead.
+ */
 export const env = envSchema.parse(process.env);

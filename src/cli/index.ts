@@ -3,6 +3,10 @@ import { helloCommand } from "./commands/hello.command";
 
 const program = new Command();
 
+/**
+ * CLI Entry Point.
+ * Registers all available commands and parses arguments.
+ */
 program
   .name("app-cli")
   .description("CLI for the Express TypeScript Boilerplate")

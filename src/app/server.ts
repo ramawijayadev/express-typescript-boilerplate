@@ -20,6 +20,16 @@ const server = app.listen(appConfig.port, () => {
   logger.info(`Server running on port ${appConfig.port}`);
 });
 
+/**
+ * Gracefully shuts down the application.
+ *
+ * This ensures that:
+ * 1. The HTTP server stops accepting new requests.
+ * 2. Database connections are closed properly.
+ * 3. Background jobs/workers are terminated safely.
+ *
+ * @param signal - The signal that triggered the shutdown (e.g., SIGINT, SIGTERM).
+ */
 async function shutdown(signal: string) {
   logger.info(`Received ${signal}. Starting graceful shutdown...`);
 

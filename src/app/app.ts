@@ -7,6 +7,18 @@ import { registerMiddlewares } from "@/core/http/middlewares";
 import { registerRoutes } from "@/core/http/router";
 import { logger } from "@/core/logging/logger";
 
+/**
+ * Bootstraps the Express application.
+ *
+ * This function configures the main Express app instance by:
+ * 1. Registering global middleware (CORS, Helmet, BodyParser, etc).
+ * 2. Setting up Swagger documentation.
+ * 3. Registering the main API router.
+ * 4. Registering the global error handler.
+ *
+ * @param configure - Optional callback to further configure the app (useful for testing).
+ * @returns The configured Express application instance.
+ */
 export function createApp(configure?: (app: express.Express) => void) {
   const app = express();
 
