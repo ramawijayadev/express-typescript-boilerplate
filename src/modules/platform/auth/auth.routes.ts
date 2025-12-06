@@ -1,7 +1,6 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 
-
 import { authenticate } from "@/core/http/middlewares/authenticate.middleware";
 import {
   loginRateLimiter,
@@ -62,8 +61,11 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User registered", 201, [400, 422, 500]),
 });
 
-authRouter.post("/register", registerRateLimiter, validateBody(registerSchema), 
-  typedHandler<RegisterBody>((req, res) => authController.register(req, res))
+authRouter.post(
+  "/register",
+  registerRateLimiter,
+  validateBody(registerSchema),
+  typedHandler<RegisterBody>((req, res) => authController.register(req, res)),
 );
 
 authRegistry.registerPath({
@@ -82,8 +84,11 @@ authRegistry.registerPath({
   responses: createApiResponse(authResponseSchema, "User logged in", 200, [400, 422, 500]),
 });
 
-authRouter.post("/login", loginRateLimiter, validateBody(loginSchema), 
-  typedHandler<LoginBody>((req, res) => authController.login(req, res))
+authRouter.post(
+  "/login",
+  loginRateLimiter,
+  validateBody(loginSchema),
+  typedHandler<LoginBody>((req, res) => authController.login(req, res)),
 );
 
 authRegistry.registerPath({
@@ -102,8 +107,10 @@ authRegistry.registerPath({
   responses: createApiResponse(refreshTokenResponseSchema, "Token refreshed", 200, [400, 422, 500]),
 });
 
-authRouter.post("/refresh-token", validateBody(refreshTokenSchema), 
-  typedHandler<RefreshTokenBody>((req, res) => authController.refreshToken(req, res))
+authRouter.post(
+  "/refresh-token",
+  validateBody(refreshTokenSchema),
+  typedHandler<RefreshTokenBody>((req, res) => authController.refreshToken(req, res)),
 );
 
 authRegistry.registerPath({
@@ -122,8 +129,10 @@ authRegistry.registerPath({
   responses: createApiResponse(logoutResponseSchema, "User logged out", 200, [400, 422, 500]),
 });
 
-authRouter.post("/logout", validateBody(refreshTokenSchema), 
-  typedHandler<RefreshTokenBody>((req, res) => authController.logout(req, res))
+authRouter.post(
+  "/logout",
+  validateBody(refreshTokenSchema),
+  typedHandler<RefreshTokenBody>((req, res) => authController.logout(req, res)),
 );
 
 authRegistry.registerPath({
@@ -134,8 +143,10 @@ authRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.post("/revoke-all", authenticate, 
-  authenticatedHandler((req, res) => authController.revokeAll(req, res))
+authRouter.post(
+  "/revoke-all",
+  authenticate,
+  authenticatedHandler((req, res) => authController.revokeAll(req, res)),
 );
 
 authRegistry.registerPath({
@@ -146,8 +157,10 @@ authRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.get("/profile", authenticate, 
-  authenticatedHandler((req, res) => authController.getProfile(req, res))
+authRouter.get(
+  "/profile",
+  authenticate,
+  authenticatedHandler((req, res) => authController.getProfile(req, res)),
 );
 
 authRegistry.registerPath({
@@ -166,20 +179,31 @@ authRegistry.registerPath({
   responses: createApiResponse(successResponseSchema, "Email verified", 200, [400, 422, 500]),
 });
 
-authRouter.post("/verify-email", verificationRateLimiter, validateBody(emailVerificationSchema), 
-  typedHandler<EmailVerificationBody>((req, res) => authController.verifyEmail(req, res))
+authRouter.post(
+  "/verify-email",
+  verificationRateLimiter,
+  validateBody(emailVerificationSchema),
+  typedHandler<EmailVerificationBody>((req, res) => authController.verifyEmail(req, res)),
 );
 
 authRegistry.registerPath({
   method: "post",
   path: "/auth/resend-verification",
   tags: ["Auth"],
-  responses: createApiResponse(successResponseSchema, "Verification email resent", 200, [401, 403, 500]),
+  responses: createApiResponse(
+    successResponseSchema,
+    "Verification email resent",
+    200,
+    [401, 403, 500],
+  ),
   security: [{ bearerAuth: [] }],
 });
 
-authRouter.post("/resend-verification", verificationRateLimiter, authenticate, 
-  authenticatedHandler((req, res) => authController.resendVerification(req, res))
+authRouter.post(
+  "/resend-verification",
+  verificationRateLimiter,
+  authenticate,
+  authenticatedHandler((req, res) => authController.resendVerification(req, res)),
 );
 
 authRegistry.registerPath({
@@ -195,11 +219,19 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(successResponseSchema, "Password reset email sent", 200, [400, 422, 500]),
+  responses: createApiResponse(
+    successResponseSchema,
+    "Password reset email sent",
+    200,
+    [400, 422, 500],
+  ),
 });
 
-authRouter.post("/forgot-password", passwordResetRateLimiter, validateBody(forgotPasswordSchema), 
-  typedHandler<ForgotPasswordBody>((req, res) => authController.forgotPassword(req, res))
+authRouter.post(
+  "/forgot-password",
+  passwordResetRateLimiter,
+  validateBody(forgotPasswordSchema),
+  typedHandler<ForgotPasswordBody>((req, res) => authController.forgotPassword(req, res)),
 );
 
 authRegistry.registerPath({
@@ -215,9 +247,17 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(successResponseSchema, "Password reset successfully", 200, [400, 422, 500]),
+  responses: createApiResponse(
+    successResponseSchema,
+    "Password reset successfully",
+    200,
+    [400, 422, 500],
+  ),
 });
 
-authRouter.post("/reset-password", verificationRateLimiter, validateBody(resetPasswordSchema), 
-  typedHandler<ResetPasswordBody>((req, res) => authController.resetPassword(req, res))
+authRouter.post(
+  "/reset-password",
+  verificationRateLimiter,
+  validateBody(resetPasswordSchema),
+  typedHandler<ResetPasswordBody>((req, res) => authController.resetPassword(req, res)),
 );

@@ -2,7 +2,11 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { z } from "zod";
 
-import { validateBody, validateParams, validateQuery } from "@/core/http/middlewares/validation.middleware";
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from "@/core/http/middlewares/validation.middleware";
 import { typedHandler } from "@/core/http/types";
 import {
   createApiPaginatedResponse,
@@ -42,8 +46,10 @@ exampleRegistry.registerPath({
   responses: createApiPaginatedResponse(ExampleSchema, "List of examples", 200, [400, 422, 500]),
 });
 
-exampleRouter.get("/", validateQuery(listExamplesQuerySchema),
-  typedHandler<unknown, ListExamplesQuery>((req, res) => exampleController.list(req, res))
+exampleRouter.get(
+  "/",
+  validateQuery(listExamplesQuerySchema),
+  typedHandler<unknown, ListExamplesQuery>((req, res) => exampleController.list(req, res)),
 );
 
 exampleRegistry.registerPath({
@@ -56,8 +62,10 @@ exampleRegistry.registerPath({
   responses: createApiResponse(ExampleSchema, "Example details", 200, [400, 404, 500]),
 });
 
-exampleRouter.get("/:id", validateParams(idParamSchema),
-  typedHandler<unknown, unknown, IdParam>((req, res) => exampleController.find(req, res))
+exampleRouter.get(
+  "/:id",
+  validateParams(idParamSchema),
+  typedHandler<unknown, unknown, IdParam>((req, res) => exampleController.find(req, res)),
 );
 
 exampleRegistry.registerPath({
@@ -76,8 +84,10 @@ exampleRegistry.registerPath({
   responses: createApiResponse(ExampleSchema, "Example created", 201, [400, 422, 500]),
 });
 
-exampleRouter.post("/", validateBody(createExampleSchema),
-  typedHandler<CreateExampleInput>((req, res) => exampleController.create(req, res))
+exampleRouter.post(
+  "/",
+  validateBody(createExampleSchema),
+  typedHandler<CreateExampleInput>((req, res) => exampleController.create(req, res)),
 );
 
 exampleRegistry.registerPath({
@@ -101,7 +111,9 @@ exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  typedHandler<UpdateExampleInput, unknown, IdParam>((req, res) => exampleController.update(req, res))
+  typedHandler<UpdateExampleInput, unknown, IdParam>((req, res) =>
+    exampleController.update(req, res),
+  ),
 );
 
 exampleRegistry.registerPath({
@@ -111,9 +123,16 @@ exampleRegistry.registerPath({
   request: {
     params: idParamSchema,
   },
-  responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted", 200, [400, 404, 500]),
+  responses: createApiResponse(
+    z.object({ deleted: z.boolean() }),
+    "Example deleted",
+    200,
+    [400, 404, 500],
+  ),
 });
 
-exampleRouter.delete("/:id", validateParams(idParamSchema),
-  typedHandler<unknown, unknown, IdParam>((req, res) => exampleController.delete(req, res))
+exampleRouter.delete(
+  "/:id",
+  validateParams(idParamSchema),
+  typedHandler<unknown, unknown, IdParam>((req, res) => exampleController.delete(req, res)),
 );

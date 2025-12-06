@@ -29,14 +29,14 @@ healthRegistry.registerPath({
 
 healthRouter.get("/health", async (_req, res) => {
   let jobsHealth;
-  
+
   try {
     const { jobQueue } = await import("@/core/queue");
     const { queueConfig } = await import("@/config/queue");
     const dlq = jobQueue.getDeadLetterQueue();
     const failedJobs = await dlq.getJobCounts("completed", "failed", "waiting", "active");
     const totalFailed = Object.values(failedJobs).reduce((sum, count) => sum + count, 0);
-    
+
     jobsHealth = {
       failedJobCount: totalFailed,
       ...(totalFailed >= queueConfig.failedJobAlertThreshold
@@ -47,7 +47,7 @@ healthRouter.get("/health", async (_req, res) => {
     // If jobs not initialized or error, skip job health
     jobsHealth = undefined;
   }
-  
+
   return ok(res, {
     status: "Server up and running gracefully!",
     version: "1.0.0",

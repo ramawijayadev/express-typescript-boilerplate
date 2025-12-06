@@ -16,21 +16,19 @@ describe("Jobs Routes Integration", () => {
   const app = createApp();
 
   beforeAll(async () => {
-
-      const user = await db().user.create({
-        data: {
-          name: "Test User",
-          email: `test-jobs-${Date.now()}@example.com`,
-          password: "hashed_password",
-        },
-      });
-      userId = user.id;
-      token = generateAccessToken({ userId });
+    const user = await db().user.create({
+      data: {
+        name: "Test User",
+        email: `test-jobs-${Date.now()}@example.com`,
+        password: "hashed_password",
+      },
+    });
+    userId = user.id;
+    token = generateAccessToken({ userId });
   });
 
   afterAll(async () => {
     await db().user.deleteMany({ where: { email: { contains: "test-jobs-" } } });
-    
 
     const dlq = jobQueue.getDeadLetterQueue();
     const jobs = await dlq.getJobs(["completed", "failed", "waiting", "active"], 0, -1);

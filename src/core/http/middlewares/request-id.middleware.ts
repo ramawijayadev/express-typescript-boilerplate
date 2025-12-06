@@ -2,8 +2,6 @@ import { randomUUID } from "node:crypto";
 
 import type { NextFunction, Request, Response } from "express";
 
-
-
 /**
  * Attaches a unique `requestId` to every request.
  * Reads from `x-request-id` header if present, otherwise generates a UUID.

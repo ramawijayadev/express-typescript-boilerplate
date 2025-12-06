@@ -8,13 +8,13 @@ This guide explains how to run and test the application, including the new Email
 
 1.  **Node.js**: Ensure you have Node.js installed.
 2.  **Redis**: Required for the background job queue (BullMQ).
-    *   **Mac (Homebrew)**: `brew install redis && brew services start redis`
-    *   **Docker**: `docker run -d -p 6379:6379 redis`
-    *   **Linux**: `sudo apt install redis-server`
+    - **Mac (Homebrew)**: `brew install redis && brew services start redis`
+    - **Docker**: `docker run -d -p 6379:6379 redis`
+    - **Linux**: `sudo apt install redis-server`
 3.  **Mailtrap Account** (or any SMTP server):
-    *   Sign up at [mailtrap.io](https://mailtrap.io).
-    *   Go to "Email Testing" -> "Inboxes" -> "Your Inbox".
-    *   Copy the "SMTP Settings" (Host, Port, User, Pass).
+    - Sign up at [mailtrap.io](https://mailtrap.io).
+    - Go to "Email Testing" -> "Inboxes" -> "Your Inbox".
+    - Copy the "SMTP Settings" (Host, Port, User, Pass).
 
 ## Environment Setup
 
@@ -44,6 +44,7 @@ pnpm dev
 ```
 
 You should see logs indicating the server is running and jobs are initialized:
+
 ```
 INFO: Server running on port 3000
 INFO: Background jobs initialized
@@ -66,6 +67,7 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
 ```
 
 **What happens:**
+
 1.  User is created in the database.
 2.  An email verification job is added to the queue.
 3.  The worker processes the job and sends an email via Mailtrap.
@@ -114,6 +116,6 @@ curl -X POST http://localhost:3000/api/v1/auth/reset-password \
 
 ## Troubleshooting
 
--   **"Connection refused" (Redis)**: Make sure your Redis server is running (`redis-cli ping` should return `PONG`).
--   **"Connection timeout" (Mail)**: Check your internet connection and verify SMTP configs in `.env`.
--   **No emails in Mailtrap**: Check the terminal logs where you ran `pnpm dev`. Look for errors starting with `[ERROR]`.
+- **"Connection refused" (Redis)**: Make sure your Redis server is running (`redis-cli ping` should return `PONG`).
+- **"Connection timeout" (Mail)**: Check your internet connection and verify SMTP configs in `.env`.
+- **No emails in Mailtrap**: Check the terminal logs where you ran `pnpm dev`. Look for errors starting with `[ERROR]`.

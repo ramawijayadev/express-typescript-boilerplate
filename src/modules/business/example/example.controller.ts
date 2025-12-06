@@ -1,4 +1,3 @@
-
 import type { TypedRequest } from "@/core/http/types";
 import { created, ok, okPaginated } from "@/shared/http/api-response";
 import type { IdParam } from "@/shared/schemas/common.schemas";

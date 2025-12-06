@@ -6,6 +6,7 @@ import { Worker } from "bullmq";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+
 import { createApp } from "@/app/app";
 import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
@@ -39,25 +40,26 @@ async function deleteAllEmails() {
  */
 async function fetchLatestEmail(recipient: string) {
   try {
-      const response = await fetch("http://localhost:8025/api/v1/messages");
-      if (!response.ok) return null;
-      
-      const data = await response.json() as MailpitListResponse;
-      const messages = data.messages || [];
-      
-      const email = messages.find((msg: unknown) => JSON.stringify(msg).includes(recipient)) as MailpitMessage | undefined;
-      
-      if (!email || typeof email !== 'object') return null;
-  
-      // Fetch full body
-      const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
-      if (!msgRes.ok) return null;
-      return await msgRes.json() as MailpitMessage;
-    } catch {
-      return null;
-    }
+    const response = await fetch("http://localhost:8025/api/v1/messages");
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as MailpitListResponse;
+    const messages = data.messages || [];
+
+    const email = messages.find((msg: unknown) => JSON.stringify(msg).includes(recipient)) as
+      | MailpitMessage
+      | undefined;
+
+    if (!email || typeof email !== "object") return null;
+
+    // Fetch full body
+    const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
+    if (!msgRes.ok) return null;
+    return (await msgRes.json()) as MailpitMessage;
+  } catch {
+    return null;
+  }
 }
-//...
 
 /**
  * Waits for an email to arrive for a specific recipient.
@@ -74,11 +76,10 @@ async function waitForEmail(recipient: string, retries = 10): Promise<string | n
   return null;
 }
 
-
 describe("User Journey E2E", () => {
   const app = createApp();
   let worker: Worker;
-  
+
   const testUser = {
     name: "E2E Traveler",
     email: `traveler-${Date.now()}@example.com`,
@@ -91,7 +92,7 @@ describe("User Journey E2E", () => {
     worker = new Worker(emailWorkerName, emailWorkerHandler, {
       connection: {
         host: "localhost",
-        port: 6379
+        port: 6379,
       },
       concurrency: 1, // Minimize race conditions
     });
@@ -107,24 +108,22 @@ describe("User Journey E2E", () => {
     await request(app).get("/api/v1/health").expect(StatusCodes.OK);
   });
   it("Registration", async () => {
-    await request(app)
-      .post("/api/v1/auth/register")
-      .send(testUser)
-      .expect(StatusCodes.CREATED);
+    await request(app).post("/api/v1/auth/register").send(testUser).expect(StatusCodes.CREATED);
   });
-  it("Verification Receive Email and Verify", async () => {
-    const emailContent = await waitForEmail(testUser.email, 30);
-    expect(emailContent).not.toBeNull();
-    
-    const match = emailContent!.match(TOKEN_REGEX);
-    expect(match).toBeTruthy();
-    const token = match![1];
+  it(
+    "Verification Receive Email and Verify",
+    async () => {
+      const emailContent = await waitForEmail(testUser.email, 30);
+      expect(emailContent).not.toBeNull();
 
-    await request(app)
-      .post("/api/v1/auth/verify-email")
-      .send({ token })
-      .expect(StatusCodes.OK);
-  }, TEST_TIMEOUT);
+      const match = emailContent!.match(TOKEN_REGEX);
+      expect(match).toBeTruthy();
+      const token = match![1];
+
+      await request(app).post("/api/v1/auth/verify-email").send({ token }).expect(StatusCodes.OK);
+    },
+    TEST_TIMEOUT,
+  );
   it("Authentication Login", async () => {
     const res = await request(app)
       .post("/api/v1/auth/login")
@@ -167,7 +166,7 @@ describe("User Journey E2E", () => {
       .send({ name: newName })
       .expect(StatusCodes.OK);
     expect(res.body.data.name).toBe(newName);
-    
+
     const check = await request(app)
       .get("/api/v1/users/me")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -222,44 +221,44 @@ describe("User Journey E2E", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(StatusCodes.NOT_FOUND);
   });
-  it("Account Security Forgot Password", async () => {
-    await deleteAllEmails();
-    await request(app)
-      .post("/api/v1/auth/forgot-password")
-      .send({ email: testUser.email })
-      .expect(StatusCodes.OK);
-      
-    
-    const emailContent = await waitForEmail(testUser.email, 30);
-    expect(emailContent).not.toBeNull();
-    
-    const match = emailContent!.match(TOKEN_REGEX);
-    const resetToken = match![1];
+  it(
+    "Account Security Forgot Password",
+    async () => {
+      await deleteAllEmails();
+      await request(app)
+        .post("/api/v1/auth/forgot-password")
+        .send({ email: testUser.email })
+        .expect(StatusCodes.OK);
 
-    const newPassword = "NewPassword123!";
-    await request(app)
-      .post("/api/v1/auth/reset-password")
-      .send({ token: resetToken, newPassword })
-      .expect(StatusCodes.OK);
-      
-    await request(app)
-      .post("/api/v1/auth/login")
-      .send({ email: testUser.email, password: testUser.password })
-      .expect(StatusCodes.UNAUTHORIZED);
-      
-    const res = await request(app)
-      .post("/api/v1/auth/login")
-      .send({ email: testUser.email, password: newPassword })
-      .expect(StatusCodes.OK);
-      
-    accessToken = res.body.data.tokens.accessToken;
-    refreshToken = res.body.data.tokens.refreshToken;
-  }, TEST_TIMEOUT);
+      const emailContent = await waitForEmail(testUser.email, 30);
+      expect(emailContent).not.toBeNull();
+
+      const match = emailContent!.match(TOKEN_REGEX);
+      const resetToken = match![1];
+
+      const newPassword = "NewPassword123!";
+      await request(app)
+        .post("/api/v1/auth/reset-password")
+        .send({ token: resetToken, newPassword })
+        .expect(StatusCodes.OK);
+
+      await request(app)
+        .post("/api/v1/auth/login")
+        .send({ email: testUser.email, password: testUser.password })
+        .expect(StatusCodes.UNAUTHORIZED);
+
+      const res = await request(app)
+        .post("/api/v1/auth/login")
+        .send({ email: testUser.email, password: newPassword })
+        .expect(StatusCodes.OK);
+
+      accessToken = res.body.data.tokens.accessToken;
+      refreshToken = res.body.data.tokens.refreshToken;
+    },
+    TEST_TIMEOUT,
+  );
   it("Logout", async () => {
-    await request(app)
-      .post("/api/v1/auth/logout")
-      .send({ refreshToken })
-      .expect(StatusCodes.OK);
+    await request(app).post("/api/v1/auth/logout").send({ refreshToken }).expect(StatusCodes.OK);
   });
   it("Verify Unauthorized after Logout", async () => {
     // The previous test revoked both Session and RefreshToken.

@@ -17,7 +17,6 @@ describe("Auth Session Management (Integrations)", () => {
   const authRepository = new AuthRepository();
 
   beforeEach(async () => {
-
     await db().userSession.deleteMany();
     await db().user.deleteMany();
   });
@@ -89,11 +88,9 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const firstRefreshToken = loginRes.body.data.tokens.refreshToken;
 
-
       await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: firstRefreshToken });
-
 
       const reuseRes = await request(app)
         .post("/api/v1/auth/refresh-token")
@@ -204,13 +201,11 @@ describe("Auth Session Management (Integrations)", () => {
     it("should support independent multi-device sessions", async () => {
       await createUser();
 
-
       const loginA = await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
         password: "Password123",
       });
       const tokenA = loginA.body.data.tokens.refreshToken;
-
 
       const loginB = await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
@@ -218,15 +213,12 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const tokenB = loginB.body.data.tokens.refreshToken;
 
-
       await request(app).post("/api/v1/auth/logout").send({ refreshToken: tokenA });
-
 
       const refreshA = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken: tokenA });
       expect(refreshA.status).toBe(StatusCodes.UNAUTHORIZED);
-
 
       const refreshB = await request(app)
         .post("/api/v1/auth/refresh-token")

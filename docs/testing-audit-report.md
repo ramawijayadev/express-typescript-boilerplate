@@ -27,6 +27,7 @@ The boilerplate has established a **solid foundation** for testing with good cov
 ### 1. Well-Configured Test Infrastructure
 
 **What Works Well:**
+
 - **Modern tooling:** Vitest with proper TypeScript integration
 - **Global setup:** Safety checks prevent accidental production/staging DB usage
 - **Isolated environment:** `fileParallelism: false` prevents race conditions
@@ -65,12 +66,14 @@ The auth module demonstrates best-in-class testing with multiple test types:
 **Coverage:** ✅✅ Good
 
 [`user-journey.e2e.spec.ts`](file:///Users/rama/Documents/projects/express-typescript-boilerplate/src/tests/e2e/user-journey.e2e.spec.ts) (365 lines) provides comprehensive end-to-end validation:
+
 - Full user registration → verification → login flow
 - Email verification with real SMTP (Mailpit integration)
 - Background job processing (BullMQ workers)
 - Multi-module interaction (Auth + Users + Example APIs)
 
 **Strengths:**
+
 - Tests actual email content extraction
 - Validates async job processing
 - Demonstrates real-world usage patterns
@@ -98,6 +101,7 @@ src/
 ```
 
 **Benefits:**
+
 - Easy to locate tests for specific modules
 - Clear separation between unit/integration/E2E tests
 - Consistent naming convention (`*.spec.ts`)
@@ -113,13 +117,14 @@ src/
 ✅ **Realistic mocks:** Auth service unit tests mock dependencies appropriately
 
 Example of good test structure:
+
 ```typescript
 describe("POST /auth/register", () => {
   it("should register a new user and return tokens", async () => {
     const payload = { name: "Test User", email: "test@example.com", password: "Password123" };
-    
+
     const response = await request(app).post("/api/v1/auth/register").send(payload);
-    
+
     expect(response.status).toBe(StatusCodes.CREATED);
     expect(response.body.data.tokens).toBeDefined();
   });
@@ -138,6 +143,7 @@ describe("POST /auth/register", () => {
 Errors could be mishandled in production, leaking sensitive information or returning incorrect status codes. Changes to error handling logic would have no safety net.
 
 **Current Behavior Untested:**
+
 - AppError formatting and status code mapping
 - ZodError → validation error transformation
 - Prisma errors (e.g., P2025 not found) → 404 mapping
@@ -148,6 +154,7 @@ Errors could be mishandled in production, leaking sensitive information or retur
 ✅ **Add integration tests:** `src/core/http/__tests__/error-handler.integration.spec.ts`
 
 **Test Cases:**
+
 ```typescript
 describe("Error Handler", () => {
   it("should return 409 for AppError with CONFLICT status");
@@ -168,6 +175,7 @@ describe("Error Handler", () => {
 Security vulnerabilities could be introduced (e.g., accepting expired tokens, wrong auth schemes, missing headers).
 
 **Current Behavior Untested:**
+
 - JWT validation and expiration handling
 - Malformed token rejection
 - Missing `Authorization` header → 401
@@ -179,6 +187,7 @@ Security vulnerabilities could be introduced (e.g., accepting expired tokens, wr
 ✅ **Add unit tests:** `src/core/http/middlewares/__tests__/authenticate.middleware.unit.spec.ts`
 
 **Test Cases:**
+
 ```typescript
 describe("Authenticate Middleware", () => {
   it("should call next() for valid Bearer token");
@@ -201,6 +210,7 @@ describe("Authenticate Middleware", () => {
 XSS vulnerabilities could slip through if sanitization logic fails or is accidentally disabled.
 
 **Current Behavior Untested:**
+
 - HTML/script tag removal from request bodies
 - Nested object sanitization
 - Array sanitization
@@ -210,6 +220,7 @@ XSS vulnerabilities could slip through if sanitization logic fails or is acciden
 ✅ **Add unit tests:** `src/core/http/middlewares/__tests__/sanitize.middleware.unit.spec.ts`
 
 **Test Cases:**
+
 ```typescript
 describe("Sanitize Middleware", () => {
   it("should remove script tags from body fields");
@@ -230,6 +241,7 @@ describe("Sanitize Middleware", () => {
 Invalid payloads could bypass validation if the middleware has bugs or integration issues.
 
 **Current Behavior Untested:**
+
 - Schema validation with Zod
 - Error formatting (ZodError → FieldError[])
 - HTTP 422 status code enforcement
@@ -248,6 +260,7 @@ Invalid payloads could bypass validation if the middleware has bugs or integrati
 Token generation/validation bugs could cause authentication failures or security vulnerabilities.
 
 **Critical Functions Untested:**
+
 - `generateAccessToken()` / `generateRefreshToken()`
 - `verifyToken()` with various scenarios (valid, expired, malformed)
 - Token payload structure
@@ -266,6 +279,7 @@ Token generation/validation bugs could cause authentication failures or security
 Password security is critical. Bugs in hashing or verification could lock users out or create vulnerabilities.
 
 **Current Behavior Untested:**
+
 - `hashPassword()` produces valid argon2 hashes
 - `verifyPassword()` correctly validates matching passwords
 - `verifyPassword()` rejects incorrect passwords
@@ -279,6 +293,7 @@ Password security is critical. Bugs in hashing or verification could lock users 
 ### 7. No Tests for Core HTTP Middlewares
 
 **Areas:**
+
 - `request-id.middleware.ts` - Request ID generation
 - `request-logger.middleware.ts` - Request/response logging
 - `auth-context.middleware.ts` - Authentication context setup
@@ -299,6 +314,7 @@ Logging/observability failures, missing request IDs in production traces.
 The Users module has routes tested but not the service layer logic.
 
 **Current Behavior Untested:**
+
 - `getProfile()` - 404 when user not found
 - `updateProfile()` - successful updates
 
@@ -306,6 +322,7 @@ The Users module has routes tested but not the service layer logic.
 ✅ **Add unit tests:** `src/modules/platform/users/__tests__/users.service.unit.spec.ts`
 
 **Test Cases:**
+
 ```typescript
 describe("UsersService", () => {
   it("should return user profile for valid userId");
@@ -326,6 +343,7 @@ describe("UsersService", () => {
 Test code duplication, reduced maintainability, slow test development.
 
 **Current Problems:**
+
 - Repeated user creation logic across auth tests
 - Repeated token generation in integration tests
 - No shared cleanup utilities
@@ -335,6 +353,7 @@ Test code duplication, reduced maintainability, slow test development.
 ✅ **Create test helpers:** `src/tests/helpers/`
 
 **Suggested Structure:**
+
 ```typescript
 // src/tests/helpers/factories.ts
 export const createTestUser = (overrides?) => {...}
@@ -357,6 +376,7 @@ export const authenticatedRequest = (app, token) => {...}
 No objective metrics to track test coverage trends or identify untested code paths.
 
 **Current State:**
+
 - No coverage thresholds configured
 - No coverage reports generated
 - No visibility into coverage gaps
@@ -386,6 +406,7 @@ test: {
 ```
 
 **Add script to `package.json`:**
+
 ```json
 "test:coverage": "vitest --coverage"
 ```
@@ -400,6 +421,7 @@ test: {
 Email jobs, password reset jobs, etc., could fail silently in production.
 
 **Current State:**
+
 - Jobs are mocked in tests (`vi.mock("@/core/queue")`)
 - No tests verify actual job handlers execute correctly
 - No tests for job retry logic, failure handling, or DLQ
@@ -408,6 +430,7 @@ Email jobs, password reset jobs, etc., could fail silently in production.
 ✅ **Add integration tests:** `src/core/queue/__tests__/queue.integration.spec.ts`
 
 **Test Cases:**
+
 ```typescript
 describe("Job Queue", () => {
   it("should process email verification job successfully");
@@ -427,6 +450,7 @@ describe("Job Queue", () => {
 Email formatting bugs, template issues, SMTP connection failures.
 
 **Current State:**
+
 - Email functionality tested indirectly in E2E tests
 - No unit tests for email template rendering
 - No tests for SMTP error handling
@@ -435,6 +459,7 @@ Email formatting bugs, template issues, SMTP connection failures.
 ✅ **Add unit tests:** `src/core/mail/__tests__/mailer.unit.spec.ts`
 
 **Test Cases:**
+
 ```typescript
 describe("Email Sender", () => {
   it("should send email with correct recipient and subject");
@@ -453,11 +478,13 @@ describe("Email Sender", () => {
 Slightly confusing naming (e.g., using ".integration.spec" for E2E tests).
 
 **Current State:**
+
 - `auth.verification.integration.spec.ts` is actually E2E (uses real email)
 - Some files use `.unit.spec.ts`, others just `.spec.ts`
 
 **Recommendation:**  
 ✅ **Adopt consistent naming:**
+
 - `*.unit.spec.ts` - Pure unit tests with mocks
 - `*.integration.spec.ts` - Integration tests hitting DB/HTTP
 - `*.e2e.spec.ts` - Full end-to-end tests with all dependencies
@@ -484,6 +511,7 @@ Utility function bugs could propagate across the entire application.
 Edge cases and error paths may not be fully validated.
 
 **Examples of Missing Tests:**
+
 - Rate limiting behavior (429 responses)
 - Invalid content-type headers
 - Extremely large payloads (beyond body size limits)
@@ -503,10 +531,12 @@ Edge cases and error paths may not be fully validated.
 No visibility into performance regressions or bottlenecks.
 
 **Current State:**
+
 - Placeholder `src/tests/perf/` directory exists but is unused
 
 **Recommendation:**  
 ✅ **Consider adding basic load tests** (optional, nice-to-have):
+
 ```bash
 npm install -D autocannon
 
@@ -520,11 +550,11 @@ autocannon -c 10 -d 5 http://localhost:3000/api/v1/health
 
 ### Test Types & Layers
 
-| Test Type | Purpose | Coverage Target | Tools |
-|-----------|---------|-----------------|-------|
-| **Unit Tests** | Test business logic in isolation | Services, utilities, middleware | Vitest + mocks |
-| **Integration Tests** | Test HTTP endpoints + DB | Routes, repositories | Vitest + Supertest + real DB |
-| **E2E Tests** | Test complete user flows | Critical paths end-to-end | Vitest + real dependencies |
+| Test Type             | Purpose                          | Coverage Target                 | Tools                        |
+| --------------------- | -------------------------------- | ------------------------------- | ---------------------------- |
+| **Unit Tests**        | Test business logic in isolation | Services, utilities, middleware | Vitest + mocks               |
+| **Integration Tests** | Test HTTP endpoints + DB         | Routes, repositories            | Vitest + Supertest + real DB |
+| **E2E Tests**         | Test complete user flows         | Critical paths end-to-end       | Vitest + real dependencies   |
 
 ### Testing Principles
 
@@ -611,61 +641,61 @@ src/
 ### 🔴 Critical Priority (Security & Stability)
 
 - [ ] **Add tests for global error handler**  
-  📄 File: `src/core/http/__tests__/error-handler.integration.spec.ts`  
-  🎯 Coverage: AppError, ZodError, Prisma errors, unhandled errors
+       📄 File: `src/core/http/__tests__/error-handler.integration.spec.ts`  
+       🎯 Coverage: AppError, ZodError, Prisma errors, unhandled errors
 
 - [ ] **Add tests for authenticate middleware**  
-  📄 File: `src/core/http/middlewares/__tests__/authenticate.middleware.unit.spec.ts`  
-  🎯 Coverage: Valid/expired/malformed tokens, missing headers, inactive users
+       📄 File: `src/core/http/middlewares/__tests__/authenticate.middleware.unit.spec.ts`  
+       🎯 Coverage: Valid/expired/malformed tokens, missing headers, inactive users
 
 - [ ] **Add tests for JWT utilities**  
-  📄 File: `src/core/auth/__tests__/jwt.unit.spec.ts`  
-  🎯 Coverage: Token generation, verification, expiration
+       📄 File: `src/core/auth/__tests__/jwt.unit.spec.ts`  
+       🎯 Coverage: Token generation, verification, expiration
 
 - [ ] **Add tests for password hashing/verification**  
-  📄 File: `src/core/auth/__tests__/password.unit.spec.ts`  
-  🎯 Coverage: Hash generation, verification, timing attack resistance
+       📄 File: `src/core/auth/__tests__/password.unit.spec.ts`  
+       🎯 Coverage: Hash generation, verification, timing attack resistance
 
 - [ ] **Add tests for sanitize middleware**  
-  📄 File: `src/core/http/middlewares/__tests__/sanitize.middleware.unit.spec.ts`  
-  🎯 Coverage: XSS prevention, nested objects, arrays
+       📄 File: `src/core/http/middlewares/__tests__/sanitize.middleware.unit.spec.ts`  
+       🎯 Coverage: XSS prevention, nested objects, arrays
 
 - [ ] **Add tests for validation middleware**  
-  📄 File: `src/core/http/middlewares/__tests__/validation.middleware.unit.spec.ts`  
-  🎯 Coverage: Schema validation, error formatting
+       📄 File: `src/core/http/middlewares/__tests__/validation.middleware.unit.spec.ts`  
+       🎯 Coverage: Schema validation, error formatting
 
 ### 🟡 High Priority (Observability & Reliability)
 
 - [ ] **Add tests for request-id middleware**  
-  📄 File: `src/core/http/middlewares/__tests__/request-id.middleware.unit.spec.ts`  
-  🎯 Coverage: UUID generation, existing ID preservation
+       📄 File: `src/core/http/middlewares/__tests__/request-id.middleware.unit.spec.ts`  
+       🎯 Coverage: UUID generation, existing ID preservation
 
 - [ ] **Add tests for request-logger middleware**  
-  📄 File: `src/core/http/middlewares/__tests__/request-logger.middleware.unit.spec.ts`  
-  🎯 Coverage: Request/response logging, sensitive data masking
+       📄 File: `src/core/http/middlewares/__tests__/request-logger.middleware.unit.spec.ts`  
+       🎯 Coverage: Request/response logging, sensitive data masking
 
 - [ ] **Add tests for UsersService**  
-  📄 File: `src/modules/platform/users/__tests__/users.service.unit.spec.ts`  
-  🎯 Coverage: getProfile, updateProfile, error cases
+       📄 File: `src/modules/platform/users/__tests__/users.service.unit.spec.ts`  
+       🎯 Coverage: getProfile, updateProfile, error cases
 
 - [ ] **Add tests for background job queue**  
-  📄 File: `src/core/queue/__tests__/queue.integration.spec.ts`  
-  🎯 Coverage: Job processing, retries, DLQ, cleanup
+       📄 File: `src/core/queue/__tests__/queue.integration.spec.ts`  
+       🎯 Coverage: Job processing, retries, DLQ, cleanup
 
 ### 🟢 Medium Priority (Test Infrastructure)
 
 - [ ] **Create test helper utilities**  
-  📄 Files:
+       📄 Files:
   - `src/tests/helpers/factories.ts` - Test data builders
   - `src/tests/helpers/database.ts` - DB cleanup utilities
   - `src/tests/helpers/request.ts` - Authenticated request helpers
 
 - [ ] **Configure code coverage reporting**  
-  📄 File: `vitest.config.ts`  
-  🎯 Target: 70% minimum coverage with thresholds
+       📄 File: `vitest.config.ts`  
+       🎯 Target: 70% minimum coverage with thresholds
 
 - [ ] **Add coverage npm script**  
-  📄 File: `package.json`  
+       📄 File: `package.json`
   ```json
   "test:coverage": "vitest --coverage"
   ```
@@ -673,28 +703,29 @@ src/
 ### 🔵 Lower Priority (Nice-to-Have)
 
 - [ ] **Add tests for email sender**  
-  📄 File: `src/core/mail/__tests__/mailer.unit.spec.ts`  
-  🎯 Coverage: Email sending, template rendering, SMTP errors
+       📄 File: `src/core/mail/__tests__/mailer.unit.spec.ts`  
+       🎯 Coverage: Email sending, template rendering, SMTP errors
 
 - [ ] **Add negative test cases for rate limiting**  
-  📄 File: Add to integration tests  
-  🎯 Coverage: 429 responses, rate limit headers
+       📄 File: Add to integration tests  
+       🎯 Coverage: 429 responses, rate limit headers
 
 - [ ] **Add tests for untested shared utilities**  
-  📄 Files: Review `src/shared/utils/` and add tests as needed
+       📄 Files: Review `src/shared/utils/` and add tests as needed
 
 - [ ] **Standardize test naming convention**  
-  📄 Action: Rename files to use consistent `.unit.spec.ts` / `.integration.spec.ts` / `.e2e.spec.ts`
+       📄 Action: Rename files to use consistent `.unit.spec.ts` / `.integration.spec.ts` / `.e2e.spec.ts`
 
 - [ ] **Add basic performance tests**  
-  📄 Directory: `src/tests/perf/`  
-  🎯 Tool: Consider autocannon or k6
+       📄 Directory: `src/tests/perf/`  
+       🎯 Tool: Consider autocannon or k6
 
 ---
 
 ## 🎓 Recommended Next Steps
 
 ### Phase 1: Critical Security & Stability (Week 1)
+
 1. Add middleware tests (authenticate, sanitize, validation)
 2. Add auth utility tests (JWT, password)
 3. Add error handler tests
@@ -702,6 +733,7 @@ src/
 **Expected Impact:** 🔐 Significantly improved security confidence
 
 ### Phase 2: Infrastructure & Observability (Week 2)
+
 1. Add remaining middleware tests (request-id, logger)
 2. Add UsersService tests
 3. Create test helper utilities
@@ -710,6 +742,7 @@ src/
 **Expected Impact:** 🛠️ Improved test maintainability and developer experience
 
 ### Phase 3: Polish & Refinement (Week 3)
+
 1. Add background job tests
 2. Add email sender tests
 3. Standardize naming conventions
@@ -721,14 +754,14 @@ src/
 
 ## 📊 Summary Metrics
 
-| Metric | Current | Target | Gap |
-|--------|---------|--------|-----|
-| **Test Files** | 16 | ~30 | +14 files |
-| **Modules with Tests** | 5/5 | 5/5 | ✅ Complete |
-| **Core Infrastructure Tests** | 2/9 | 9/9 | +7 areas |
-| **Test Helpers/Factories** | 0 | 3 | +3 helpers |
-| **Coverage Reporting** | ❌ None | ✅ Configured | Action needed |
-| **E2E Tests** | 3 | 3-5 | ✅ Adequate |
+| Metric                        | Current | Target        | Gap           |
+| ----------------------------- | ------- | ------------- | ------------- |
+| **Test Files**                | 16      | ~30           | +14 files     |
+| **Modules with Tests**        | 5/5     | 5/5           | ✅ Complete   |
+| **Core Infrastructure Tests** | 2/9     | 9/9           | +7 areas      |
+| **Test Helpers/Factories**    | 0       | 3             | +3 helpers    |
+| **Coverage Reporting**        | ❌ None | ✅ Configured | Action needed |
+| **E2E Tests**                 | 3       | 3-5           | ✅ Adequate   |
 
 ---
 
@@ -737,11 +770,13 @@ src/
 **This boilerplate has a DECENT testing foundation but requires additional coverage in critical infrastructure to be production-ready.**
 
 **Key Strengths:**
+
 - ✅ Auth module is exceptionally well-tested
 - ✅ E2E tests validate realistic user flows
 - ✅ Test infrastructure is properly configured
 
 **Critical Actions Required:**
+
 - 🔴 Add tests for middleware (especially authenticate, sanitize, validation)
 - 🔴 Add tests for auth utilities (JWT, password hashing)
 - 🔴 Add tests for global error handler

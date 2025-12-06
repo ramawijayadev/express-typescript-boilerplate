@@ -15,7 +15,6 @@ describe("Users Routes Integration", () => {
   const app = createApp();
 
   beforeAll(async () => {
-
     const user = await db().user.create({
       data: {
         name: "Test User",
@@ -36,7 +35,7 @@ describe("Users Routes Integration", () => {
       const res = await request(app)
         .get("/api/v1/users/me")
         .set("Authorization", `Bearer ${token}`);
-      
+
       expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.success).toBe(true);
       expect(res.body.data.email).toBeDefined();
@@ -59,7 +58,6 @@ describe("Users Routes Integration", () => {
 
       expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.data.name).toBe(newName);
-
 
       const updated = await db().user.findUnique({ where: { id: userId } });
       expect(updated?.name).toBe(newName);

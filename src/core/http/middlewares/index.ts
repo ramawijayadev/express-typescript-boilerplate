@@ -7,7 +7,6 @@ import hpp from "hpp";
 
 import { appConfig } from "@/config/app";
 
-
 import { requestLoggerMiddleware } from "./request-logger.middleware";
 import { sanitizeInput } from "./sanitize.middleware";
 
@@ -18,7 +17,7 @@ export function registerMiddlewares(app: Express) {
 
   // HTTP hardening
   app.disable("x-powered-by");
-  
+
   // Only enable CSP in non-test environments (causes issues with test setup)
   if (!isTest) {
     app.use(
@@ -42,7 +41,7 @@ export function registerMiddlewares(app: Express) {
     // In tests, use helmet without CSP
     app.use(helmet({ contentSecurityPolicy: false }));
   }
-  
+
   app.use(
     cors({
       origin: appConfig.corsOrigin === "*" ? "*" : appConfig.corsOrigin.split(","),
@@ -74,6 +73,4 @@ export function registerMiddlewares(app: Express) {
 
   // Internal middlewares
   app.use(requestLoggerMiddleware);
-
-
 }

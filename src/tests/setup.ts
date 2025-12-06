@@ -4,7 +4,6 @@
 import { beforeAll } from "vitest";
 
 beforeAll(() => {
-
   const isLocal =
     process.env.DATABASE_URL?.includes("localhost") ||
     process.env.DATABASE_URL?.includes("127.0.0.1") ||
@@ -20,7 +19,6 @@ beforeAll(() => {
       "⛔️ FATAL: Attempting to run tests in PRODUCTION/STAGING environment. Aborting to protect data.",
     );
   }
-
 
   if (!isLocal && !process.env.CI) {
     // Silent

@@ -11,9 +11,7 @@ describe("Example module - error mapping", () => {
   it("should map AppError from service into standardized 404 response", async () => {
     const app = createApp();
 
-    const res = await request(app)
-      .get("/api/v1/examples/999999")
-      .expect(StatusCodes.NOT_FOUND);
+    const res = await request(app).get("/api/v1/examples/999999").expect(StatusCodes.NOT_FOUND);
 
     expect(res.body).toEqual({
       success: false,

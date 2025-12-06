@@ -41,7 +41,6 @@ const getOpenApiDocumentation = () => {
         description: "API Server",
       },
     ],
-
   });
 };
 

@@ -32,7 +32,7 @@ export class JobsRepository {
   async retryJob(job: Job): Promise<void> {
     const _originalQueue = (job.data as FailedJob).originalQueue;
     const queue = jobQueue.getQueue(); // For now we only have email queue
-    
+
     await queue.add((job.data as FailedJob).jobName, (job.data as FailedJob).data);
     await job.remove();
   }
@@ -50,19 +50,19 @@ export class JobsRepository {
   async cleanupOldJobs(): Promise<number> {
     const dlq = jobQueue.getDeadLetterQueue();
     const jobs = await dlq.getJobs(["completed", "failed", "waiting", "active"], 0, -1);
-    
+
     const retentionMs = queueConfig.failedJobRetentionDays * 24 * 60 * 60 * 1000;
     const cutoffDate = Date.now() - retentionMs;
-    
+
     let removedCount = 0;
-    
+
     for (const job of jobs) {
       if (job.timestamp && job.timestamp < cutoffDate) {
         await job.remove();
         removedCount++;
       }
     }
-    
+
     return removedCount;
   }
 }

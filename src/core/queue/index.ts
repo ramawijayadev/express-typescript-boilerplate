@@ -12,8 +12,6 @@ export interface EmailJobData {
   text?: string;
 }
 
-
-
 export interface JobQueue {
   enqueueEmailVerification(data: { userId: number; email: string; token: string }): Promise<void>;
   enqueuePasswordReset(data: { userId: number; email: string; token: string }): Promise<void>;
@@ -62,7 +60,11 @@ export class BullmqJobQueue implements JobQueue {
     logger.info({ userId: data.userId, type: "verify-email" }, "Enqueued email verification job");
   }
 
-  async enqueuePasswordReset(data: { userId: number; email: string; token: string }): Promise<void> {
+  async enqueuePasswordReset(data: {
+    userId: number;
+    email: string;
+    token: string;
+  }): Promise<void> {
     await this.emailQueue.add("password-reset", data);
     logger.info({ userId: data.userId, type: "password-reset" }, "Enqueued password reset job");
   }
@@ -93,7 +95,11 @@ export class InMemoryJobQueue implements JobQueue {
     });
   }
 
-  async enqueuePasswordReset(data: { userId: number; email: string; token: string }): Promise<void> {
+  async enqueuePasswordReset(data: {
+    userId: number;
+    email: string;
+    token: string;
+  }): Promise<void> {
     logger.info({ userId: data.userId }, "Processing in-memory password reset");
     await this.emailService.send({
       to: data.email,

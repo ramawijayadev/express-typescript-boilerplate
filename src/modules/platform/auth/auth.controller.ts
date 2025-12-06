@@ -12,7 +12,6 @@ import type {
 } from "./auth.types";
 import type { Request, Response } from "express";
 
-
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
@@ -91,7 +90,9 @@ export class AuthController {
     if (userId) {
       await this.service.resendVerification(userId);
     }
-    return ok(res, { message: "If your account exists and is not verified, a verification email has been sent." });
+    return ok(res, {
+      message: "If your account exists and is not verified, a verification email has been sent.",
+    });
   }
 
   /**

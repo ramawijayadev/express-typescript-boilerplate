@@ -16,7 +16,7 @@ import type { ErrorRequestHandler } from "express";
 
 /**
  * Global Error Handler Middleware.
- * 
+ *
  * Intercepts all errors, formats them into a standard JSON response, and handles logging.
  * specific handling for:
  * - AppError (Operational errors with status codes)

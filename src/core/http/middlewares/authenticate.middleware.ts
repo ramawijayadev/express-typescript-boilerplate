@@ -30,14 +30,14 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-     next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token format"));
-     return;
+    next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token format"));
+    return;
   }
 
   try {
     // Payload has userId as number from jwt verify
     const payload = verifyToken(token);
-    
+
     // We modify req.user directly but typed usage should happen in controllers
     req.user = { id: payload.userId };
     next();

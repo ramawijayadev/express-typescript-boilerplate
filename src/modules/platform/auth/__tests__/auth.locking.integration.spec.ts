@@ -52,7 +52,6 @@ describe("Auth Account Locking (Integration)", () => {
   it(`should lock account after ${authConfig.locking.maxAttempts} failed attempts`, async () => {
     await createUser();
 
-
     for (let i = 0; i < authConfig.locking.maxAttempts; i++) {
       const response = await request(app).post("/api/v1/auth/login").send({
         email: "lock_test@example.com",
@@ -70,7 +69,6 @@ describe("Auth Account Locking (Integration)", () => {
 
   it("should reject login when account is locked even with correct password", async () => {
     const user = await createUser();
-
 
     await db().user.update({
       where: { id: user.id },
@@ -92,7 +90,6 @@ describe("Auth Account Locking (Integration)", () => {
   it("should allow login after lock expires", async () => {
     const user = await createUser();
 
-
     await db().user.update({
       where: { id: user.id },
       data: {
@@ -108,7 +105,6 @@ describe("Auth Account Locking (Integration)", () => {
 
     expect(response.status).toBe(StatusCodes.OK);
 
-
     const updatedUser = await db().user.findUnique({ where: { id: user.id } });
     expect(updatedUser?.failedLoginAttempts).toBe(0);
     expect(updatedUser?.lockedUntil).toBeNull();
@@ -118,7 +114,6 @@ describe("Auth Account Locking (Integration)", () => {
   it("should reset failed attempts on successful login before limit", async () => {
     const user = await createUser();
 
-
     await request(app).post("/api/v1/auth/login").send({
       email: "lock_test@example.com",
       password: "WrongPassword",
@@ -126,7 +121,6 @@ describe("Auth Account Locking (Integration)", () => {
 
     const userBefore = await db().user.findUnique({ where: { id: user.id } });
     expect(userBefore?.failedLoginAttempts).toBe(1);
-
 
     const response = await request(app).post("/api/v1/auth/login").send({
       email: "lock_test@example.com",

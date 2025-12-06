@@ -6,7 +6,6 @@ import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 
-
 import { createApp } from "@/app/app";
 import { AppError } from "@/shared/errors/AppError";
 import { type FieldError, created, ok, validationError } from "@/shared/http/api-response";

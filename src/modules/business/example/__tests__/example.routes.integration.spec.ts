@@ -184,21 +184,17 @@ describe("Example routes (integration)", () => {
     });
 
     it("should return 404 when updating a soft-deleted example", async () => {
-
       const createRes = await request(app)
         .post(baseUrl)
         .send({ name: "To be deleted", description: "desc" })
         .expect(StatusCodes.CREATED);
       const id = createRes.body.data.id;
 
-
       await request(app).delete(`${baseUrl}/${id}`).expect(StatusCodes.OK);
-
 
       const res = await request(app)
         .put(`${baseUrl}/${id}`)
         .send({ name: "Resurrected?", description: "should not happen" });
-
 
       // CURRENT BUG: Likely 200 OK
       expect(res.status).toBe(StatusCodes.NOT_FOUND);

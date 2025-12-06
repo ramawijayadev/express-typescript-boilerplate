@@ -25,7 +25,7 @@ export interface AuthenticatedRequest<
 /**
  * Type-safe wrapper for Express route handlers.
  * Encapsulates the type casting required for Express compatibility.
- * 
+ *
  * @example
  * authRouter.post("/login", validateBody(loginSchema),
  *   typedHandler<LoginBody>(authController.login)
@@ -50,13 +50,17 @@ export function typedHandler<Body = unknown, Query = SafeParsedQs, Params = Reco
 /**
  * Type-safe wrapper for authenticated Express route handlers.
  * Encapsulates the type casting required for Express compatibility.
- * 
+ *
  * @example
  * authRouter.post("/profile", authenticate,
  *   authenticatedHandler<UpdateProfileBody>(authController.updateProfile)
  * );
  */
-export function authenticatedHandler<Body = unknown, Query = SafeParsedQs, Params = Record<string, string>>(
+export function authenticatedHandler<
+  Body = unknown,
+  Query = SafeParsedQs,
+  Params = Record<string, string>,
+>(
   handler: (
     req: AuthenticatedRequest<Body, Query, Params>,
     res: Response,

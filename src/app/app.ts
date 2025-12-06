@@ -24,7 +24,7 @@ export function createApp(configure?: (app: express.Express) => void) {
         swaggerOptions: {
           defaultModelsExpandDepth: -1,
         },
-      })
+      }),
     );
     app.use("/", swaggerUi.serve);
   } else {

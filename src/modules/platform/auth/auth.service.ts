@@ -51,8 +51,7 @@ export class AuthService {
     // SECURITY: Always verify password to prevent timing attacks that could reveal valid emails
     // Use a dummy hash if user doesn't exist to maintain constant-time response
     const passwordHash =
-      user?.password ||
-      "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHR2YWx1ZQ$dummy"; // dummy argon2 hash
+      user?.password || "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHR2YWx1ZQ$dummy"; // dummy argon2 hash
 
     const isValidPassword = await verifyPassword(passwordHash, data.password);
 
@@ -184,7 +183,7 @@ export class AuthService {
 
   /**
    * Revokes all sessions for a specific user.
-  */
+   */
   async revokeAllSessions(userId: number): Promise<void> {
     await this.repo.revokeAllUserSessions(userId);
   }
@@ -281,9 +280,7 @@ export class AuthService {
 
     const token = randomBytes(32).toString("hex");
     const tokenHash = hashToken(token);
-    const expiresAt = new Date(
-      Date.now() + authConfig.passwordResetExpirationMinutes * 60 * 1000,
-    );
+    const expiresAt = new Date(Date.now() + authConfig.passwordResetExpirationMinutes * 60 * 1000);
 
     await this.repo.createPasswordResetToken({
       userId: user.id,

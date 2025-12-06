@@ -89,4 +89,3 @@ export const successResponseSchema = z
     message: z.string(),
   })
   .openapi("SuccessResponse");
-

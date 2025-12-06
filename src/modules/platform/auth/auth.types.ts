@@ -8,7 +8,6 @@ import type {
 } from "./auth.schemas";
 import type { z } from "zod";
 
-
 export type RegisterBody = z.infer<typeof registerSchema>;
 export type LoginBody = z.infer<typeof loginSchema>;
 export type RefreshTokenBody = z.infer<typeof refreshTokenSchema>;

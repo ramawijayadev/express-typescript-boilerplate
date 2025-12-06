@@ -10,9 +10,7 @@ import { AppError } from "@/shared/errors/AppError";
 import { AuthRepository } from "../auth.repository";
 import { AuthService } from "../auth.service";
 
-
 vi.mock("../auth.repository");
-
 
 vi.mock("@/core/auth/jwt", () => ({
   generateAccessToken: vi.fn(() => "access_token"),

@@ -31,7 +31,8 @@ jobsRegistry.registerPath({
   path: "/jobs/failed",
   tags: ["Jobs"],
   summary: "List all failed jobs",
-  description: "Retrieves all jobs that have exhausted their retry attempts and moved to the Dead Letter Queue",
+  description:
+    "Retrieves all jobs that have exhausted their retry attempts and moved to the Dead Letter Queue",
   responses: createApiResponse(FailedJobListSchema, "Failed jobs list", 200, [401, 500]),
   security: [{ bearerAuth: [] }],
 });

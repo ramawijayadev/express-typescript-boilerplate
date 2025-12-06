@@ -86,7 +86,7 @@ const envSchema = z.object({
   QUEUE_JOB_REMOVE_ON_FAIL: z.coerce.boolean().default(false),
   QUEUE_FAILED_JOB_RETENTION_DAYS: z.coerce.number().default(7),
   QUEUE_FAILED_JOB_ALERT_THRESHOLD: z.coerce.number().default(100),
-  
+
   ENABLE_BACKGROUND_JOBS: z.coerce.boolean().default(true),
 });
 

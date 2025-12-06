@@ -279,10 +279,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
 ```
 
@@ -291,20 +291,24 @@ services:
 The Dockerfile uses a **multi-stage build** for optimal image size and security:
 
 ### Stage 1: Base
+
 - Sets up Node.js 22 Alpine
 - Enables pnpm package manager
 - Installs dumb-init for signal handling
 
 ### Stage 2: Dependencies
+
 - Installs all npm dependencies
 - Cached separately for faster rebuilds
 
 ### Stage 3: Builder
+
 - Generates Prisma client
 - Compiles TypeScript to JavaScript
 - Prunes devDependencies
 
 ### Stage 4: Runner (Final Image)
+
 - Production-only dependencies
 - Compiled application code
 - Prisma schema and generated client
@@ -319,18 +323,20 @@ The Dockerfile uses a **multi-stage build** for optimal image size and security:
 ✅ **Health**: Built-in health check for orchestration  
 ✅ **Caching**: Optimized layer caching for fast rebuilds  
 ✅ **Signals**: Proper signal handling with dumb-init  
-✅ **Production-Ready**: Only production dependencies in final image  
+✅ **Production-Ready**: Only production dependencies in final image
 
 ## Troubleshooting
 
 ### Container Exits Immediately
 
 **Check logs:**
+
 ```bash
 docker logs express-app
 ```
 
 **Common causes:**
+
 - Missing required environment variables
 - Database connection failure
 - Invalid configuration
@@ -338,10 +344,12 @@ docker logs express-app
 ### Database Connection Errors
 
 **When using Docker Compose:**
+
 - Ensure DATABASE_URL uses service name: `postgres` not `localhost`
 - Wait for PostgreSQL to be ready (health check configured in docker-compose.yml)
 
 **Standalone container:**
+
 - Use host machine's IP for DATABASE_URL (not `localhost`)
 - On macOS/Windows: use `host.docker.internal` as hostname
   ```
@@ -357,6 +365,7 @@ COPY --from=builder /app/src/generated ./src/generated
 ```
 
 If you still see this error, rebuild without cache:
+
 ```bash
 docker build --no-cache -t express-ts-boilerplate .
 ```
@@ -364,11 +373,13 @@ docker build --no-cache -t express-ts-boilerplate .
 ### Port Already in Use
 
 Change the host port mapping:
+
 ```bash
 docker run -d -p 8080:3000 express-ts-boilerplate
 ```
 
 Or set a different APP_PORT:
+
 ```bash
 docker run -d -e APP_PORT=8080 -p 8080:8080 express-ts-boilerplate
 ```
@@ -376,6 +387,7 @@ docker run -d -e APP_PORT=8080 -p 8080:8080 express-ts-boilerplate
 ### Out of Memory
 
 Increase Docker's memory limit or set constraints:
+
 ```bash
 docker run --memory="1g" express-ts-boilerplate
 ```
@@ -383,13 +395,16 @@ docker run --memory="1g" express-ts-boilerplate
 ### Slow Build Times
 
 **Use layer caching effectively:**
+
 - Package files are copied before source code
 - Only rebuild when dependencies change
 
 **Exclude unnecessary files:**
+
 - The `.dockerignore` file prevents copying `node_modules`, tests, etc.
 
 **Clean up build cache:**
+
 ```bash
 docker builder prune
 ```
@@ -397,16 +412,19 @@ docker builder prune
 ### Health Check Failing
 
 **Check the health status:**
+
 ```bash
 docker inspect express-app | grep -A 10 Health
 ```
 
 **Common issues:**
+
 - App not listening on correct port
 - APP_BASE_PATH configured incorrectly
 - Database not connected (app might not start)
 
 **Test manually:**
+
 ```bash
 docker exec express-app wget -qO- http://localhost:3000/api/v1/health
 ```

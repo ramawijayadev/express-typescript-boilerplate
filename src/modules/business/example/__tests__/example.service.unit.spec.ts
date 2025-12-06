@@ -9,7 +9,6 @@ import { AppError } from "@/shared/errors/AppError";
 import { ExampleRepository } from "../example.repository";
 import { ExampleService } from "../example.service";
 
-
 vi.mock("../example.repository");
 
 describe("Example service (unit)", () => {

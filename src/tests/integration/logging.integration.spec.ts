@@ -7,7 +7,6 @@ import { logger } from "@/core/logging/logger";
 
 describe("Logging System Integration", () => {
   const app = createApp((app) => {
-
     app.get("/test-logging", (req, res) => {
       logger.info("Test log inside route");
       res.json({ message: "Hello", requestId: req.requestId });

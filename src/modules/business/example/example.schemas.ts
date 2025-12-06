@@ -29,8 +29,6 @@ export const listExamplesQuerySchema = z.object({
     .transform(Number),
 });
 
-
-
 export const ExampleSchema = z
   .object({
     id: z.number().openapi({ description: "The auto-generated id of the example" }),

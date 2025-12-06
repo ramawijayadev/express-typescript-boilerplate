@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-06  
 **Project:** Express TypeScript Boilerplate  
-**Auditor:** Antigravity AI  
+**Auditor:** Antigravity AI
 
 ---
 
@@ -15,6 +15,7 @@
 The handbook documentation (`docs/`) can be trusted as a reliable reference for the current state of the boilerplate, with clear markers where implementation is pending.
 
 **Key Findings:**
+
 - **Implemented Features:** Comprehensive auth system, background jobs with DLQ, security middleware stack, structured logging, API standardization
 - **Documentation Status:** Major implementation details added to `architecture.html` to accurately reflect actual codebase
 - **Critical Gaps:** RBAC/permissions, dedicated audit logging, file upload infrastructure, Redis caching layer
@@ -29,6 +30,7 @@ The handbook documentation (`docs/`) can be trusted as a reliable reference for 
 **Sections Extended with Implementation Details:**
 
 #### 3. Platform / Runtime Core
+
 - ✅ Added actual middleware stack documentation (Helmet with CSP, CORS with credentials, HPP, rate limiting with configurable window/max)
 - ✅ Documented body size limit (10kb) for DoS prevention
 - ✅ Added input sanitization middleware details
@@ -40,6 +42,7 @@ The handbook documentation (`docs/`) can be trusted as a reliable reference for 
 - ✅ Documented config validation with Zod and modular config structure
 
 #### 5. Data & Integration Layer
+
 - ✅ Added Prisma + PostgreSQL adapter implementation details
 - ✅ Documented BullMQ queue system with Dead Letter Queue
 - ✅ Added email job infrastructure (verification, password reset)
@@ -48,6 +51,7 @@ The handbook documentation (`docs/`) can be trusted as a reliable reference for 
 - ✅ Marked missing implementations: Redis caching layer, file storage, search engine, external API wrappers
 
 #### 6. Security & Access Layer
+
 - ✅ Documented dual-token JWT system (access token + refresh token)
 - ✅ Added session management details (UserSession table, IP/user-agent tracking, token rotation)
 - ✅ Documented account locking mechanism (failed login tracking)
@@ -58,6 +62,7 @@ The handbook documentation (`docs/`) can be trusted as a reliable reference for 
 - ✅ Marked missing: RBAC/permission system, dedicated audit log
 
 #### 8. Observability & Operations
+
 - ✅ Documented Pino logger with JSON output, pretty print for dev, request correlation
 - ✅ Added log rotation policy (pino-roll)
 - ✅ Documented request ID propagation through logs and API responses
@@ -65,25 +70,30 @@ The handbook documentation (`docs/`) can be trusted as a reliable reference for 
 - ✅ Marked missing: External alerting system integration
 
 #### 9. Developer Experience & Quality
+
 - ✅ Documented Vitest test setup with Supertest
-- ✅ Added test organization conventions (feature-based, __tests__ folders, naming patterns)
+- ✅ Added test organization conventions (feature-based, **tests** folders, naming patterns)
 - ✅ Documented OpenAPI/Swagger code-first approach (zod-to-openapi, registry pattern)
 - ✅ Added ESLint + Prettier + Husky configuration
 - ✅ Documented Docker Compose setup for local development
 
 ### convention.html 🟡 PARTIALLY REVIEWED
+
 **Status:** Current conventions documented are accurate and match implementation  
 **Recommendation:** No critical updates needed based on codebase analysis
 
-### depedency.html (typo in filename) 🟡 PARTIALLY REVIEWED  
+### depedency.html (typo in filename) 🟡 PARTIALLY REVIEWED
+
 **Status:** All listed dependencies match package.json  
 **Minor Note:** File has typo in name (`depedency.html` should be `dependency.html`)  
 **Recommendation:** Dependencies are accurate; typo fix is cosmetic and optional
 
 ### feature.html 🟡 REQUIRES STATUS UPDATES
+
 **Recommendation:** Update Tier 1 checklist implementation status (see section 4 below)
 
 ### overview.html ✅ ACCURATE
+
 **Status:** Entry point document is complete and accurate
 
 ---
@@ -94,69 +104,69 @@ The following features were **fully implemented in code** but **missing or incom
 
 ### Platform/Runtime Infrastructure
 
-| Feature | Code Location | Documentation Added |
-|---------|--------------|-------------------|
-| **Complete middleware security stack** | `src/core/http/middlewares/index.ts` | architecture.html § 3.3 |
-| **Content Security Policy (CSP)** | Helmet configuration with Swagger UI exceptions | architecture.html § 3.3 |
-| **HPP Protection** | hpp middleware | architecture.html § 3.3 |
-| **Body size limits** | 10kb limit for DoS prevention | architecture.html § 3.3 |
-| **Input sanitization middleware** | `sanitize.middleware.ts` | architecture.html § 3.3 |
-| **Request ID middleware** | `request-id.middleware.ts` with UUID generation | architecture.html § 3.3 |
-| **Structured request logging** | `request-logger.middleware.ts` | architecture.html § 3.3 |
-| **Modular configuration system** | `src/config/*` with separate files per domain | architecture.html § 3.1 |
-| **Environment validation** | Zod schema validation in `src/app/env.ts` | architecture.html § 3.1 |
-| **Prisma PostgreSQL adapter** | `@prisma/adapter-pg` for serverless compatibility | architecture.html § 5.1 |
-| **Standardized API responses** | `src/shared/http/api-response.ts` with helper functions | architecture.html § 3.4 |
-| **ZodError handling** | Automatic validation error formatting | architecture.html § 3.4 |
-| **Prisma error mapping** | P2025 → 404 translation | architecture.html § 3.4 |
-| **Graceful shutdown** | `src/app/server.ts` with SIGINT/SIGTERM handlers | architecture.html § 3.5 |
-| **Health check with job metrics** | Failed job count with alert threshold | architecture.html § 3.5 |
+| Feature                                | Code Location                                           | Documentation Added     |
+| -------------------------------------- | ------------------------------------------------------- | ----------------------- |
+| **Complete middleware security stack** | `src/core/http/middlewares/index.ts`                    | architecture.html § 3.3 |
+| **Content Security Policy (CSP)**      | Helmet configuration with Swagger UI exceptions         | architecture.html § 3.3 |
+| **HPP Protection**                     | hpp middleware                                          | architecture.html § 3.3 |
+| **Body size limits**                   | 10kb limit for DoS prevention                           | architecture.html § 3.3 |
+| **Input sanitization middleware**      | `sanitize.middleware.ts`                                | architecture.html § 3.3 |
+| **Request ID middleware**              | `request-id.middleware.ts` with UUID generation         | architecture.html § 3.3 |
+| **Structured request logging**         | `request-logger.middleware.ts`                          | architecture.html § 3.3 |
+| **Modular configuration system**       | `src/config/*` with separate files per domain           | architecture.html § 3.1 |
+| **Environment validation**             | Zod schema validation in `src/app/env.ts`               | architecture.html § 3.1 |
+| **Prisma PostgreSQL adapter**          | `@prisma/adapter-pg` for serverless compatibility       | architecture.html § 5.1 |
+| **Standardized API responses**         | `src/shared/http/api-response.ts` with helper functions | architecture.html § 3.4 |
+| **ZodError handling**                  | Automatic validation error formatting                   | architecture.html § 3.4 |
+| **Prisma error mapping**               | P2025 → 404 translation                                 | architecture.html § 3.4 |
+| **Graceful shutdown**                  | `src/app/server.ts` with SIGINT/SIGTERM handlers        | architecture.html § 3.5 |
+| **Health check with job metrics**      | Failed job count with alert threshold                   | architecture.html § 3.5 |
 
 ### Background Jobs & Queue System
 
-| Feature | Code Location | Documentation Added |
-|---------|--------------|-------------------|
-| **Dead Letter Queue (DLQ)** | `src/core/queue/index.ts` | architecture.html § 5.3 |
-| **Automatic DLQ migration** | `src/jobs/index.ts` after retry exhausted | architecture.html § 5.3 |
-| **Job worker with concurrency** | Worker with concurrency 5 | architecture.html § 5.3 |
-| **Job management API** | `/api/v1/jobs` endpoints | architecture.html § 5.3 |
-| **Failed job operations** | List, retry, remove, cleanup | architecture.html § 5.3 |
-| **Job retention policy** | Configurable retention days | architecture.html § 5.3 |
+| Feature                         | Code Location                             | Documentation Added     |
+| ------------------------------- | ----------------------------------------- | ----------------------- |
+| **Dead Letter Queue (DLQ)**     | `src/core/queue/index.ts`                 | architecture.html § 5.3 |
+| **Automatic DLQ migration**     | `src/jobs/index.ts` after retry exhausted | architecture.html § 5.3 |
+| **Job worker with concurrency** | Worker with concurrency 5                 | architecture.html § 5.3 |
+| **Job management API**          | `/api/v1/jobs` endpoints                  | architecture.html § 5.3 |
+| **Failed job operations**       | List, retry, remove, cleanup              | architecture.html § 5.3 |
+| **Job retention policy**        | Configurable retention days               | architecture.html § 5.3 |
 
 ### Authentication & Security
 
-| Feature | Code Location | Documentation Added |
-|---------|--------------|-------------------|
-| **Dual-token system** | Access token + refresh token | architecture.html § 6.1 |
-| **Token rotation** | Refresh token hashing and rotation | architecture.html § 6.1 |
-| **Session management** | UserSession table with metadata | architecture.html § 6.1 |
-| **Account locking** | Failed login tracking | architecture.html § 6.1 |
-| **Email verification** | Token-based with expiry | architecture.html § 6.1 |
-| **Password reset flow** | Secure token generation/validation | architecture.html § 6.1 |
-| **Argon2 hashing** | Password encryption | architecture.html § 6.3 |
-| **Timing-safe comparisons** | Token validation security | architecture.html § 6.3 |
+| Feature                     | Code Location                      | Documentation Added     |
+| --------------------------- | ---------------------------------- | ----------------------- |
+| **Dual-token system**       | Access token + refresh token       | architecture.html § 6.1 |
+| **Token rotation**          | Refresh token hashing and rotation | architecture.html § 6.1 |
+| **Session management**      | UserSession table with metadata    | architecture.html § 6.1 |
+| **Account locking**         | Failed login tracking              | architecture.html § 6.1 |
+| **Email verification**      | Token-based with expiry            | architecture.html § 6.1 |
+| **Password reset flow**     | Secure token generation/validation | architecture.html § 6.1 |
+| **Argon2 hashing**          | Password encryption                | architecture.html § 6.3 |
+| **Timing-safe comparisons** | Token validation security          | architecture.html § 6.3 |
 
 ### Observability
 
-| Feature | Code Location | Documentation Added |
-|---------|--------------|-------------------|
-| **Pino logger configuration** | `src/core/logging/logger.ts` | architecture.html § 8.1 |
-| **Request correlation** | Automatic request ID in logs | architecture.html § 8.1 |
-| **Log rotation** | Pino-roll configuration | architecture.html § 8.1 |
-| **Metrics initialization** | `src/core/observability/metrics.ts` | architecture.html § 8.2 |
-| **Tracing initialization** | `src/core/observability/tracing.ts` | architecture.html § 8.3 |
+| Feature                       | Code Location                       | Documentation Added     |
+| ----------------------------- | ----------------------------------- | ----------------------- |
+| **Pino logger configuration** | `src/core/logging/logger.ts`        | architecture.html § 8.1 |
+| **Request correlation**       | Automatic request ID in logs        | architecture.html § 8.1 |
+| **Log rotation**              | Pino-roll configuration             | architecture.html § 8.1 |
+| **Metrics initialization**    | `src/core/observability/metrics.ts` | architecture.html § 8.2 |
+| **Tracing initialization**    | `src/core/observability/tracing.ts` | architecture.html § 8.3 |
 
 ### Developer Experience
 
-| Feature | Code Location | Documentation Added |
-|---------|--------------|-------------------|
-| **Vitest test framework** | `vitest.config.ts` | architecture.html § 9.1 |
-| **Test organization** | Feature-based with __tests__ folders | architecture.html § 9.1 |
-| **Test naming conventions** | *.unit.spec.ts, *.integration.spec.ts | architecture.html § 9.1 |
-| **OpenAPI registry pattern** | Each route exports OpenAPIRegistry | architecture.html § 9.2 |
-| **Swagger UI mounting** | Root path for non-production | architecture.html § 9.2 |
-| **Docker Compose** | PostgreSQL + Redis setup | architecture.html § 9.4 |
-| **Development workflow** | nodemon + tsx for hot reload | architecture.html § 9.4 |
+| Feature                      | Code Location                         | Documentation Added     |
+| ---------------------------- | ------------------------------------- | ----------------------- |
+| **Vitest test framework**    | `vitest.config.ts`                    | architecture.html § 9.1 |
+| **Test organization**        | Feature-based with **tests** folders  | architecture.html § 9.1 |
+| **Test naming conventions**  | _.unit.spec.ts, _.integration.spec.ts | architecture.html § 9.1 |
+| **OpenAPI registry pattern** | Each route exports OpenAPIRegistry    | architecture.html § 9.2 |
+| **Swagger UI mounting**      | Root path for non-production          | architecture.html § 9.2 |
+| **Docker Compose**           | PostgreSQL + Redis setup              | architecture.html § 9.4 |
+| **Development workflow**     | nodemon + tsx for hot reload          | architecture.html § 9.4 |
 
 ---
 
@@ -167,6 +177,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 ### 🔴 CRITICAL (Must implement soon for production-grade consistency)
 
 #### 1. RBAC / Permission System
+
 - **Docs**: convention.html, architecture.html § 6.2
 - **Expected**: Role-based access control with permission checking
 - **Actual**: Authentication middleware exists, but no authorization/permission checking beyond userId validation
@@ -174,6 +185,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Implement basic RBAC with User → Role → Permission mapping
 
 #### 2. Dedicated Audit Log
+
 - **Docs**: architecture.html § 6.5, feature.html Tier 1 requirement
 - **Expected**: Audit log table tracking sensitive operations (who, what, when, IP)
 - **Actual**: Structured logging exists but no dedicated audit trail for compliance/forensic purposes
@@ -183,6 +195,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 ### 🟡 IMPORTANT (Significantly improves boilerplate completeness)
 
 #### 3. File Upload Infrastructure
+
 - **Docs**: architecture.html § 5.4, feature.html Tier 1 requirement
 - **Expected**: File upload endpoint with storage abstraction (S3/local)
 - **Actual**: Storage abstraction exists (`src/core/storage/index.ts`) but no implementation or upload endpoint
@@ -190,6 +203,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Implement local storage driver + multer middleware for file uploads
 
 #### 4. Redis Caching Layer
+
 - **Docs**: architecture.html § 5.2
 - **Expected**: Dedicated caching strategy with TTL and invalidation
 - **Actual**: Redis client available for queues but no caching implementation
@@ -197,6 +211,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Create cache abstraction with common patterns (get, set, invalidate, TTL)
 
 #### 5. Notification/Email Templates
+
 - **Docs**: feature.html Tier 1 - "Templates: Reset Password, Email Verification, Welcome User"
 - **Expected**: Email templates infrastructure
 - **Actual**: Job queue sends emails but templates are inline text
@@ -204,6 +219,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Add template engine (handlebars/pug) or React Email for email templates
 
 #### 6. Settings & Configuration Module
+
 - **Docs**: feature.html Tier 2
 - **Expected**: SystemSetting and UserPreference models
 - **Actual**: Not implemented
@@ -213,6 +229,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 ### 🟢 NICE-TO-HAVE (Optional enhancements, not baseline requirements)
 
 #### 7. CLI Tools
+
 - **Docs**: Folder `src/cli/` exists with `index.ts`
 - **Expected**: Internal CLI commands
 - **Actual**: Basic structure but no actual commands
@@ -220,6 +237,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Add as needed (e.g., db seed, user creation, etc.)
 
 #### 8. Search Engine Integration
+
 - **Docs**: architecture.html § 5.5
 - **Expected**: Elasticsearch/MeiliSearch integration
 - **Actual**: Not implemented
@@ -227,6 +245,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Add only if specific search requirements emerge
 
 #### 9. External API Client Wrappers
+
 - **Docs**: architecture.html § 5.6
 - **Expected**: Wrappers for payment, SMS, etc.
 - **Actual**: Axios available but no wrappers
@@ -234,6 +253,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Implement as integrations are needed
 
 #### 10. External Alerting Integration
+
 - **Docs**: architecture.html § 8.4
 - **Expected**: Slack/PagerDuty integration
 - **Actual**: Health check with threshold but no external notifications
@@ -241,6 +261,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Add webhook integration for production deployment
 
 #### 11. Organization/Team Module
+
 - **Docs**: feature.html Tier 2
 - **Expected**: Multi-tenant support
 - **Actual**: Not implemented
@@ -248,6 +269,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Add if multi-tenancy is required
 
 #### 12. Activity/Timeline Module
+
 - **Docs**: feature.html Tier 3
 - **Expected**: User-friendly activity feed
 - **Actual**: Not implemented
@@ -255,6 +277,7 @@ Features **specified in documentation** but **not yet implemented** or **impleme
 - **Recommendation**: Low priority - add if needed
 
 #### 13. Advanced Features (Tier 3)
+
 - **Docs**: feature.html Tier 3 (Workflow, Comments, Tags)
 - **Actual**: None implemented
 - **Impact**: Optional patterns for specific use cases
@@ -329,12 +352,14 @@ Based on discovered patterns, these principles should be explicitly stated:
 ## 6. Summary Statistics
 
 ### Documentation Accuracy
+
 - **Before Audit**: ~60% (many implementation details missing)
 - **After Updates**: ~85-90% (implementation details added, gaps clearly marked)
 
 ### Feature Implementation Status
 
 **Tier 1 (Must Have) Status:**
+
 - ✅ Auth Module: FULLY IMPLEMENTED
 - ✅ User Module: FULLY IMPLEMENTED (basic profile CRUD)
 - 🟡 Generic CRUD: IMPLEMENTED (pagination helper missing from some endpoints)
@@ -343,14 +368,17 @@ Based on discovered patterns, these principles should be explicitly stated:
 - 🔴 Audit Log: NOT IMPLEMENTED
 
 **Tier 2 (Recommended) Status:**
+
 - 🔴 Settings Module: NOT IMPLEMENTED
 - 🔴 Organization/Team: NOT IMPLEMENTED
 - 🔴 Activity Feed: NOT IMPLEMENTED
 
 **Tier 3 (Optional) Status:**
+
 - 🔴 All: NOT IMPLEMENTED
 
 ### Code Quality
+
 - **Codebase Size**: ~85,000 lines of TypeScript
 - **Test Coverage**: E2E tests exist for auth flow and user journey
 - **Lint Status**: ESLint + Prettier configured
@@ -362,6 +390,7 @@ Based on discovered patterns, these principles should be explicitly stated:
 ## Conclusion
 
 The Express TypeScript Boilerplate has a **solid foundation** with excellent infrastructure for:
+
 - ✅ Authentication & session management
 - ✅ Background jobs with failure handling
 - ✅ Security hardening
@@ -370,6 +399,7 @@ The Express TypeScript Boilerplate has a **solid foundation** with excellent inf
 - ✅ Testing framework
 
 **Critical next steps** to reach production-grade baseline:
+
 1. RBAC/Permission system
 2. Dedicated audit logging
 3. File upload infrastructure

@@ -1,4 +1,3 @@
-
 import { env } from "@/app/env";
 import { logger } from "@/core/logging/logger";
 import { emailSender } from "@/core/mail/mailer";
@@ -30,7 +29,7 @@ export async function emailWorkerHandler(job: Job<EmailJobData>) {
 
 async function sendVerificationEmail(data: EmailJobData) {
   const url = `${env.FRONTEND_URL}/verify-email?token=${data.token}`;
-  
+
   await emailSender.send({
     to: data.email,
     subject: "Verify your email address",

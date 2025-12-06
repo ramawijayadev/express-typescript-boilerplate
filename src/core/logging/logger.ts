@@ -66,7 +66,7 @@ export const logger = pino({
 /**
  * Executes a callback within a distinct logging context.
  * Any logs written during the callback will get the `context` fields attached automatically.
- * 
+ *
  * @param context - Key-value pairs to attach to logs.
  * @param callback - Function to execute.
  */

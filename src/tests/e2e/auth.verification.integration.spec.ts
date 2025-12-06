@@ -39,12 +39,10 @@ describe("Auth Verification & Password Reset Integration", () => {
   });
 
   beforeEach(async () => {
-
     await db().emailVerificationToken.deleteMany();
     await db().passwordResetToken.deleteMany();
     await db().userSession.deleteMany();
     await db().user.deleteMany();
-
 
     testUser = await db().user.create({
       data: {
@@ -60,7 +58,6 @@ describe("Auth Verification & Password Reset Integration", () => {
 
   describe("POST /auth/resend-verification", () => {
     it("should enqueue verification email for unverified user", async () => {
-
       const { generateAccessToken } = await import("@/core/auth/jwt");
       const accessToken = generateAccessToken({ userId: testUser.id });
 
@@ -71,24 +68,23 @@ describe("Auth Verification & Password Reset Integration", () => {
       expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.data.message).toContain("verification email has been sent");
 
-
       const token = await db().emailVerificationToken.findFirst({
         where: { userId: testUser.id },
       });
       expect(token).toBeDefined();
 
-
-      expect(jobQueue.enqueueEmailVerification).toHaveBeenCalledWith(expect.objectContaining({
-         userId: testUser.id,
-         email: testUser.email,
-         token: expect.any(String),
-      }));
+      expect(jobQueue.enqueueEmailVerification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: testUser.id,
+          email: testUser.email,
+          token: expect.any(String),
+        }),
+      );
     });
   });
 
   describe("POST /auth/verify-email", () => {
     it("should verify email with valid token", async () => {
-
       const { randomBytes } = await import("node:crypto");
       const token = randomBytes(32).toString("hex");
       const tokenHash = hashToken(token);
@@ -101,9 +97,7 @@ describe("Auth Verification & Password Reset Integration", () => {
         },
       });
 
-      const res = await request(app)
-        .post("/api/v1/auth/verify-email")
-        .send({ token });
+      const res = await request(app).post("/api/v1/auth/verify-email").send({ token });
 
       expect(res.status).toBe(StatusCodes.OK);
       expect(res.body.data.message).toBe("Email verified successfully");
@@ -138,11 +132,13 @@ describe("Auth Verification & Password Reset Integration", () => {
       });
       expect(token).toBeDefined();
 
-      expect(jobQueue.enqueuePasswordReset).toHaveBeenCalledWith(expect.objectContaining({
-        userId: testUser.id,
-        email: testUser.email,
-        token: expect.any(String),
-      }));
+      expect(jobQueue.enqueuePasswordReset).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: testUser.id,
+          email: testUser.email,
+          token: expect.any(String),
+        }),
+      );
     });
   });
 
@@ -159,7 +155,6 @@ describe("Auth Verification & Password Reset Integration", () => {
           expiresAt: new Date(Date.now() + 10000),
         },
       });
-
 
       const newPassword = "NewPassword123";
 

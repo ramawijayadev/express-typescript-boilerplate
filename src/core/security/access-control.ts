@@ -1,7 +1,7 @@
 /**
  * Primitive Role types based on Convention.
  */
-export type Role = 'admin' | 'user';
+export type Role = "admin" | "user";
 
 /**
  * Interface for Access Control Logic (RBAC).
@@ -15,7 +15,7 @@ export interface AccessControl {
 
 export const accessControl: AccessControl = {
   can(roles, _resource, _action) {
-    if (roles.includes('admin')) {
+    if (roles.includes("admin")) {
       return true;
     }
     // TODO: Implement fine-grained permission logic

@@ -2,12 +2,12 @@ import type { NextFunction, Request, Response } from "express";
 
 /**
  * Sanitizes request body, query, and params to prevent NoSQL/SQL injection attempts.
- * 
+ *
  * This middleware removes potentially dangerous characters and operators:
  * - MongoDB operators starting with $ (e.g., $gt, $ne, $where)
  * - SQL injection patterns
  * - Dangerous characters in object keys
- * 
+ *
  * While Prisma provides good protection through parameterized queries,
  * this adds defense-in-depth against injection attacks.
  */

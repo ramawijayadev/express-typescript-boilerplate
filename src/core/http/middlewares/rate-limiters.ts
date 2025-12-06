@@ -1,6 +1,7 @@
 import rateLimit from "express-rate-limit";
 
 import { rateLimitConfig } from "@/config";
+
 import type { RequestHandler } from "express";
 
 const isTest = process.env.NODE_ENV === "test";

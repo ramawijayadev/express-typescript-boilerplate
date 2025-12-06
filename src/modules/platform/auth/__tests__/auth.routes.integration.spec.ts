@@ -11,7 +11,6 @@ import { db } from "@/core/database/connection";
 
 import { AuthRepository } from "../auth.repository";
 
-
 vi.mock("@/core/queue", () => ({
   jobQueue: {
     enqueueEmailVerification: vi.fn(),
@@ -283,7 +282,6 @@ describe("Auth routes (integration)", () => {
       const response = await request(app)
         .post("/api/v1/auth/logout")
         .send({ refreshToken: "invalid_token" });
-
 
       expect(response.status).not.toBe(StatusCodes.OK);
     });
