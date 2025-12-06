@@ -8,7 +8,7 @@ export const FailedJobSchema = z.object({
   jobName: z.string(),
   originalQueue: z.string(),
   originalJobId: z.string().optional(),
-  data: z.record(z.string(), z.any()),
+  data: z.record(z.string(), z.unknown()),
   error: z.string(),
   errorStack: z.string().optional(),
   failedAt: z.string().datetime(),

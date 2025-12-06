@@ -43,8 +43,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
-  typedHandler<any, ListExamplesQuery>((req, res, next) => exampleController.list(req, res))
+  typedHandler<unknown, ListExamplesQuery>((req, res, next) => exampleController.list(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -58,8 +57,7 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.get("/:id", validateParams(idParamSchema),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
-  typedHandler<any, any, IdParam>((req, res, next) => exampleController.find(req, res))
+  typedHandler<unknown, unknown, IdParam>((req, res, next) => exampleController.find(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -103,8 +101,7 @@ exampleRouter.put(
   "/:id",
   validateParams(idParamSchema),
   validateBody(updateExampleSchema),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
-  typedHandler<UpdateExampleInput, any, IdParam>((req, res, next) => exampleController.update(req, res))
+  typedHandler<UpdateExampleInput, unknown, IdParam>((req, res, next) => exampleController.update(req, res))
 );
 
 exampleRegistry.registerPath({
@@ -118,6 +115,5 @@ exampleRegistry.registerPath({
 });
 
 exampleRouter.delete("/:id", validateParams(idParamSchema),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Runtime validation via Zod provides type safety
-  typedHandler<any, any, IdParam>((req, res, next) => exampleController.delete(req, res))
+  typedHandler<unknown, unknown, IdParam>((req, res, next) => exampleController.delete(req, res))
 );

@@ -2,18 +2,16 @@ import type { NextFunction, Request, Response } from "express";
 
 // ESLint: Using 'any' is intentional here to match Express's type system
 // Express uses 'any' for Params/Query/ResBody, and strict 'unknown' causes type incompatibility
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type TypedRequest<
-  Body = any,
-  Query = any,
-  Params = any,
-> = Request<Params, any, Body, Query>;
-/* eslint-enable @typescript-eslint/no-explicit-any */
+  Body = unknown,
+  Query = unknown,
+  Params = Record<string, string>,
+> = Request<Params, unknown, Body, Query>;
 
 export interface AuthenticatedRequest<
   Body = unknown,
   Query = unknown,
-  Params = unknown,
+  Params = Record<string, string>,
 > extends TypedRequest<Body, Query, Params> {
   user: {
     id: number;
@@ -29,10 +27,12 @@ export interface AuthenticatedRequest<
  *   typedHandler<LoginBody>(authController.login)
  * );
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function typedHandler<Body = any, Query = any, Params = any>(
-  handler: (req: TypedRequest<Body, Query, Params>, res: Response, next: NextFunction) => any
+export function typedHandler<Body = unknown, Query = unknown, Params = Record<string, string>>(
+  handler: (
+    req: TypedRequest<Body, Query, Params>,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void> | Response | Promise<Response>,
 ) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,8 +52,12 @@ export function typedHandler<Body = any, Query = any, Params = any>(
  *   authenticatedHandler<UpdateProfileBody>(authController.updateProfile)
  * );
  */
-export function authenticatedHandler<Body = any, Query = any, Params = any>(
-  handler: (req: AuthenticatedRequest<Body, Query, Params>, res: Response, next: NextFunction) => any
+export function authenticatedHandler<Body = unknown, Query = unknown, Params = Record<string, string>>(
+  handler: (
+    req: AuthenticatedRequest<Body, Query, Params>,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void> | Response | Promise<Response>,
 ) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -63,4 +67,3 @@ export function authenticatedHandler<Body = any, Query = any, Params = any>(
     }
   };
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */

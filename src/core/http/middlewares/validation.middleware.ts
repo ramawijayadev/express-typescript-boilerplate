@@ -27,8 +27,7 @@ export function validateBody<T extends ZodTypeAny>(schema: T): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
       const parsed = schema.parse(req.body);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (req as any).body = parsed;
+      req.body = parsed;
       next();
     } catch (err) {
       handleZodError(err);
