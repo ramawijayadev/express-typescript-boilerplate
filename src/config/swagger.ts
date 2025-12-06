@@ -47,6 +47,5 @@ const getOpenApiDocumentation = () => {
 
 /**
  * Generated OpenAPI/Swagger documentation specification.
- * Aggregates all registered Zod schemas and route definitions into a single JSON object.
  */
 export const swaggerSpec = getOpenApiDocumentation();

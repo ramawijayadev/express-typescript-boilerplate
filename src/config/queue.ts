@@ -2,7 +2,6 @@ import { env } from "@/app/env";
 
 /**
  * Background Job Queue configuration (Redis).
- * Defines connection details and default job behaviors (attempts, backoff).
  */
 export const queueConfig = {
   redis: {

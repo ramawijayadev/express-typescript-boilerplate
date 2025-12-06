@@ -2,7 +2,6 @@ import { env } from "@/app/env";
 
 /**
  * Rate Limiting Configuration.
- * Defines the window duration and maximum attempts for various endpoints.
  */
 export const rateLimitConfig = {
   login: {
