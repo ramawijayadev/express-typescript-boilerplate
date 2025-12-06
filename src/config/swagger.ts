@@ -39,7 +39,7 @@ const getOpenApiDocumentation = () => {
         description: "API Server",
       },
     ],
-    security: [{ bearerAuth: [] }],
+
   });
 };
 

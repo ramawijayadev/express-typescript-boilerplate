@@ -16,7 +16,6 @@ import { ExampleRepository } from "./example.repository";
 import {
   ExampleSchema,
   createExampleSchema,
-  exampleIdSchema,
   listExamplesQuerySchema,
   updateExampleSchema,
 } from "./example.schemas";
@@ -40,7 +39,7 @@ exampleRegistry.registerPath({
   request: {
     query: listExamplesQuerySchema,
   },
-  responses: createApiPaginatedResponse(ExampleSchema, "List of examples"),
+  responses: createApiPaginatedResponse(ExampleSchema, "List of examples", 200, [400, 422, 500]),
 });
 
 exampleRouter.get("/", validateQuery(listExamplesQuerySchema), (req, res) =>
@@ -52,9 +51,9 @@ exampleRegistry.registerPath({
   path: "/examples/{id}",
   tags: ["Example"],
   request: {
-    params: exampleIdSchema,
+    params: idParamSchema,
   },
-  responses: createApiResponse(ExampleSchema, "Example details"),
+  responses: createApiResponse(ExampleSchema, "Example details", 200, [400, 404, 500]),
 });
 
 exampleRouter.get("/:id", validateParams(idParamSchema), (req, res) =>
@@ -74,7 +73,7 @@ exampleRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(ExampleSchema, "Example created", 201),
+  responses: createApiResponse(ExampleSchema, "Example created", 201, [400, 422, 500]),
 });
 
 exampleRouter.post("/", validateBody(createExampleSchema), (req, res) =>
@@ -86,7 +85,7 @@ exampleRegistry.registerPath({
   path: "/examples/{id}",
   tags: ["Example"],
   request: {
-    params: exampleIdSchema,
+    params: idParamSchema,
     body: {
       content: {
         "application/json": {
@@ -95,7 +94,7 @@ exampleRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(ExampleSchema, "Example updated"),
+  responses: createApiResponse(ExampleSchema, "Example updated", 200, [400, 404, 422, 500]),
 });
 
 exampleRouter.put(
@@ -110,16 +109,9 @@ exampleRegistry.registerPath({
   path: "/examples/{id}",
   tags: ["Example"],
   request: {
-    params: exampleIdSchema,
-    body: {
-      content: {
-        "application/json": {
-          schema: updateExampleSchema,
-        },
-      },
-    },
+    params: idParamSchema,
   },
-  responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted"),
+  responses: createApiResponse(z.object({ deleted: z.boolean() }), "Example deleted", 200, [400, 404, 500]),
 });
 
 exampleRouter.delete("/:id", validateParams(idParamSchema), (req, res) =>

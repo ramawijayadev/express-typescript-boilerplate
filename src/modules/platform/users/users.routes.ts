@@ -37,7 +37,8 @@ userRegistry.registerPath({
   method: "get",
   path: "/users/me",
   tags: ["User"],
-  responses: createApiResponse(UserSchema, "User"),
+  responses: createApiResponse(UserSchema, "User", 200, [401, 500]),
+  security: [{ bearerAuth: [] }],
 });
 
 usersRouter.patch("/me", authenticate, validateBody(updateUserSchema), (req, res) =>
@@ -48,5 +49,15 @@ userRegistry.registerPath({
   method: "patch",
   path: "/users/me",
   tags: ["User"],
-  responses: createApiResponse(UserSchema, "User"),
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: updateUserSchema,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(UserSchema, "User", 200, [401, 422, 500]),
+  security: [{ bearerAuth: [] }],
 });

@@ -53,7 +53,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(authResponseSchema, "User registered"),
+  responses: createApiResponse(authResponseSchema, "User registered", 201, [400, 422, 500]),
 });
 
 authRouter.post("/register", validateBody(registerSchema), (req, res) =>
@@ -73,7 +73,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(authResponseSchema, "User logged in"),
+  responses: createApiResponse(authResponseSchema, "User logged in", 200, [400, 422, 500]),
 });
 
 authRouter.post("/login", validateBody(loginSchema), (req, res) =>
@@ -93,7 +93,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(refreshTokenResponseSchema, "Token refreshed"),
+  responses: createApiResponse(refreshTokenResponseSchema, "Token refreshed", 200, [400, 422, 500]),
 });
 
 authRouter.post("/refresh-token", validateBody(refreshTokenSchema), (req, res) =>
@@ -113,7 +113,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(logoutResponseSchema, "User logged out"),
+  responses: createApiResponse(logoutResponseSchema, "User logged out", 200, [400, 422, 500]),
 });
 
 authRouter.post("/logout", validateBody(refreshTokenSchema), (req, res) =>
@@ -124,7 +124,8 @@ authRegistry.registerPath({
   method: "post",
   path: "/auth/revoke-all",
   tags: ["Auth"],
-  responses: createApiResponse(logoutResponseSchema, "All sessions revoked"),
+  responses: createApiResponse(logoutResponseSchema, "All sessions revoked", 200, [401, 403, 500]),
+  security: [{ bearerAuth: [] }],
 });
 
 authRouter.post("/revoke-all", authenticate, (req, res) =>
@@ -135,7 +136,8 @@ authRegistry.registerPath({
   method: "get",
   path: "/auth/profile",
   tags: ["Auth"],
-  responses: createApiResponse(profileResponseSchema, "User profile"),
+  responses: createApiResponse(profileResponseSchema, "User profile", 200, [401, 403, 500]),
+  security: [{ bearerAuth: [] }],
 });
 
 authRouter.get("/profile", authenticate, (req, res) =>
@@ -155,7 +157,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(successResponseSchema, "Email verified"),
+  responses: createApiResponse(successResponseSchema, "Email verified", 200, [400, 422, 500]),
 });
 
 authRouter.post("/verify-email", validateBody(emailVerificationSchema), (req, res) =>
@@ -166,7 +168,8 @@ authRegistry.registerPath({
   method: "post",
   path: "/auth/resend-verification",
   tags: ["Auth"],
-  responses: createApiResponse(successResponseSchema, "Verification email resent"),
+  responses: createApiResponse(successResponseSchema, "Verification email resent", 200, [401, 403, 500]),
+  security: [{ bearerAuth: [] }],
 });
 
 authRouter.post("/resend-verification", authenticate, (req, res) =>
@@ -186,7 +189,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(successResponseSchema, "Password reset email sent"),
+  responses: createApiResponse(successResponseSchema, "Password reset email sent", 200, [400, 422, 500]),
 });
 
 authRouter.post("/forgot-password", validateBody(forgotPasswordSchema), (req, res) =>
@@ -206,7 +209,7 @@ authRegistry.registerPath({
       },
     },
   },
-  responses: createApiResponse(successResponseSchema, "Password reset successfully"),
+  responses: createApiResponse(successResponseSchema, "Password reset successfully", 200, [400, 422, 500]),
 });
 
 authRouter.post("/reset-password", validateBody(resetPasswordSchema), (req, res) =>
