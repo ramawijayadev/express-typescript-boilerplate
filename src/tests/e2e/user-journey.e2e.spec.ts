@@ -78,7 +78,7 @@ async function waitForEmail(recipient: string, retries = 10): Promise<string | n
 
 const TOKEN_REGEX = /token=([a-f0-9]+)/i;
 
-describe("E2E: User Journey", () => {
+describe("User Journey E2E", () => {
   const app = createApp();
   let worker: Worker;
   
@@ -113,18 +113,18 @@ describe("E2E: User Journey", () => {
     await db().user.deleteMany({ where: { email: testUser.email } });
   });
 
-  it("1. Public Access: Health Check", async () => {
+  it("Public Access Health Check", async () => {
     await request(app).get("/api/v1/health").expect(StatusCodes.OK);
   });
 
-  it("2. Registration", async () => {
+  it("Registration", async () => {
     await request(app)
       .post("/api/v1/auth/register")
       .send(testUser)
       .expect(StatusCodes.CREATED);
   });
 
-  it("3. Verification: Receive Email and Verify", async () => {
+  it("Verification Receive Email and Verify", async () => {
 
     const emailContent = await waitForEmail(testUser.email, 30);
     expect(emailContent).not.toBeNull();
@@ -144,7 +144,7 @@ describe("E2E: User Journey", () => {
       });
   }, 20000); // 20s timeout
 
-  it("4. Authentication: Login", async () => {
+  it("Authentication Login", async () => {
     const res = await request(app)
       .post("/api/v1/auth/login")
       .send({ email: testUser.email, password: testUser.password })
@@ -156,7 +156,7 @@ describe("E2E: User Journey", () => {
     expect(refreshToken).toBeDefined();
   });
 
-  it("5. Protected Resource: Get Profile", async () => {
+  it("Protected Resource Get Profile", async () => {
     const res = await request(app)
       .get("/api/v1/auth/profile")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -165,7 +165,7 @@ describe("E2E: User Journey", () => {
     expect(res.body.data.user.email).toBe(testUser.email);
   });
 
-  it("6. Token Refresh", async () => {
+  it("Token Refresh", async () => {
     // Wait a bit to ensure 'exp' changes if resolution is low? No need for most tests.
     const res = await request(app)
       .post("/api/v1/auth/refresh-token")
@@ -177,7 +177,7 @@ describe("E2E: User Journey", () => {
     refreshToken = res.body.data.refreshToken;
   });
 
-  it("7. User Management: Get Me", async () => {
+  it("User Management Get Me", async () => {
     const res = await request(app)
       .get("/api/v1/users/me")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -186,7 +186,7 @@ describe("E2E: User Journey", () => {
     expect(res.body.data.email).toBe(testUser.email);
   });
 
-  it("8. User Management: Update Me", async () => {
+  it("User Management Update Me", async () => {
     const newName = "Updated Traveler";
     const res = await request(app)
       .patch("/api/v1/users/me")
@@ -206,7 +206,7 @@ describe("E2E: User Journey", () => {
 
   let exampleId: number;
 
-  it("9. Business Logic: Create Example", async () => {
+  it("Business Logic Create Example", async () => {
     const res = await request(app)
       .post("/api/v1/examples")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -217,7 +217,7 @@ describe("E2E: User Journey", () => {
     exampleId = res.body.data.id;
   });
 
-  it("10. Business Logic: List Examples", async () => {
+  it("Business Logic List Examples", async () => {
     const res = await request(app)
       .get("/api/v1/examples")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -230,7 +230,7 @@ describe("E2E: User Journey", () => {
     expect(item).toBeDefined();
   });
 
-  it("11. Business Logic: Get Example Details", async () => {
+  it("Business Logic Get Example Details", async () => {
     const res = await request(app)
       .get(`/api/v1/examples/${exampleId}`)
       .set("Authorization", `Bearer ${accessToken}`)
@@ -240,7 +240,7 @@ describe("E2E: User Journey", () => {
     expect(res.body.data.name).toBe("Journey Example");
   });
 
-  it("12. Business Logic: Update Example", async () => {
+  it("Business Logic Update Example", async () => {
     const res = await request(app)
       .put(`/api/v1/examples/${exampleId}`)
       .set("Authorization", `Bearer ${accessToken}`)
@@ -250,7 +250,7 @@ describe("E2E: User Journey", () => {
     expect(res.body.data.name).toBe("Updated Journey Example");
   });
 
-  it("13. Business Logic: Delete Example", async () => {
+  it("Business Logic Delete Example", async () => {
     await request(app)
       .delete(`/api/v1/examples/${exampleId}`)
       .set("Authorization", `Bearer ${accessToken}`)
@@ -263,7 +263,7 @@ describe("E2E: User Journey", () => {
       .expect(StatusCodes.NOT_FOUND);
   });
 
-  it("14. Account Security: Forgot Password", async () => {
+  it("Account Security Forgot Password", async () => {
     await deleteAllEmails();
     await request(app)
       .post("/api/v1/auth/forgot-password")
@@ -302,14 +302,22 @@ describe("E2E: User Journey", () => {
     refreshToken = res.body.data.tokens.refreshToken;
   }, 20000); // 20s timeout
 
-  it("15. Logout", async () => {
+  it("Logout", async () => {
     await request(app)
       .post("/api/v1/auth/logout")
       .send({ refreshToken })
       .expect(StatusCodes.OK);
   });
 
-  it("16. Verify Unauthorized after Logout", async () => {
-
+  it("Verify Unauthorized after Logout", async () => {
+    // The previous test revoked both Session and RefreshToken.
+    // However, access tokens are stateless JWTs. They remain valid until expiry (usually 15m).
+    // The boilerplate might not check blacklist for access tokens on every request for performance.
+    // BUT, the test requirement says: "Verify Unauthorized after Logout".
+    // Let's try to use the RefreshToken again - that MUST fail.
+    await request(app)
+      .post("/api/v1/auth/refresh-token")
+      .send({ refreshToken })
+      .expect(StatusCodes.UNAUTHORIZED);
   });
 });
