@@ -92,9 +92,6 @@ const envSchema = z.object({
 
 /**
  * Type-safe environment variables.
- *
- * Validated by Zod to ensure all required variables are present and correctly typed.
- * This object serves as the SINGLE SOURCE OF TRUTH for all configuration values.
- * Do NOT use `process.env` directly in application code; import `env` from here instead.
+ * Validated by Zod (Single Source of Truth).
  */
 export const env = envSchema.parse(process.env);

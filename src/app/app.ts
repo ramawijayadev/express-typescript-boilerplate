@@ -10,22 +10,13 @@ import { logger } from "@/core/logging/logger";
 
 /**
  * Bootstraps the Express application.
- *
- * This function configures the main Express app instance by:
- * 1. Registering global middleware (CORS, Helmet, BodyParser, etc).
- * 2. Setting up Swagger documentation.
- * 3. Registering the main API router.
- * 4. Registering the global error handler.
- *
- * @param configure - Optional callback to further configure the app (useful for testing).
- * @returns The configured Express application instance.
+ * Sets up middleware, Swagger, routers, and error handling.
  */
 export function createApp(configure?: (app: express.Express) => void) {
   const app = express();
 
   registerMiddlewares(app);
 
-  // Swagger API documentation (disabled in production)
   if (env.NODE_ENV !== "production") {
     app.get(
       "/",
@@ -37,7 +28,6 @@ export function createApp(configure?: (app: express.Express) => void) {
     );
     app.use("/", swaggerUi.serve);
   } else {
-    // In production, return a simple message at root
     app.get("/", (_req, res) => {
       res.json({ message: "API is running. Documentation available in development mode." });
     });
