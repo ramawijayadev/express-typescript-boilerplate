@@ -239,10 +239,17 @@
 			<li><strong>Schema Validation:</strong> Aplikasi harus gagal start jika config wajib tidak valid.</li>
 			<li><strong>Abstraction:</strong> Gunakan satu objek config global (singleton) di dalam app.</li>
 		</ul>
+		<p><strong>Implementasi:</strong> Menggunakan Zod untuk validasi environment variables di
+			<code>src/app/env.ts</code>. Config dikelompokkan modular per domain di <code>src/config/</code> (app, auth,
+			database, logging, mail, queue, swagger).
+		</p>
 
 		<h3>3.2. HTTP Server & Routing</h3>
 		<p>Inisialisasi framework dan router global. Pastikan struktur URL konsisten (e.g., <code>/api/v1</code>) dan
 			routing dipecah per modul fitur.</p>
+		<p><strong>Implementasi:</strong> Express app dibootstrap di <code>src/app/app.ts</code> dengan routing terpusat
+			di <code>src/core/http/router.ts</code>. Semua endpoint mounted di <code>/api/v1</code>. Swagger UI tersedia
+			di root (<code>/</code>) untuk non-production.</p>
 
 		<h3>3.3. Global Middlewares</h3>
 		<p>Logic teknis yang berjalan sebelum business logic:</p>
@@ -251,18 +258,37 @@
 			<li>Request ID generator (untuk tracing).</li>
 			<li>Rate limiter.</li>
 		</ul>
+		<p><strong>Implementasi:</strong> Stack middleware lengkap di <code>src/core/http/middlewares/index.ts</code>:
+		</p>
+		<ul>
+			<li><strong>Helmet:</strong> HTTP security headers dengan CSP policy (konten dinamis untuk Swagger UI)</li>
+			<li><strong>CORS:</strong> Konfigurasi origin dari env var dengan support credentials</li>
+			<li><strong>HPP:</strong> Proteksi HTTP Parameter Pollution</li>
+			<li><strong>Rate Limiting:</strong> Configurable window & max requests (disabled di test environment)</li>
+			<li><strong>Body Size Limit:</strong> 10kb untuk mencegah DoS attacks</li>
+			<li><strong>Input Sanitization:</strong> Middleware custom untuk mencegah NoSQL/SQL injection</li>
+			<li><strong>Request ID:</strong> UUID generation atau dari header <code>x-request-id</code></li>
+			<li><strong>Request Logger:</strong> Structured logging untuk setiap HTTP request (method, path, status,
+				duration)</li>
+		</ul>
 
 		<h3>3.4. Error Handling Strategy</h3>
 		<p>Menstandarkan representasi error ke client:</p>
 		<ul>
-			<li><strong>Error Model:</strong> Struktur JSON standar (<code>code</code>, <code>message</code>,
-				<code>details</code>).
+			<li><strong>Error Model:</strong> Struktur JSON standar (<code>success</code>, <code>message</code>,
+				<code>statusCode</code>, <code>errors</code> untuk validation, <code>requestId</code>).
 			</li>
 			<li><strong>Error Mapping:</strong> Mapping jenis error ke HTTP status (400, 404, 500) menggunakan class
-				<code>AppError</code>.</li>
+				<code>AppError</code>.
+			</li>
 			<li><strong>Global Handler:</strong> Centralized catch-all untuk logging (terpisah dari user response) dan
 				sanitization.</li>
 		</ul>
+		<p><strong>Implementasi:</strong> Class <code>AppError</code> di <code>src/shared/errors/AppError.ts</code>
+			untuk operational errors. Global error handler di <code>src/core/http/error-handler.ts</code> dengan
+			handling khusus untuk AppError, ZodError (validation), dan Prisma errors. Response helpers di
+			<code>src/shared/http/api-response.ts</code> (ok, created, clientError, validationError, serverError).
+		</p>
 
 		<h3>3.5. Health Checks & Lifecycle</h3>
 		<ul>
@@ -272,6 +298,12 @@
 				dengan
 				rapi sebelum mati.</li>
 		</ul>
+		<p><strong>Implementasi:</strong> Endpoint <code>GET /api/v1/health</code> di
+			<code>src/modules/platform/health/health.routes.ts</code>. Response mencakup status server, version,
+			timestamp, dan job metrics (failed job count dengan alert threshold). Graceful shutdown di
+			<code>src/app/server.ts</code> menangani SIGINT/SIGTERM dengan menutup HTTP server, database connections,
+			dan background job workers.
+		</p>
 	</section>
 
 	<section id="domain-api">
@@ -314,31 +346,57 @@
 		<p>Gunakan <strong>Repository Pattern</strong> (via Prisma ORM) untuk mengisolasi domain dari detail query
 			database,
 			memudahkan testing dan maintenance.</p>
+		<p><strong>Implementasi:</strong> Prisma Client di <code>src/core/database/connection.ts</code> dengan
+			PostgreSQL adapter (<code>@prisma/adapter-pg</code>) untuk serverless compatibility. Schema di
+			<code>prisma/schema.prisma</code> mencakup User, UserSession, PasswordResetToken, EmailVerificationToken,
+			Example. Repository pattern konsisten di semua modul (e.g., <code>auth.repository.ts</code>,
+			<code>users.repository.ts</code>).
+		</p>
 
 		<h3>5.2. Caching Strategy</h3>
 		<p>Mengurangi latency data (Redis). Tentukan strategi <strong>TTL</strong> dan <strong>Invalidation</strong>
 			yang
 			jelas saat data berubah.</p>
+		<p><strong>Status:</strong> Redis client (ioredis) tersedia dan digunakan untuk queue infrastructure. Caching
+			layer belum diimplementasikan secara eksplisit.</p>
 
 		<h3>5.3. Async Jobs (Message Queue)</h3>
 		<p>Menangani proses berat (email, report) secara background menggunakan Queue (BullMQ/Redis) dan Worker process
 			terpisah.
 		</p>
+		<p><strong>Implementasi:</strong> BullMQ queue system di <code>src/core/queue/index.ts</code> dengan:</p>
+		<ul>
+			<li><strong>Email Queue:</strong> Queue dedicated untuk email jobs (verification, password reset)</li>
+			<li><strong>Dead Letter Queue (DLQ):</strong> Queue terpisah untuk failed jobs setelah retry exhausted</li>
+			<li><strong>Worker:</strong> Background worker di <code>src/jobs/index.ts</code> dengan concurrency 5</li>
+			<li><strong>Job Handlers:</strong> Send email (<code>send-email.job.ts</code>), cleanup old failed jobs
+				(<code>cleanup-failed-jobs.job.ts</code>)</li>
+			<li><strong>Retry Policy:</strong> Configurable attempts dengan automatic DLQ migration</li>
+			<li><strong>Job Management API:</strong> Admin endpoints di <code>/api/v1/jobs</code> untuk list, retry,
+				remove, dan cleanup failed jobs</li>
+			<li><strong>Health Monitoring:</strong> Job metrics included dalam health check endpoint dengan alert
+				threshold</li>
+		</ul>
 
 		<h3>5.4. File & Object Storage</h3>
 		<p>Menyimpan file binary (gambar, dokumen) di Object Storage (S3/MinIO), bukan di database. Database hanya
 			menyimpan
 			URL/Key-nya.</p>
+		<p><strong>Status:</strong> Storage abstraction layer tersedia di <code>src/core/storage/index.ts</code>, namun
+			belum ada implementasi konkret untuk S3/local storage dan belum ada file upload endpoint.</p>
 
 		<h3>5.5. Search Engine Integration</h3>
 		<p>Jika fitur pencarian kompleks dibutuhkan (Full-text search), sync data ke search engine khusus
 			(Elasticsearch/MeiliSearch).</p>
+		<p><strong>Status:</strong> Belum diimplementasikan.</p>
 
 		<h3>5.6. External API Clients</h3>
 		<p>Wrapper untuk layanan pihak ketiga (Payment, SMS). Fokus pada penanganan <strong>Timeout</strong> dan
 			strategi
 			<strong>Retry</strong>.
 		</p>
+		<p><strong>Status:</strong> Axios tersedia sebagai HTTP client, namun belum ada wrapper spesifik untuk external
+			APIs.</p>
 	</section>
 
 	<section id="security">
@@ -346,22 +404,44 @@
 
 		<h3>6.1. Authentication</h3>
 		<p>Identifikasi user (JWT, Session, OAuth). Pastikan mekanisme validasi token aman.</p>
+		<p><strong>Implementasi:</strong> Dual-token JWT system di <code>src/modules/platform/auth/</code>:</p>
+		<ul>
+			<li><strong>Access Token:</strong> Short-lived JWT (configurable expiry) untuk authorization</li>
+			<li><strong>Refresh Token:</strong> Long-lived hashed token stored di database (UserSession table)</li>
+			<li><strong>Token Rotation:</strong> Refresh token di-hash dan rotated setiap refresh untuk security</li>
+			<li><strong>Session Management:</strong> Track user agent, IP address, last used timestamp</li>
+			<li><strong>Account Locking:</strong> Failed login tracking dengan automatic account lock setelah threshold
+			</li>
+			<li><strong>Email Verification:</strong> Token-based dengan expiry</li>
+			<li><strong>Password Reset Flow:</strong> Secure token generation dan validation</li>
+		</ul>
 
 		<h3>6.2. Authorization</h3>
 		<p>Kontrol akses (RBAC/Permission-based). Menentukan "siapa boleh melakukan apa" terhadap resource tertentu.</p>
+		<p><strong>Status:</strong> Middleware authentication (<code>authenticate.middleware.ts</code>) tersedia untuk
+			verify JWT dan attach user ke request context. RBAC/permission system belum diimplementasikan.</p>
 
 		<h3>6.3. Security Hardening</h3>
 		<p>Implementasi pertahanan lapis tambahan: Rate Limiter, Input Sanitization (XSS/SQLi), CORS policy ketat, dan
 			proteksi Brute-force.</p>
+		<p><strong>Implementasi:</strong> Comprehensive security middleware stack (lihat section 3.3). Password hashing
+			menggunakan <strong>Argon2</strong> (more secure than bcrypt). Timing-safe comparisons untuk token
+			validation.</p>
 
 		<h3>6.4. Secrets Management</h3>
 		<p>Manajemen enkripsi dan keys. <strong>Jangan pernah commit secrets ke repo.</strong> Gunakan Secret Manager
 			atau
 			Env Vars terenkripsi.</p>
+		<p><strong>Implementasi:</strong> Semua secrets di environment variables dengan validation via Zod schema. JWT
+			secrets, database URLs, Redis credentials, SMTP credentials managed via <code>.env</code> (gitignored).
+			<code>.env.example</code> provided sebagai template.
+		</p>
 
 		<h3>6.5. Audit Log</h3>
 		<p>Mencatat jejak aktivitas kritis ("Siapa", "Melakukan Apa", "Kapan") untuk keperluan forensik, keamanan, dan
 			compliance.</p>
+		<p><strong>Status:</strong> Belum diimplementasikan. Structured logging tersedia namun belum ada dedicated audit
+			log table atau tracking untuk sensitive operations.</p>
 	</section>
 
 	<section id="communication">
@@ -380,18 +460,34 @@
 
 		<h3>8.1. Structured Logging</h3>
 		<p>Log dalam format JSON. Wajib menyertakan context (RequestId, UserId) dan Log Level yang tepat.</p>
+		<p><strong>Implementasi:</strong> Pino logger di <code>src/core/logging/logger.ts</code> dengan fitur:</p>
+		<ul>
+			<li><strong>JSON Output:</strong> Structured logging untuk easy parsing (production)</li>
+			<li><strong>Pretty Print:</strong> Human-readable format untuk development (pino-pretty)</li>
+			<li><strong>Request Correlation:</strong> Automatic request ID attachment di setiap log entry</li>
+			<li><strong>Context Enrichment:</strong> Support untuk menambahkan contextual data (userId, path, etc)</li>
+			<li><strong>Log Rotation:</strong> Pino-roll configured untuk daily rotation dan retention policy</li>
+			<li><strong>Log Levels:</strong> debug, info, warn, error properly utilized di seluruh codebase</li>
+		</ul>
 
 		<h3>8.2. Metrics & Monitoring</h3>
 		<p>Memantau kesehatan sistem: Throughput (RPS), Latency (p95, p99), Error Rate, dan Resource Usage.</p>
+		<p><strong>Implementasi:</strong> Metrics initialization di <code>src/core/observability/metrics.ts</code>
+			(dipanggil di server bootstrap). Infrastructure ready untuk metrics collection.</p>
 
 		<h3>8.3. Tracing</h3>
 		<p>Menggunakan <code>TraceId</code> / <code>CorrelationId</code> untuk melacak perjalanan request melintasi
 			berbagai
 			komponen sistem.</p>
+		<p><strong>Implementasi:</strong> Request ID middleware generates UUID untuk setiap request. Tracing
+			initialization di <code>src/core/observability/tracing.ts</code>. ID propagated via HTTP headers
+			(<code>x-request-id</code>) dan included di semua log entries dan API responses.</p>
 
 		<h3>8.4. Alerting Hooks</h3>
 		<p>Notifikasi otomatis (Slack/PagerDuty) ketika metrik kritis (Error rate, Latency) melebihi ambang batas wajar.
 		</p>
+		<p><strong>Status:</strong> Health check endpoint menyediakan job metrics dengan alert threshold, namun belum
+			ada integrasi dengan external alerting systems.</p>
 	</section>
 
 	<section id="dx-quality">
@@ -405,15 +501,37 @@
 			<li><strong>E2E Test (API Flow):</strong> Skenario user penuh dari awal sampai akhir.</li>
 			<li><strong>Load/Stress Test (k6):</strong> Uji performa dan ketahanan beban.</li>
 		</ul>
+		<p><strong>Implementasi:</strong> Vitest sebagai test runner di <code>src/tests/</code>:</p>
+		<ul>
+			<li><strong>Vitest:</strong> Modern test runner dengan Vite-native compilation (faster than Jest)</li>
+			<li><strong>Supertest:</strong> HTTP assertion library untuk integration testing</li>
+			<li><strong>Test Organization:</strong> Feature-based dengan <code>__tests__</code> folders di setiap module
+			</li>
+			<li><strong>Naming Convention:</strong> <code>*.unit.spec.ts</code>, <code>*.integration.spec.ts</code>,
+				<code>*.e2e.spec.ts</code></li>
+			<li><strong>Setup:</strong> Global test setup di <code>src/tests/setup.ts</code> untuk database connection
+				dan cleanup</li>
+			<li><strong>Coverage:</strong> Auth flow, user journey, API response format, error handling</li>
+		</ul>
 
 		<h3>9.2. Documentation</h3>
 		<p>OpenAPI/Swagger yang <strong>generated from code</strong> (via zod-to-openapi) sebagai kontrak (Single Source
 			of Truth) dengan Frontend/Client.</p>
+		<p><strong>Implementasi:</strong> Code-first OpenAPI documentation:</p>
+		<ul>
+			<li><strong>@asteasolutions/zod-to-openapi:</strong> Generate spec dari Zod schemas</li>
+			<li><strong>Registry Pattern:</strong> Each route file exports OpenAPIRegistry dengan path definitions</li>
+			<li><strong>Swagger UI:</strong> Mounted di root (<code>/</code>) untuk non-production environments</li>
+			<li><strong>Config:</strong> Swagger spec generator di <code>src/config/swagger.ts</code></li>
+			<li><strong>Auto-sync:</strong> Documentation always in sync dengan validation schemas</li>
+		</ul>
 
 		<h3>9.3. Code Quality & Standards</h3>
 		<p>Otomatisasi Linter (ESLint) dan Formatter (Prettier) via <strong>Git Hooks</strong> (Husky) untuk standar
 			kode
 			yang konsisten.</p>
+		<p><strong>Implementasi:</strong> ESLint + Prettier dengan TypeScript support. Husky + lint-staged configured
+			untuk pre-commit hooks. Import sorting, no unused vars, consistent naming enforced.</p>
 
 		<h3>9.4. CI Pipeline & Local Dev</h3>
 		<ul>
@@ -422,6 +540,9 @@
 				<strong>Docker</strong>.
 			</li>
 		</ul>
+		<p><strong>Implementasi:</strong> Docker Compose setup di <code>docker-compose.yml</code> untuk PostgreSQL dan
+			Redis. Development workflow dengan <code>pnpm dev</code> untuk hot reload via nodemon + tsx. Scripts
+			tersedia untuk db migration, testing, linting.</p>
 	</section>
 
 	<section id="advanced">
