@@ -12,6 +12,17 @@ import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
 
+interface MailpitMessage {
+  ID: string;
+  Text?: string;
+  HTML?: string;
+  [key: string]: unknown;
+}
+
+interface MailpitListResponse {
+  messages: MailpitMessage[];
+}
+
 /**
  * Deletes all emails from the Mailpit inbox.
  * Useful for ensuring a clean state before tests.
@@ -37,17 +48,17 @@ async function fetchLatestEmail(recipient: string) {
       const response = await fetch("http://localhost:8025/api/v1/messages");
       if (!response.ok) return null;
       
-      const data = await response.json() as { messages: unknown[] };
+      const data = await response.json() as MailpitListResponse;
       const messages = data.messages || [];
       
-      const email = messages.find((msg: unknown) => JSON.stringify(msg).includes(recipient));
+      const email = messages.find((msg: unknown) => JSON.stringify(msg).includes(recipient)) as MailpitMessage | undefined;
       
       if (!email || typeof email !== 'object') return null;
   
       // Fetch full body
-      const msgRes = await fetch(`http://localhost:8025/api/v1/message/${(email as { ID: string }).ID}`);
+      const msgRes = await fetch(`http://localhost:8025/api/v1/message/${email.ID}`);
       if (!msgRes.ok) return null;
-      return await msgRes.json() as { Text: string; HTML: string }; // Full message with Text/HTML
+      return await msgRes.json() as MailpitMessage; // Full message with Text/HTML
     } catch {
       return null;
     }
@@ -65,9 +76,9 @@ async function fetchLatestEmail(recipient: string) {
  */
 async function waitForEmail(recipient: string, retries = 10): Promise<string | null> {
   for (let i = 0; i < retries; i++) {
-    const email = await fetchLatestEmail(recipient) as { Text: string; HTML: string } | null;
+    const email = await fetchLatestEmail(recipient);
     if (email) {
-      return email.Text || email.HTML;
+      return email.Text || email.HTML || null;
     }
     await new Promise((r) => setTimeout(r, 500)); // Wait 500ms
   }
@@ -138,10 +149,7 @@ describe("User Journey E2E", () => {
     await request(app)
       .post("/api/v1/auth/verify-email")
       .send({ token })
-      .expect(StatusCodes.OK)
-      .catch(err => {
-        throw err;
-      });
+      .expect(StatusCodes.OK);
   }, 20000); // 20s timeout
 
   it("Authentication Login", async () => {
@@ -270,7 +278,7 @@ describe("User Journey E2E", () => {
       .send({ email: testUser.email })
       .expect(StatusCodes.OK);
       
-    await new Promise(r => setTimeout(r, 1000));
+
     
     const emailContent = await waitForEmail(testUser.email, 30);
     expect(emailContent).not.toBeNull();
