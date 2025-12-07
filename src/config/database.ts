@@ -6,7 +6,6 @@ interface ConnectionConfig {
   url: string | undefined;
 }
 
-/** Configures primary and secondary database connections. */
 export const databaseConfig: {
   default: DatabaseConnectionName;
   connections: Record<DatabaseConnectionName, ConnectionConfig>;
