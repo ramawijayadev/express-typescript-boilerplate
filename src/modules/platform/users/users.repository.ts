@@ -1,5 +1,5 @@
 import type { User } from "@prisma/client";
-import type { PrismaClient } from "@prisma/client/client";
+import type { PrismaClient } from "@prisma/client";
 
 import type { UpdateUserBody } from "./users.types";
 

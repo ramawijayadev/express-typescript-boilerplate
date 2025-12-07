@@ -19,6 +19,7 @@
     "incremental": true,
     "isolatedModules": true,
     "baseUrl": "src",
+    "paths": {
       "@/*": ["*"]
     },
     "types": ["node", "vitest", "supertest"]
