@@ -5,11 +5,12 @@ import { InMemoryJobQueue } from "./memory.queue";
 
 import type { JobQueue } from "./types";
 
+// Re-export everything from types so other files can import from "@/core/queue"
 export * from "./types";
 
 /**
- * Factory to select the appropriate job queue implementation.
- * Uses InMemoryJobQueue for testing or if configured, otherwise BullmqJobQueue.
+ * Singleton Instance Factory.
+ * Automatically selects the implementation based on environment or config.
  */
 export const jobQueue: JobQueue =
   process.env.NODE_ENV === "test" || queueConfig.redis.host === "memory"

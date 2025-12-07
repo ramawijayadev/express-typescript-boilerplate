@@ -2,6 +2,7 @@ import { logger } from "@/core/logging/logger";
 import { type EmailSender } from "@/core/mail/mailer";
 
 import type { JobQueue } from "./types";
+import type { Queue } from "bullmq";
 
 /**
  * In-memory job queue implementation.
@@ -40,5 +41,16 @@ export class InMemoryJobQueue implements JobQueue {
         text: `Token: ${data.token}`,
       });
     }
+  }
+
+  // Stub methods to satisfy interface
+  getQueue(): Queue {
+    throw new Error("Method 'getQueue' is not supported in In-Memory mode. Use Redis driver.");
+  }
+
+  getDeadLetterQueue(): Queue {
+    throw new Error(
+      "Method 'getDeadLetterQueue' is not supported in In-Memory mode. Use Redis driver.",
+    );
   }
 }

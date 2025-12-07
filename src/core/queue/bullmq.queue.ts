@@ -20,6 +20,7 @@ export class BullmqJobQueue implements JobQueue {
       host: queueConfig.redis.host,
       port: Number(queueConfig.redis.port),
       maxRetriesPerRequest: null, // Required by BullMQ
+      // Conditional spread to handle optional password strictly
       ...(queueConfig.redis.password ? { password: queueConfig.redis.password } : {}),
     });
 
@@ -61,10 +62,6 @@ export class BullmqJobQueue implements JobQueue {
     logger.info({ userId: data.userId, job: "password-reset" }, "Job Enqueued: Password Reset");
   }
 
-  /**
-   * Exposes the underlying BullMQ queue instance.
-   * Useful for workers or advanced queue management.
-   */
   getQueue(): Queue {
     return this.emailQueue;
   }
