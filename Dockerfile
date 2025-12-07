@@ -1,6 +1,4 @@
-# ============================================
 # Base Stage: Setup Node.js and pnpm
-# ============================================
 FROM node:22-alpine AS base
 
 # Enable pnpm package manager via corepack
@@ -8,7 +6,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable pnpm
 
-# Install dumb-init for proper signal handling
+# Install dumb-init for proper signal handling (PID 1)
 RUN apk add --no-cache dumb-init
 
 # ============================================
@@ -38,8 +36,8 @@ COPY . .
 # Copy node_modules from dependencies stage
 COPY --from=dependencies /app/node_modules ./node_modules
 
-# Generate Prisma client (outputs to src/generated/prisma)
-# Note: DATABASE_URL is required by prisma.config.ts but not actually used during generation
+# Generate Prisma client
+# Note: Generates into node_modules/@prisma/client by default
 ARG DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 ENV DATABASE_URL=${DATABASE_URL}
 RUN pnpm dlx prisma generate
@@ -47,7 +45,7 @@ RUN pnpm dlx prisma generate
 # Build TypeScript to JavaScript (outputs to dist/)
 RUN pnpm build
 
-# Remove devDependencies, keep only production dependencies
+# Remove devDependencies, keep only production dependencies to save space
 RUN pnpm prune --prod
 
 # ============================================
@@ -64,13 +62,13 @@ ENV NODE_ENV=production
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Copy production dependencies
+# Copy production dependencies (including generated Prisma Client)
 COPY --from=builder /app/node_modules ./node_modules
 
 # Copy compiled application
 COPY --from=builder /app/dist ./dist
 
-# Copy Prisma schema and migrations (needed for runtime)
+# Copy Prisma schema and migrations (needed for migration deployment)
 COPY --from=builder /app/prisma ./prisma
 
 # Copy package.json for metadata
