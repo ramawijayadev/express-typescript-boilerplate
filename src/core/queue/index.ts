@@ -1,5 +1,5 @@
 import { queueConfig } from "@/config/queue";
-import { emailSender } from "@/core/mail/mailer";
+import { emailSender } from "@/core/mail";
 
 import { BullmqJobQueue } from "./bullmq.queue";
 import { InMemoryJobQueue } from "./memory.queue";

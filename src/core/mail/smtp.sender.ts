@@ -3,20 +3,14 @@ import nodemailer from "nodemailer";
 import { mailConfig } from "@/config/mail";
 import { logger } from "@/core/logging/logger";
 
-export interface SendEmailOptions {
-  to: string;
-  subject: string;
-  html?: string;
-  text?: string;
-  from?: string;
-}
+import { type EmailSender, type SendEmailOptions, defaultMailOptions } from "./types";
 
-export interface EmailSender {
-  send(options: SendEmailOptions): Promise<void>;
-}
-
+/**
+ * Production-ready email sender using Nodemailer (SMTP).
+ * Recommended for production usage.
+ */
 export class SmtpEmailSender implements EmailSender {
-  private transporter: nodemailer.Transporter;
+  private readonly transporter: nodemailer.Transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -32,24 +26,16 @@ export class SmtpEmailSender implements EmailSender {
   async send(options: SendEmailOptions): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: options.from || mailConfig.from,
+        from: options.from || defaultMailOptions.from,
         to: options.to,
         subject: options.subject,
         text: options.text,
         html: options.html,
       });
-      logger.info({ to: options.to, subject: options.subject }, "Email sent successfully");
+      logger.info({ to: options.to, subject: options.subject }, "Email sent successfully (SMTP)");
     } catch (error) {
-      logger.error({ error, to: options.to }, "Failed to send email");
+      logger.error({ error, to: options.to }, "Failed to send email (SMTP)");
       throw error;
     }
   }
 }
-
-export class ConsoleEmailSender implements EmailSender {
-  async send(options: SendEmailOptions): Promise<void> {
-    logger.info(options, "Mock email sent");
-  }
-}
-
-export const emailSender = new SmtpEmailSender();

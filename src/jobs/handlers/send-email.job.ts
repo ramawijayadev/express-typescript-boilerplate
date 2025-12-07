@@ -1,6 +1,6 @@
 import { env } from "@/app/env";
 import { logger } from "@/core/logging/logger";
-import { emailSender } from "@/core/mail/mailer";
+import { emailSender } from "@/core/mail";
 
 import type { Job } from "bullmq";
 

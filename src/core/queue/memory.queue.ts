@@ -1,5 +1,5 @@
 import { logger } from "@/core/logging/logger";
-import { type EmailSender } from "@/core/mail/mailer";
+import { type EmailSender } from "@/core/mail";
 
 import type { JobQueue } from "./types";
 import type { Queue } from "bullmq";
