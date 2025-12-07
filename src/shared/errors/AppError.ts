@@ -1,6 +1,3 @@
-/**
- * Custom Error class for Operational Errors (e.g., 404, 400).
- */
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly details?: unknown;

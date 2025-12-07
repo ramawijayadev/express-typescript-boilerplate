@@ -1,4 +1,3 @@
-/** Extends Express Request with observability context. */
 declare global {
   namespace Express {
     interface Request {
