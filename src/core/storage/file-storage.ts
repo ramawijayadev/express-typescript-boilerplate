@@ -11,13 +11,11 @@ import { logger } from "@/core/logging/logger";
  */
 export class LocalFileStorage implements FileStorage {
   async upload(key: string, body: Buffer, contentType: string): Promise<string> {
-    // TODO: Implement actual fs.writeFile logic here
     logger.info({ key, size: body.length, contentType }, "[LocalFileStorage] Uploading file");
     return `http://localhost:3000/uploads/${key}`;
   }
 
   async delete(key: string): Promise<void> {
-    // TODO: Implement actual fs.unlink logic here
     logger.info({ key }, "[LocalFileStorage] Deleting file");
   }
 

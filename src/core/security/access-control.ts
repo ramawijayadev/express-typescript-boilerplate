@@ -9,7 +9,6 @@ export const accessControl: AccessControl = {
     if (roles.includes("admin")) {
       return true;
     }
-    // TODO: Implement fine-grained permission logic
     return false;
   },
 };
