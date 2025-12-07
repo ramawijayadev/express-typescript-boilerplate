@@ -4,7 +4,7 @@ import IORedis from "ioredis";
 import { queueConfig } from "@/config/queue";
 import { logger } from "@/core/logging/logger";
 
-import { emailWorkerHandler, emailWorkerName } from "./handlers/send-email.job";
+import { emailWorkerHandler, emailWorkerName } from "./send-email.job";
 
 let worker: Worker | undefined;
 

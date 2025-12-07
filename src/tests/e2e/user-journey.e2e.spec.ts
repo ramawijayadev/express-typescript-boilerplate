@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "@/app/app";
 import { env } from "@/config/env";
 import { queueConfig } from "@/config/queue";
-import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
+import { emailWorkerHandler, emailWorkerName } from "@/jobs/send-email.job";
 
 const TEST_TIMEOUT = env.TEST_TIMEOUT_MS;
 const TOKEN_REGEX = /token=([a-f0-9]+)/i;
