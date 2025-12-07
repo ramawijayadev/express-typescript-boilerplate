@@ -1,6 +1,3 @@
-/**
- * Global test setup file for Vitest.
- */
 import { beforeAll } from "vitest";
 
 beforeAll(() => {

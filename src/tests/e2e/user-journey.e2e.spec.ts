@@ -1,7 +1,3 @@
-/**
- * End-to-End User Journey tests.
- * Simulates a complete user lifecycle.
- */
 import { Worker } from "bullmq";
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
@@ -27,10 +23,7 @@ interface MailpitListResponse {
   messages: MailpitMessage[];
 }
 
-/**
- * Deletes all emails from the Mailpit inbox.
- * Useful for ensuring a clean state before tests.
- */
+/** Clears Mailpit inbox. */
 async function deleteAllEmails() {
   try {
     await fetch(`${env.TEST_MAILPIT_URL}/api/v1/messages`, { method: "DELETE" });
@@ -39,9 +32,7 @@ async function deleteAllEmails() {
   }
 }
 
-/**
- * Fetches the latest email for a specific recipient from Mailpit.
- */
+/** Retrieves latest email for recipient. */
 async function fetchLatestEmail(recipient: string) {
   try {
     const response = await fetch(`${env.TEST_MAILPIT_URL}/api/v1/messages`);
@@ -64,10 +55,7 @@ async function fetchLatestEmail(recipient: string) {
   }
 }
 
-/**
- * Waits for an email to arrive for a specific recipient.
- * Retries multiple times with a delay.
- */
+/** Polls until email arrives for recipient. */
 async function waitForEmail(recipient: string, retries = 10): Promise<string | null> {
   for (let i = 0; i < retries; i++) {
     const email = await fetchLatestEmail(recipient);

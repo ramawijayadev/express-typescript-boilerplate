@@ -1,6 +1,3 @@
-/**
- * Integration tests for Auth Verification flows.
- */
 import { type Server } from "http";
 
 import { StatusCodes } from "http-status-codes";

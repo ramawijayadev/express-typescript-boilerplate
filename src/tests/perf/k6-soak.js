@@ -1,7 +1,4 @@
-/**
- * K6 Soak Test.
- * Validates system stability under sustained load.
- */
+/** Validates system stability under sustained load. */
 import http from "k6/http";
 import { check, sleep } from "k6";
 

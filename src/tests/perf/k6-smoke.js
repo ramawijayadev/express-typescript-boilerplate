@@ -1,7 +1,4 @@
-/**
- * K6 Smoke Test.
- * Validates system availability under minimal load.
- */
+/** Validates system availability under minimal load. */
 import http from "k6/http";
 import { check, sleep } from "k6";
 
