@@ -1,13 +1,12 @@
-import { AsyncLocalStorage } from "async_hooks";
-import path from "path";
+import path from "node:path";
 
 import pino from "pino";
 
 import { loggingConfig } from "@/config/logging";
 
-import type { WriteStream } from "node:tty";
+import { requestContext } from "./context";
 
-export const requestContext = new AsyncLocalStorage<Map<string, unknown>>();
+import type { WriteStream } from "node:fs";
 
 const redacts = [
   "req.headers.authorization",
@@ -19,7 +18,8 @@ const redacts = [
   "refreshToken",
 ];
 
-const streams = [{ stream: process.stdout }];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const streams: Array<{ stream: any }> = [{ stream: process.stdout }];
 
 if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
   streams.push({
@@ -27,12 +27,13 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
       dest: path.join(process.cwd(), loggingConfig.filePath, "app"),
       minLength: 4096,
       sync: false,
-    }) as unknown as WriteStream & { fd: 1 },
+    }) as unknown as WriteStream,
   });
 }
 
 /**
- * Structured JSON logging with automatic redaction and request context isolation.
+ * Structured JSON logging with automatic redaction.
+ * Enriched with data from the global Request Context (requestId, etc).
  */
 export const logger = pino(
   {
@@ -45,11 +46,3 @@ export const logger = pino(
   },
   pino.multistream(streams),
 );
-
-/**
- * Executes a callback within a distinct logging context.
- */
-export function runWithContext(context: Record<string, unknown>, callback: () => void) {
-  const store = new Map(Object.entries(context));
-  requestContext.run(store, callback);
-}
