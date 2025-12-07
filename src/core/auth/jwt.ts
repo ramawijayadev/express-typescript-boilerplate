@@ -25,9 +25,13 @@ export function generateAccessToken(payload: TokenPayload): string {
  */
 export function generateRefreshToken(payload: TokenPayload): string {
   const jti = randomUUID();
-  return jwt.sign({ ...payload, jti }, (authConfig.jwt.refreshSecret || authConfig.jwt.secret) as jwt.Secret, {
-    expiresIn: authConfig.jwt.refreshExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
-  });
+  return jwt.sign(
+    { ...payload, jti },
+    (authConfig.jwt.refreshSecret || authConfig.jwt.secret) as jwt.Secret,
+    {
+      expiresIn: authConfig.jwt.refreshExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
+    },
+  );
 }
 
 /**
@@ -47,7 +51,10 @@ export function verifyToken(token: string): TokenPayload {
  * Throws if the token is invalid or expired.
  */
 export function verifyRefreshToken(token: string): TokenPayload {
-  const decoded = jwt.verify(token, (authConfig.jwt.refreshSecret || authConfig.jwt.secret) as jwt.Secret);
+  const decoded = jwt.verify(
+    token,
+    (authConfig.jwt.refreshSecret || authConfig.jwt.secret) as jwt.Secret,
+  );
   if (typeof decoded === "string") {
     throw new Error("Invalid token payload");
   }

@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 
 import { authConfig } from "@/config/auth";
 import { hashToken } from "@/core/auth/hash";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken, verifyToken } from "@/core/auth/jwt";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "@/core/auth/jwt";
 import { hashPassword, verifyPassword } from "@/core/auth/password";
 import { jobQueue } from "@/core/queue";
 import { AppError } from "@/shared/errors/AppError";
