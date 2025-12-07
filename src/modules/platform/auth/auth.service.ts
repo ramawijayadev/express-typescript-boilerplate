@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 
 import { authConfig } from "@/config/auth";
 import { hashToken } from "@/core/auth/hash";
-import { generateAccessToken, generateRefreshToken, verifyToken } from "@/core/auth/jwt";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken, verifyToken } from "@/core/auth/jwt";
 import { hashPassword, verifyPassword } from "@/core/auth/password";
 import { jobQueue } from "@/core/queue";
 import { AppError } from "@/shared/errors/AppError";
@@ -101,7 +101,7 @@ export class AuthService {
     const accessToken = generateAccessToken({ userId: user.id, email: user.email });
     const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
 
-    const decoded = verifyToken(refreshToken);
+    const decoded = verifyRefreshToken(refreshToken);
     const expiresAt = new Date((Number(decoded.exp) || 0) * 1000);
 
     const refreshTokenHash = hashToken(refreshToken);
@@ -133,7 +133,7 @@ export class AuthService {
    */
   async refreshToken(token: string): Promise<RefreshTokenResponse> {
     try {
-      verifyToken(token);
+      verifyRefreshToken(token);
       const tokenHash = hashToken(token);
 
       const session = await this.repo.findSessionByHash(tokenHash);
@@ -156,7 +156,7 @@ export class AuthService {
         userId: session.userId,
         email: session.user.email,
       });
-      const newDecoded = verifyToken(newRefreshToken);
+      const newDecoded = verifyRefreshToken(newRefreshToken);
       const newExpiresAt = new Date((Number(newDecoded.exp) || 0) * 1000);
       const newHash = hashToken(newRefreshToken);
 

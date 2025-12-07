@@ -16,6 +16,10 @@ vi.mock("@/core/auth/jwt", () => ({
   generateAccessToken: vi.fn(() => "access_token"),
   generateRefreshToken: vi.fn(() => "valid_refresh_token"),
   verifyToken: vi.fn((token) => {
+    if (token === "access_token") return { userId: 1 };
+    throw new Error("Invalid token");
+  }),
+  verifyRefreshToken: vi.fn((token) => {
     if (token === "valid_refresh_token") return { userId: 1 };
     throw new Error("Invalid token");
   }),
