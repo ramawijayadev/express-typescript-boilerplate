@@ -11,7 +11,6 @@ import { appConfig } from "./app";
 
 const registry = new OpenAPIRegistry();
 
-// Register Bearer Auth
 registry.registerComponent("securitySchemes", "bearerAuth", {
   type: "http",
   scheme: "bearer",
@@ -44,7 +43,4 @@ const getOpenApiDocumentation = () => {
   });
 };
 
-/**
- * Generated OpenAPI/Swagger documentation specification.
- */
 export const swaggerSpec = getOpenApiDocumentation();

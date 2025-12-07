@@ -1,8 +1,5 @@
 import { env } from "@/app/env";
 
-/**
- * Background Job Queue configuration (Redis).
- */
 export const queueConfig = {
   redis: {
     host: env.REDIS_HOST,

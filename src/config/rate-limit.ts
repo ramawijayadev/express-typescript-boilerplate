@@ -1,8 +1,5 @@
 import { env } from "@/app/env";
 
-/**
- * Rate Limiting Configuration.
- */
 export const rateLimitConfig = {
   login: {
     windowMs: env.RATE_LIMIT_LOGIN_WINDOW_MS,

@@ -6,10 +6,7 @@ interface ConnectionConfig {
   url: string | undefined;
 }
 
-/**
- * Database connection configuration.
- * Supports multiple connection definitions (e.g., primary 'app' and secondary 'other').
- */
+/** Configures primary and secondary database connections. */
 export const databaseConfig: {
   default: DatabaseConnectionName;
   connections: Record<DatabaseConnectionName, ConnectionConfig>;

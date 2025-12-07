@@ -1,8 +1,5 @@
 import { env } from "@/app/env";
 
-/**
- * General application configuration.
- */
 export const appConfig = {
   env: env.NODE_ENV,
   port: env.APP_PORT,
