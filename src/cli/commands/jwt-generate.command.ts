@@ -19,16 +19,13 @@ export const jwtGenerateCommand = new Command("jwt:generate")
 
       const envContent = fs.readFileSync(envPath, "utf-8");
 
-      // Generate secrets
       const jwtSecret = crypto.randomBytes(64).toString("hex");
       const jwtRefreshSecret = crypto.randomBytes(64).toString("hex");
 
-      // Backup .env
       fs.writeFileSync(`${envPath}.bak`, envContent);
 
       let newEnvContent = envContent;
 
-      // Replace JWT_SECRET
       if (newEnvContent.includes("JWT_SECRET=")) {
         newEnvContent = newEnvContent.replace(/JWT_SECRET=.*/g, `JWT_SECRET=${jwtSecret}`);
       } else {
@@ -36,7 +33,6 @@ export const jwtGenerateCommand = new Command("jwt:generate")
         newEnvContent += `\nJWT_SECRET=${jwtSecret}`;
       }
 
-      // Replace or Append JWT_REFRESH_SECRET
       if (newEnvContent.includes("JWT_REFRESH_SECRET=")) {
         newEnvContent = newEnvContent.replace(
           /JWT_REFRESH_SECRET=.*/g,
