@@ -10,9 +10,6 @@ export interface TokenPayload {
   [key: string]: unknown;
 }
 
-/**
- * Generates a short-lived Access Token.
- */
 export function generateAccessToken(payload: TokenPayload): string {
   return jwt.sign({ ...payload }, authConfig.jwt.secret as jwt.Secret, {
     expiresIn: authConfig.jwt.accessExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
@@ -34,10 +31,6 @@ export function generateRefreshToken(payload: TokenPayload): string {
   );
 }
 
-/**
- * Verifies a JWT Access Token.
- * Throws if the token is invalid or expired.
- */
 export function verifyToken(token: string): TokenPayload {
   const decoded = jwt.verify(token, authConfig.jwt.secret as jwt.Secret);
   if (typeof decoded === "string") {
@@ -46,10 +39,6 @@ export function verifyToken(token: string): TokenPayload {
   return decoded as TokenPayload;
 }
 
-/**
- * Verifies a JWT Refresh Token using the refresh secret.
- * Throws if the token is invalid or expired.
- */
 export function verifyRefreshToken(token: string): TokenPayload {
   const decoded = jwt.verify(
     token,

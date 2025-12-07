@@ -32,7 +32,6 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
 }
 
 /**
- * Global application logger instance (Pino).
  * Structured JSON logging with automatic redaction and request context isolation.
  */
 export const logger = pino(
@@ -49,10 +48,6 @@ export const logger = pino(
 
 /**
  * Executes a callback within a distinct logging context.
- * Any logs written during the callback will get the `context` fields attached automatically.
- *
- * @param context - Key-value pairs to attach to logs.
- * @param callback - Function to execute.
  */
 export function runWithContext(context: Record<string, unknown>, callback: () => void) {
   const store = new Map(Object.entries(context));

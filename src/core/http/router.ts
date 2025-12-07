@@ -8,9 +8,6 @@ import { usersRouter } from "@/modules/platform/users/users.routes";
 
 import type { Express } from "express";
 
-/**
- * Registers all API routes (Health, Auth, Users, etc).
- */
 export function registerRoutes(app: Express) {
   const api = Router();
 

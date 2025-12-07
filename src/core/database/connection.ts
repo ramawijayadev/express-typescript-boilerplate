@@ -31,7 +31,6 @@ function createClient(name: DatabaseConnectionName): PrismaClient {
   return new PrismaClient({ adapter });
 }
 
-/** Gets singleton Prisma instance for named connection. */
 export function connection(name?: DatabaseConnectionName): PrismaClient {
   const resolvedName = name ?? databaseConfig.default;
 
@@ -42,7 +41,6 @@ export function connection(name?: DatabaseConnectionName): PrismaClient {
   return clients[resolvedName] as PrismaClient;
 }
 
-/** Database access helper (alias for connection). */
 export function db(name?: DatabaseConnectionName): PrismaClient {
   return connection(name);
 }

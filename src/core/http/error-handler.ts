@@ -15,8 +15,7 @@ import {
 import type { ErrorRequestHandler } from "express";
 
 /**
- * Global Error Handler Middleware.
- * Intercepts errors, formats them into a standard JSON response, and handles logging.
+ * Centralized error handling for consistent API responses.
  */
 export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const path = req.originalUrl ?? req.url;

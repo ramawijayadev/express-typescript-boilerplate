@@ -11,7 +11,7 @@ export const requestLoggerMiddleware: RequestHandler = (req, res, next) => {
 
   const context = {
     requestId,
-    service: "api", // Could be configurable
+    service: "api",
   };
 
   runWithContext(context, () => {

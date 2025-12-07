@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
 
-/** Sanitizes inputs against NoSQL/SQL injection attacks. */
 export function sanitizeInput(req: Request, _res: Response, next: NextFunction) {
   if (req.body) {
     req.body = sanitizeObject(req.body);
