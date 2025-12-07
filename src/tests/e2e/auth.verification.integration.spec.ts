@@ -8,8 +8,8 @@ import { createApp } from "@/app/app";
 import { hashToken } from "@/core/auth/hash";
 import { db } from "@/core/database/connection";
 import { jobQueue } from "@/core/queue";
-import type { User } from "@prisma/client";
 
+import type { User } from "@prisma/client";
 import type { Express } from "express";
 
 // Mock job queue to avoid Redis dependency

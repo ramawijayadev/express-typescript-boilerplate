@@ -1,7 +1,8 @@
 import type { DatabaseConnectionName } from "@/config/database";
-import type { Prisma } from "@prisma/client";
 
 import { db } from "./connection";
+
+import type { Prisma } from "@prisma/client";
 
 export async function transaction<T>(fn: (trx: Prisma.TransactionClient) => Promise<T>): Promise<T>;
 
