@@ -1,7 +1,4 @@
-/**
- * Global Type Augmentation for Express.
- * Adds custom properties to the Request object.
- */
+/** Extends Express Request with observability context. */
 declare global {
   namespace Express {
     interface Request {
