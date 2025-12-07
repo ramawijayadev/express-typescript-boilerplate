@@ -5,7 +5,6 @@ import { SmtpEmailSender } from "./smtp.sender";
 
 import type { EmailSender } from "./types";
 
-// Re-export types so consumers can just import from "@/core/mail"
 export * from "./types";
 
 /**

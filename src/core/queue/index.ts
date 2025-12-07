@@ -6,7 +6,6 @@ import { InMemoryJobQueue } from "./memory.queue";
 
 import type { JobQueue } from "./types";
 
-// Re-export everything from types so other files can import from "@/core/queue"
 export * from "./types";
 
 /**
