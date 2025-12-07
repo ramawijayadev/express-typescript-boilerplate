@@ -73,9 +73,6 @@ COPY --from=builder /app/dist ./dist
 # Copy Prisma schema and migrations (needed for runtime)
 COPY --from=builder /app/prisma ./prisma
 
-# Copy Prisma generated client (CRITICAL: required for runtime imports)
-COPY --from=builder /app/src/generated ./src/generated
-
 # Copy package.json for metadata
 COPY --from=builder /app/package.json ./package.json
 
