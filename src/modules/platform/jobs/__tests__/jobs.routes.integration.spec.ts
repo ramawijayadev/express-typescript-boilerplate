@@ -28,7 +28,7 @@ describe("Jobs Routes Integration", () => {
   });
 
   afterAll(async () => {
-    await db().user.deleteMany({ where: { email: { contains: "test-jobs-" } } });
+
 
     const dlq = jobQueue.getDeadLetterQueue();
     const jobs = await dlq.getJobs(["completed", "failed", "waiting", "active"], 0, -1);

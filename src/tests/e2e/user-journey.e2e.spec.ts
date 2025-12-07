@@ -99,8 +99,7 @@ describe("User Journey E2E", () => {
     worker.on("error", () => {});
     worker.on("failed", () => {});
 
-    // Manual cleanup because we skip global reset for this file
-    await db().user.deleteMany();
+
   });
 
   afterAll(async () => {
