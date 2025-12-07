@@ -93,8 +93,5 @@ const envSchema = z.object({
   TEST_TIMEOUT_MS: z.coerce.number().default(20000),
 });
 
-/**
- * Type-safe environment variables.
- * Validated by Zod (Single Source of Truth).
- */
+/** Type-safe environment variable configuration. */
 export const env = envSchema.parse(process.env);

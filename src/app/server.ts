@@ -20,9 +20,6 @@ const server = app.listen(appConfig.port, () => {
   logger.info(`Server running on port ${appConfig.port}`);
 });
 
-/**
- * Gracefully shuts down the application.
- */
 async function shutdown(signal: string) {
   logger.info(`Received ${signal}. Starting graceful shutdown...`);
 
