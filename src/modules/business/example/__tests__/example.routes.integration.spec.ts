@@ -6,7 +6,7 @@ import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
-import { db } from "@/core/database";
+import { db } from "@/core/database/connection";
 
 describe("Example routes (integration)", () => {
   const baseUrl = "/api/v1/examples";

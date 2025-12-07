@@ -1,5 +1,5 @@
 import { appConfig } from "@/config/app";
-import { db } from "@/core/database";
+import { db } from "@/core/database/connection";
 import type { Prisma } from "@/generated/prisma";
 import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
 
