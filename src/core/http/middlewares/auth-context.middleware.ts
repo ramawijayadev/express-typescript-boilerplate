@@ -6,16 +6,11 @@ export interface AuthContext {
   permissions?: string[];
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      auth: AuthContext | undefined;
-    }
-  }
-}
-
+/**
+ * Initializes the authentication context on the request object.
+ * Ensures req.auth is always defined, even if empty.
+ */
 export function authContextMiddleware(req: Request, _res: Response, next: NextFunction) {
-  req.auth = undefined;
-
+  req.auth = undefined; // Initialize as empty/undefined
   next();
 }

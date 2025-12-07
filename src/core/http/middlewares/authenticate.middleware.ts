@@ -6,22 +6,12 @@ import { AppError } from "@/shared/errors/AppError";
 
 import type { NextFunction, Request, Response } from "express";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: number;
-      };
-    }
-  }
-}
-
 /**
  * Enforces JWT Bearer Authentication.
- * Attaches user identity to request context.
+ * Verifies the token and attaches the user identity to the request context.
  */
-export function authenticate(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization as string | undefined;
+export function authenticate(req: Request, _res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
     next(new AppError(StatusCodes.UNAUTHORIZED, "No token provided"));
@@ -29,6 +19,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 
   const token = authHeader.split(" ")[1];
+  // Guard clause against empty tokens (e.g. "Bearer ")
   if (!token) {
     next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token format"));
     return;
@@ -36,10 +27,13 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
   try {
     const payload = verifyToken(token);
+
+    // Type 'user' is now globally defined in src/shared/types/express.d.ts
     req.user = { id: payload.userId };
+
     next();
   } catch (error) {
-    logger.warn({ err: error }, "Invalid token");
-    next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token"));
+    logger.warn({ err: error }, "Authentication failed: Invalid token");
+    next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid or expired token"));
   }
 }
