@@ -1,6 +1,6 @@
 import { appConfig } from "@/config/app";
 import { db } from "@/core/database/connection";
-import type { Prisma } from "@/generated/prisma";
+import type { Prisma } from "@prisma/client";
 import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
 
 import type { Example, ExampleId, ListExamplesFilter } from "./example.types";

@@ -1,4 +1,4 @@
-import type { User } from "@/generated/prisma";
+import type { User } from "@prisma/client";
 
 /**
  * Maps a Prisma User entity to a safe API response format.

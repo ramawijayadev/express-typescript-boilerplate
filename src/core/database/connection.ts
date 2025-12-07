@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { Pool } from "pg";
 
 import { type DatabaseConnectionName, databaseConfig } from "@/config/database";
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { AppError } from "@/shared/errors/AppError";
 
 const clients: Partial<Record<DatabaseConnectionName, PrismaClient>> = {};

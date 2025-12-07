@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { ZodError } from "zod";
 
 import { logger } from "@/core/logging/logger";
-import { Prisma } from "@/generated/prisma";
+import { Prisma } from "@prisma/client";
 import { AppError } from "@/shared/errors/AppError";
 import {
   type FieldError,

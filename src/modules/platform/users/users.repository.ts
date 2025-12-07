@@ -1,5 +1,5 @@
-import type { User } from "@/generated/prisma";
-import type { PrismaClient } from "@/generated/prisma/client";
+import type { User } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client/client";
 
 import type { UpdateUserBody } from "./users.types";
 

@@ -1,5 +1,5 @@
 import type { DatabaseConnectionName } from "@/config/database";
-import type { Prisma } from "@/generated/prisma";
+import type { Prisma } from "@prisma/client";
 
 import { db } from "./connection";
 
