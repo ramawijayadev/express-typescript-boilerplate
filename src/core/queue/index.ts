@@ -1,15 +1,11 @@
-import { Queue, Worker } from "bullmq";
+import { Queue } from "bullmq";
 import IORedis from "ioredis";
 
 import { queueConfig } from "@/config/queue";
 import { logger } from "@/core/logging/logger";
 import { type EmailSender } from "@/core/mail/mailer";
 
-const connection = {
-  host: queueConfig.redis.host,
-  port: queueConfig.redis.port,
-  password: queueConfig.redis.password,
-};
+// Connection configs are now used directly in BullmqJobQueue
 
 export const defaultJobOptions = {
   attempts: queueConfig.defaultJobOptions.attempts,

@@ -98,11 +98,11 @@ export class AuthService {
     user: { id: number; name: string; email: string },
     meta?: { ip?: string; userAgent?: string },
   ): Promise<AuthResponse> {
-    const accessToken = generateAccessToken({ userId: user.id });
-    const refreshToken = generateRefreshToken({ userId: user.id });
+    const accessToken = generateAccessToken({ userId: user.id, email: user.email });
+    const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
 
     const decoded = verifyToken(refreshToken);
-    const expiresAt = new Date((decoded.exp || 0) * 1000);
+    const expiresAt = new Date((Number(decoded.exp) || 0) * 1000);
 
     const refreshTokenHash = hashToken(refreshToken);
 
@@ -152,13 +152,19 @@ export class AuthService {
         throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
       }
 
-      const newRefreshToken = generateRefreshToken({ userId: session.userId });
+      const newRefreshToken = generateRefreshToken({
+        userId: session.userId,
+        email: session.user.email,
+      });
       const newDecoded = verifyToken(newRefreshToken);
-      const newExpiresAt = new Date((newDecoded.exp || 0) * 1000);
+      const newExpiresAt = new Date((Number(newDecoded.exp) || 0) * 1000);
       const newHash = hashToken(newRefreshToken);
 
       await this.repo.updateSessionHash(session.id, newHash, newExpiresAt);
-      const newAccessToken = generateAccessToken({ userId: session.userId });
+      const newAccessToken = generateAccessToken({
+        userId: session.userId,
+        email: session.user.email,
+      });
 
       return {
         accessToken: newAccessToken,

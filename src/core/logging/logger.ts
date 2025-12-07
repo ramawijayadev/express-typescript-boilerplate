@@ -5,6 +5,8 @@ import pino from "pino";
 
 import { loggingConfig } from "@/config/logging";
 
+import type { WriteStream } from "node:tty";
+
 export const requestContext = new AsyncLocalStorage<Map<string, unknown>>();
 
 const redacts = [
@@ -31,7 +33,7 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
       dest: path.join(process.cwd(), loggingConfig.filePath, "app"), // app.log, auto-rotated by external tools usually or use pino-roll
       minLength: 4096, // Buffer
       sync: false,
-    }),
+    }) as unknown as WriteStream & { fd: 1 },
   });
 }
 
@@ -39,15 +41,16 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
  * Global application logger instance (Pino).
  * Structured JSON logging with automatic redaction and request context isolation.
  */
-export const logger = pino({
-  level: loggingConfig.level,
-  redact: redacts,
-  mixin: () => {
-    const context = requestContext.getStore();
-    return context ? Object.fromEntries(context) : {};
+export const logger = pino(
+  {
+    level: loggingConfig.level,
+    redact: redacts,
+    mixin: () => {
+      const context = requestContext.getStore();
+      return context ? Object.fromEntries(context) : {};
+    },
   },
-},
-pino.multistream(streams),
+  pino.multistream(streams),
 );
 
 /**

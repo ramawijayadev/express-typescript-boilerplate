@@ -7,9 +7,9 @@ import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { queueConfig } from "@/config/queue";
 import { createApp } from "@/app/app";
 import { env } from "@/app/env";
+import { queueConfig } from "@/config/queue";
 import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
@@ -108,8 +108,8 @@ describe("User Journey E2E", () => {
       concurrency: 1,
     });
     worker.on("ready", () => null);
-    worker.on("error", (err) => console.error("Worker Error:", err));
-    worker.on("failed", (job, err) => console.error(`Job ${job?.id} failed:`, err));
+    worker.on("error", () => {});
+    worker.on("failed", () => {});
   });
 
   afterAll(async () => {

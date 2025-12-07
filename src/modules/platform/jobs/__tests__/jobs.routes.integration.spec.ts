@@ -24,7 +24,7 @@ describe("Jobs Routes Integration", () => {
       },
     });
     userId = user.id;
-    token = generateAccessToken({ userId });
+    token = generateAccessToken({ userId, email: "test@example.com" });
   });
 
   afterAll(async () => {

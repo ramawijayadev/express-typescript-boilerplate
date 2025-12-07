@@ -59,7 +59,7 @@ describe("Auth Verification & Password Reset Integration", () => {
   describe("POST /auth/resend-verification", () => {
     it("should enqueue verification email for unverified user", async () => {
       const { generateAccessToken } = await import("@/core/auth/jwt");
-      const accessToken = generateAccessToken({ userId: testUser.id });
+      const accessToken = generateAccessToken({ userId: testUser.id, email: testUser.email });
 
       const res = await request(app)
         .post("/api/v1/auth/resend-verification")
