@@ -1,6 +1,7 @@
 import { env } from "@/config/env";
 import { logger } from "@/core/logging/logger";
 import { emailSender } from "@/core/mail";
+import { emailTemplates } from "@/shared/templates/emails";
 
 import type { Job } from "bullmq";
 
@@ -29,33 +30,24 @@ export async function emailWorkerHandler(job: Job<EmailJobData>) {
 
 async function sendVerificationEmail(data: EmailJobData) {
   const url = `${env.FRONTEND_URL}/verify-email?token=${data.token}`;
+  const template = emailTemplates.verification(url);
 
   await emailSender.send({
     to: data.email,
-    subject: "Verify your email address",
-    html: `
-      <p>Hello,</p>
-      <p>Please click the link below to verify your email address:</p>
-      <p><a href="${url}">${url}</a></p>
-      <p>This link will expire in 24 hours.</p>
-    `,
-    text: `Please verify your email address: ${url}`,
+    subject: template.subject,
+    html: template.html,
+    text: template.text,
   });
 }
 
 async function sendPasswordResetEmail(data: EmailJobData) {
   const url = `${env.FRONTEND_URL}/reset-password?token=${data.token}`;
+  const template = emailTemplates.passwordReset(url);
 
   await emailSender.send({
     to: data.email,
-    subject: "Reset your password",
-    html: `
-      <p>Hello,</p>
-      <p>You requested a password reset. Click the link below to verify your email address and set a new password:</p>
-      <p><a href="${url}">${url}</a></p>
-      <p>This link will expire in 1 hour.</p>
-      <p>If you didn't request this, you can safely ignore this email.</p>
-    `,
-    text: `Reset your password: ${url}`,
+    subject: template.subject,
+    html: template.html,
+    text: template.text,
   });
 }
