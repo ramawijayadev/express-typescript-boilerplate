@@ -3,12 +3,27 @@
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/app/app";
 import { generateAccessToken } from "@/core/auth/jwt";
 import { db } from "@/core/database/connection";
 import { jobQueue } from "@/core/queue";
+
+vi.mock("@/core/queue", () => ({
+  jobQueue: {
+    enqueueEmailVerification: vi.fn(),
+    enqueuePasswordReset: vi.fn(),
+    getQueue: vi.fn().mockReturnValue({
+      add: vi.fn(),
+    }),
+    getDeadLetterQueue: vi.fn().mockReturnValue({
+      getJobs: vi.fn().mockResolvedValue([]),
+      add: vi.fn(),
+      getJob: vi.fn(),
+    }),
+  },
+}));
 
 describe("Jobs Routes Integration", () => {
   let token: string;

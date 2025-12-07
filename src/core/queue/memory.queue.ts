@@ -22,7 +22,7 @@ export class InMemoryJobQueue implements JobQueue {
       await this.emailService.send({
         to: data.email,
         subject: "Verify your email",
-        text: `Token: ${data.token}`,
+        text: `Please verify your email here: https://example.com/verify?token=${data.token}`,
       });
     }
   }
@@ -38,7 +38,7 @@ export class InMemoryJobQueue implements JobQueue {
       await this.emailService.send({
         to: data.email,
         subject: "Reset your password",
-        text: `Token: ${data.token}`,
+        text: `Reset your password here: https://example.com/reset-password?token=${data.token}`,
       });
     }
   }

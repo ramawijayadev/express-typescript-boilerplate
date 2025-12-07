@@ -1,4 +1,5 @@
 import { queueConfig } from "@/config/queue";
+import { emailSender } from "@/core/mail/mailer";
 
 import { BullmqJobQueue } from "./bullmq.queue";
 import { InMemoryJobQueue } from "./memory.queue";
@@ -14,5 +15,5 @@ export * from "./types";
  */
 export const jobQueue: JobQueue =
   process.env.NODE_ENV === "test" || queueConfig.redis.host === "memory"
-    ? new InMemoryJobQueue()
+    ? new InMemoryJobQueue(emailSender)
     : new BullmqJobQueue();

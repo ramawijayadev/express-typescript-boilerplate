@@ -15,6 +15,14 @@ vi.mock("@/core/queue", () => ({
   jobQueue: {
     enqueueEmailVerification: vi.fn(),
     enqueuePasswordReset: vi.fn(),
+    getQueue: vi.fn().mockReturnValue({
+      add: vi.fn(),
+    }),
+    getDeadLetterQueue: vi.fn().mockReturnValue({
+      getJobs: vi.fn().mockResolvedValue([]),
+      add: vi.fn(),
+      getJob: vi.fn(),
+    }),
   },
 }));
 
