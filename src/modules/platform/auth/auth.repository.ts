@@ -104,7 +104,6 @@ export class AuthRepository {
     });
   }
 
-  // Email Verification
   async createEmailVerificationToken(data: { userId: number; tokenHash: string; expiresAt: Date }) {
     return db().emailVerificationToken.create({
       data: {
@@ -136,7 +135,6 @@ export class AuthRepository {
     });
   }
 
-  // Password Reset
   async createPasswordResetToken(data: { userId: number; tokenHash: string; expiresAt: Date }) {
     return db().passwordResetToken.create({
       data: {

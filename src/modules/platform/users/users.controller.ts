@@ -8,18 +8,12 @@ import type { Response } from "express";
 export class UsersController {
   constructor(private readonly service: UsersService) {}
 
-  /**
-   * Get authenticated user profile.
-   */
   async me(req: AuthenticatedRequest, res: Response) {
     const userId = req.user.id;
     const result = await this.service.getProfile(userId);
     return ok(res, result);
   }
 
-  /**
-   * Update authenticated user profile.
-   */
   async updateMe(req: AuthenticatedRequest<UpdateUserBody>, res: Response) {
     const userId = req.user.id;
     const result = await this.service.updateProfile(userId, req.body);

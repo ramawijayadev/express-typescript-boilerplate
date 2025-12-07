@@ -20,10 +20,6 @@ const controller = new JobsController(service);
 // All routes require authentication
 jobsRouter.use(authenticate);
 
-/**
- * GET /jobs/failed
- * List all failed jobs in the Dead Letter Queue
- */
 jobsRouter.get("/failed", (req, res) => controller.listFailedJobs(req, res));
 
 jobsRegistry.registerPath({
@@ -37,10 +33,6 @@ jobsRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-/**
- * POST /jobs/failed/:id/retry
- * Retry a specific failed job
- */
 jobsRouter.post("/failed/:id/retry", (req, res) => controller.retryFailedJob(req, res));
 
 jobsRegistry.registerPath({
@@ -63,10 +55,6 @@ jobsRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-/**
- * DELETE /jobs/failed/:id
- * Remove a specific failed job
- */
 jobsRouter.delete("/failed/:id", (req, res) => controller.removeFailedJob(req, res));
 
 jobsRegistry.registerPath({
@@ -89,10 +77,6 @@ jobsRegistry.registerPath({
   security: [{ bearerAuth: [] }],
 });
 
-/**
- * DELETE /jobs/failed
- * Cleanup old failed jobs based on retention policy
- */
 jobsRouter.delete("/failed", (req, res) => controller.cleanupOldFailedJobs(req, res));
 
 jobsRegistry.registerPath({

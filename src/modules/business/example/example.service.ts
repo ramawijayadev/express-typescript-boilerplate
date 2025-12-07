@@ -9,9 +9,6 @@ import type { ExampleId } from "./example.types";
 export class ExampleService {
   constructor(private readonly repo: ExampleRepository) {}
 
-  /**
-   * Lists all examples with pagination and optional search.
-   */
   async list(query: ListExamplesQuery) {
     const filter: { search?: string } = {};
     if (query.search) {
@@ -51,9 +48,6 @@ export class ExampleService {
     return updated;
   }
 
-  /**
-   * Deletes an example by its ID (soft delete).
-   */
   async delete(id: ExampleId) {
     const deleted = await this.repo.delete(id);
 

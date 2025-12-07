@@ -6,9 +6,6 @@ import type { PaginatedResult, PaginationParams } from "@/shared/types/paginatio
 import type { Example, ExampleId, ListExamplesFilter } from "./example.types";
 
 export class ExampleRepository {
-  /**
-   * Finds all examples matching the filter criteria and pagination options.
-   */
   async findAll(
     filter: ListExamplesFilter = {},
     pagination: PaginationParams = { page: 1, limit: appConfig.pagination.defaultLimit },
@@ -45,9 +42,6 @@ export class ExampleRepository {
     };
   }
 
-  /**
-   * Finds an example by its unique ID.
-   */
   async findById(id: ExampleId): Promise<Example | null> {
     return db().example.findFirst({
       where: {
@@ -57,9 +51,6 @@ export class ExampleRepository {
     });
   }
 
-  /**
-   * Creates a new example in the database.
-   */
   async create(data: { name: string; description?: string | null }): Promise<Example> {
     return db().example.create({
       data: {
@@ -69,9 +60,6 @@ export class ExampleRepository {
     });
   }
 
-  /**
-   * Updates an existing example in the database.
-   */
   async update(
     id: ExampleId,
     data: { name?: string; description?: string | null },
@@ -91,9 +79,6 @@ export class ExampleRepository {
     return this.findById(id);
   }
 
-  /**
-   * Soft deletes an example by setting its deletedAt timestamp.
-   */
   async delete(id: ExampleId): Promise<boolean> {
     const { count } = await db().example.updateMany({
       where: {
