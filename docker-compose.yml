@@ -6,7 +6,7 @@ services:
     environment:
       - NODE_ENV=production
     env_file:
-      - .env.docker
+      - .env.example
     depends_on:
       postgres:
         condition: service_healthy
