@@ -2,9 +2,7 @@ import type { PaginatedMeta } from "@/shared/types/pagination";
 
 import type { Request } from "express";
 
-/**
- * Generates HATEOAS-style pagination links (first, last, prev, next).
- */
+/** Constructs navigation links for paginated responses. */
 export function generatePaginationLinks(
   req: Request,
   meta: PaginatedMeta,
