@@ -24,9 +24,6 @@ export function sanitizeInput(req: Request, _res: Response, next: NextFunction) 
   next();
 }
 
-/**
- * Recursively sanitizes an object by removing dangerous patterns.
- */
 function sanitizeObject(obj: unknown): unknown {
   if (obj === null || obj === undefined) {
     return obj;

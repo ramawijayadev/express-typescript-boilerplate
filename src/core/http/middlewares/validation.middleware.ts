@@ -56,9 +56,6 @@ export function validateQuery<T extends ZodTypeAny>(schema: T): RequestHandler {
   };
 }
 
-/**
- * Validates request path parameters (e.g., /users/:id).
- */
 export function validateParams<T extends ZodTypeAny>(schema: T): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {

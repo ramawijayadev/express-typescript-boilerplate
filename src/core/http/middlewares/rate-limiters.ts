@@ -7,7 +7,6 @@ const isTest = env.NODE_ENV === "test";
 
 import type { RequestHandler } from "express";
 
-// Helper to create a no-op middleware for tests
 const noOpMiddleware: RequestHandler = (_req, _res, next) => next();
 
 /**

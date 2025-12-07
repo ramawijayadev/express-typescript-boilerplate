@@ -16,12 +16,7 @@ import type { ErrorRequestHandler } from "express";
 
 /**
  * Global Error Handler Middleware.
- *
- * Intercepts all errors, formats them into a standard JSON response, and handles logging.
- * specific handling for:
- * - AppError (Operational errors with status codes)
- * - ZodError (Validation failures)
- * - PrismaError (Database constraint failures)
+ * Intercepts errors, formats them into a standard JSON response, and handles logging.
  */
 export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const path = req.originalUrl ?? req.url;

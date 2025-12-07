@@ -35,7 +35,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    // Payload has userId as number from jwt verify
     const payload = verifyToken(token);
 
     // We modify req.user directly but typed usage should happen in controllers

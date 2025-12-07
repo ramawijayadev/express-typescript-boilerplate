@@ -1,15 +1,6 @@
-/**
- * Primitive Role types based on Convention.
- */
 export type Role = "admin" | "user";
 
-/**
- * Interface for Access Control Logic (RBAC).
- */
 export interface AccessControl {
-  /**
-   * Check if a user with given roles can perform the action.
-   */
   can(roles: Role[], resource: string, action: string): boolean;
 }
 

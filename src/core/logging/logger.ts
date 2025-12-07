@@ -19,18 +19,12 @@ const redacts = [
   "refreshToken",
 ];
 
-const streams = [
-  { stream: process.stdout }, // Always log to stdout
-];
+const streams = [{ stream: process.stdout }];
 
-// If developing locally or specifically configured, log to files
 if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
-  // Ensure log directory exists or use rotation
-  // For simplicity using simple pino file destination or transport
-  // In real prod, you might use a transport thread
   streams.push({
     stream: pino.destination({
-      dest: path.join(process.cwd(), loggingConfig.filePath, "app"), // app.log, auto-rotated by external tools usually or use pino-roll
+      dest: path.join(process.cwd(), loggingConfig.filePath, "app"), // app.log
       minLength: 4096, // Buffer
       sync: false,
     }) as unknown as WriteStream & { fd: 1 },

@@ -15,7 +15,6 @@ import type { Express } from "express";
 export function registerMiddlewares(app: Express) {
   const isTest = process.env.NODE_ENV === "test";
 
-  // HTTP hardening
   app.disable("x-powered-by");
 
   // Only enable CSP in non-test environments (causes issues with test setup)
@@ -62,7 +61,6 @@ export function registerMiddlewares(app: Express) {
     );
   }
 
-  // Body & cookie parsing
   app.use(express.json({ limit: "10kb" })); // Prevent DoS via large payloads
   app.use(cookieParser());
 
@@ -71,6 +69,5 @@ export function registerMiddlewares(app: Express) {
     app.use(sanitizeInput);
   }
 
-  // Internal middlewares
   app.use(requestLoggerMiddleware);
 }

@@ -11,9 +11,6 @@ export interface SendEmailOptions {
   from?: string;
 }
 
-/**
- * Abstraction for Email Sending.
- */
 export interface EmailSender {
   send(options: SendEmailOptions): Promise<void>;
 }
@@ -27,11 +24,11 @@ export class SmtpEmailSender implements EmailSender {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: mailConfig.host, // Replaced mailConfig.host
-      port: mailConfig.port, // Replaced mailConfig.port
+      host: mailConfig.host,
+      port: mailConfig.port,
       auth: {
-        user: mailConfig.user, // Replaced mailConfig.user
-        pass: mailConfig.pass, // Replaced mailConfig.pass
+        user: mailConfig.user,
+        pass: mailConfig.pass,
       },
     });
   }
@@ -39,7 +36,7 @@ export class SmtpEmailSender implements EmailSender {
   async send(options: SendEmailOptions): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: options.from || mailConfig.from, // Replaced mailConfig.from
+        from: options.from || mailConfig.from,
         to: options.to,
         subject: options.subject,
         text: options.text,

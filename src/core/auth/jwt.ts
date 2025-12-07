@@ -4,9 +4,6 @@ import jwt from "jsonwebtoken";
 
 import { authConfig } from "@/config/auth";
 
-/**
- * Payload structure for JWT tokens.
- */
 export interface TokenPayload {
   userId: number;
   email: string;

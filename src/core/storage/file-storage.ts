@@ -1,20 +1,6 @@
-/**
- * Interface for File Storage operations.
- */
 export interface FileStorage {
-  /**
-   * Upload a file buffer to storage.
-   */
   upload(key: string, body: Buffer, contentType: string): Promise<string>;
-
-  /**
-   * Delete a file from storage.
-   */
   delete(key: string): Promise<void>;
-
-  /**
-   * Get the public URL for a given key.
-   */
   getUrl(key: string): string;
 }
 

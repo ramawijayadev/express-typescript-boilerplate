@@ -12,7 +12,6 @@ export const requestLoggerMiddleware: RequestHandler = (req, res, next) => {
   const context = {
     requestId,
     service: "api", // Could be configurable
-    // Add other context like userId here later if available from auth middleware
   };
 
   runWithContext(context, () => {

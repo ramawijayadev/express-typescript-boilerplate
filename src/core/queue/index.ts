@@ -5,8 +5,6 @@ import { queueConfig } from "@/config/queue";
 import { logger } from "@/core/logging/logger";
 import { type EmailSender } from "@/core/mail/mailer";
 
-// Connection configs are now used directly in BullmqJobQueue
-
 export const defaultJobOptions = {
   attempts: queueConfig.defaultJobOptions.attempts,
   backoff: queueConfig.defaultJobOptions.backoff,
@@ -53,7 +51,7 @@ export class BullmqJobQueue implements JobQueue {
       connection: this.connection,
       defaultJobOptions: {
         removeOnComplete: {
-          age: queueConfig.failedJobRetentionDays * 24 * 60 * 60, // Convert days to seconds
+          age: queueConfig.failedJobRetentionDays * 24 * 60 * 60,
         },
         removeOnFail: false,
       },
