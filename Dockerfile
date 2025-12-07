@@ -7,7 +7,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable pnpm
 
 # Install dumb-init for proper signal handling (PID 1)
-RUN apk add --no-cache dumb-init
+RUN apk add --no-cache dumb-init openssl
 
 # ============================================
 # Dependencies Stage: Install all dependencies
@@ -40,7 +40,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 # Note: Generates into node_modules/@prisma/client by default
 ARG DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 ENV DATABASE_URL=${DATABASE_URL}
-RUN pnpm dlx prisma generate
+RUN npx prisma generate
 
 # Build TypeScript to JavaScript (outputs to dist/)
 RUN pnpm build
