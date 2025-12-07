@@ -2,23 +2,23 @@ import { randomUUID } from "node:crypto";
 
 import jwt from "jsonwebtoken";
 
-import { config } from "@/config";
+import { authConfig } from "@/config/auth";
 
 /**
  * Payload structure for JWT tokens.
  */
 export interface TokenPayload {
   userId: number;
-  jti?: string;
-  exp?: number;
+  email: string;
+  [key: string]: unknown;
 }
 
 /**
  * Generates a short-lived Access Token.
  */
 export function generateAccessToken(payload: TokenPayload): string {
-  return jwt.sign({ ...payload }, config.security.jwt.secret as jwt.Secret, {
-    expiresIn: config.security.jwt.accessExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
+  return jwt.sign({ ...payload }, authConfig.jwt.secret as jwt.Secret, {
+    expiresIn: authConfig.jwt.accessExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
   });
 }
 
@@ -28,8 +28,8 @@ export function generateAccessToken(payload: TokenPayload): string {
  */
 export function generateRefreshToken(payload: TokenPayload): string {
   const jti = randomUUID();
-  return jwt.sign({ ...payload, jti }, config.security.jwt.secret as jwt.Secret, {
-    expiresIn: config.security.jwt.refreshExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
+  return jwt.sign({ ...payload, jti }, authConfig.jwt.secret as jwt.Secret, {
+    expiresIn: authConfig.jwt.refreshExpiration as NonNullable<jwt.SignOptions["expiresIn"]>,
   });
 }
 
@@ -38,7 +38,7 @@ export function generateRefreshToken(payload: TokenPayload): string {
  * Throws if the token is invalid or expired.
  */
 export function verifyToken(token: string): TokenPayload {
-  const decoded = jwt.verify(token, config.security.jwt.secret as jwt.Secret);
+  const decoded = jwt.verify(token, authConfig.jwt.secret as jwt.Secret);
   if (typeof decoded === "string") {
     throw new Error("Invalid token payload");
   }

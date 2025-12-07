@@ -1,9 +1,22 @@
-import { Queue } from "bullmq";
+import { Queue, Worker } from "bullmq";
 import IORedis from "ioredis";
 
 import { queueConfig } from "@/config/queue";
 import { logger } from "@/core/logging/logger";
 import { type EmailSender } from "@/core/mail/mailer";
+
+const connection = {
+  host: queueConfig.redis.host,
+  port: queueConfig.redis.port,
+  password: queueConfig.redis.password,
+};
+
+export const defaultJobOptions = {
+  attempts: queueConfig.defaultJobOptions.attempts,
+  backoff: queueConfig.defaultJobOptions.backoff,
+  removeOnComplete: queueConfig.defaultJobOptions.removeOnComplete,
+  removeOnFail: queueConfig.defaultJobOptions.removeOnFail,
+};
 
 export interface EmailJobData {
   to: string;

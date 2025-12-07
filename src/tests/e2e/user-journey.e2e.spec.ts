@@ -7,12 +7,13 @@ import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { config } from "@/config";
+import { queueConfig } from "@/config/queue";
 import { createApp } from "@/app/app";
+import { env } from "@/app/env";
 import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
-const TEST_TIMEOUT = config.test.timeout;
+const TEST_TIMEOUT = env.TEST_TIMEOUT_MS;
 const TOKEN_REGEX = /token=([a-f0-9]+)/i;
 
 interface MailpitMessage {
@@ -32,7 +33,7 @@ interface MailpitListResponse {
  */
 async function deleteAllEmails() {
   try {
-    await fetch(`${config.test.mailpitUrl}/api/v1/messages`, { method: "DELETE" });
+    await fetch(`${env.TEST_MAILPIT_URL}/api/v1/messages`, { method: "DELETE" });
   } catch {
     //
   }
@@ -43,7 +44,7 @@ async function deleteAllEmails() {
  */
 async function fetchLatestEmail(recipient: string) {
   try {
-    const response = await fetch(`${config.test.mailpitUrl}/api/v1/messages`);
+    const response = await fetch(`${env.TEST_MAILPIT_URL}/api/v1/messages`);
     if (!response.ok) return null;
 
     const data = (await response.json()) as MailpitListResponse;
@@ -55,7 +56,7 @@ async function fetchLatestEmail(recipient: string) {
 
     if (!email || typeof email !== "object") return null;
 
-    const msgRes = await fetch(`${config.test.mailpitUrl}/api/v1/message/${email.ID}`);
+    const msgRes = await fetch(`${env.TEST_MAILPIT_URL}/api/v1/message/${email.ID}`);
     if (!msgRes.ok) return null;
     return (await msgRes.json()) as MailpitMessage;
   } catch {
@@ -96,16 +97,19 @@ describe("User Journey E2E", () => {
   let exampleId: number;
 
   beforeAll(async () => {
+    const redisOpts = {
+      host: queueConfig.redis.host,
+      port: Number(queueConfig.redis.port),
+      password: queueConfig.redis.password || undefined, // explicit undefined for exactOptionalPropertyTypes if needed, or better logic
+    };
+
     worker = new Worker(emailWorkerName, emailWorkerHandler, {
-      connection: {
-        host: "localhost",
-        port: 6379,
-      },
+      connection: redisOpts,
       concurrency: 1,
     });
     worker.on("ready", () => null);
-    worker.on("error", (_err) => null);
-    worker.on("failed", (_job, _err) => null);
+    worker.on("error", (err) => console.error("Worker Error:", err));
+    worker.on("failed", (job, err) => console.error(`Job ${job?.id} failed:`, err));
   });
 
   afterAll(async () => {

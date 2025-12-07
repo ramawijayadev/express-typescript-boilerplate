@@ -17,33 +17,21 @@ const redacts = [
   "refreshToken",
 ];
 
-const transports = [];
+const streams = [
+  { stream: process.stdout }, // Always log to stdout
+];
 
-if (loggingConfig.isDevelopment) {
-  transports.push({
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      translateTime: "SYS:standard",
-      ignore: "pid,hostname",
-    },
-  });
-}
-
+// If developing locally or specifically configured, log to files
 if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
-  transports.push({
-    target: "pino-roll",
-    options: {
-      file: path.join(process.cwd(), loggingConfig.filePath, "app"),
-      frequency: "daily",
-      extension: ".log",
-      mkdir: true,
-      dateFormat: "yyyy-MM-dd",
-      size: "10m",
-      limit: {
-        count: 30, // keep 30 files
-      },
-    },
+  // Ensure log directory exists or use rotation
+  // For simplicity using simple pino file destination or transport
+  // In real prod, you might use a transport thread
+  streams.push({
+    stream: pino.destination({
+      dest: path.join(process.cwd(), loggingConfig.filePath, "app"), // app.log, auto-rotated by external tools usually or use pino-roll
+      minLength: 4096, // Buffer
+      sync: false,
+    }),
   });
 }
 
@@ -54,14 +42,13 @@ if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
 export const logger = pino({
   level: loggingConfig.level,
   redact: redacts,
-  transport: {
-    targets: transports,
-  },
   mixin: () => {
     const context = requestContext.getStore();
     return context ? Object.fromEntries(context) : {};
   },
-});
+},
+pino.multistream(streams),
+);
 
 /**
  * Executes a callback within a distinct logging context.

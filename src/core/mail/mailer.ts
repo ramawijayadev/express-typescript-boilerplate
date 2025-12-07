@@ -27,11 +27,11 @@ export class SmtpEmailSender implements EmailSender {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: mailConfig.host,
-      port: mailConfig.port,
+      host: mailConfig.host, // Replaced mailConfig.host
+      port: mailConfig.port, // Replaced mailConfig.port
       auth: {
-        user: mailConfig.user,
-        pass: mailConfig.pass,
+        user: mailConfig.user, // Replaced mailConfig.user
+        pass: mailConfig.pass, // Replaced mailConfig.pass
       },
     });
   }
@@ -39,7 +39,7 @@ export class SmtpEmailSender implements EmailSender {
   async send(options: SendEmailOptions): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: options.from || mailConfig.from,
+        from: options.from || mailConfig.from, // Replaced mailConfig.from
         to: options.to,
         subject: options.subject,
         text: options.text,

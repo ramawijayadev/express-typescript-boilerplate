@@ -1,13 +1,12 @@
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 
-import { config } from "@/config";
+import { env } from "@/app/env";
+import { rateLimitConfig } from "@/config/rate-limit";
 
-import type { RequestHandler } from "express";
-
-const isTest = process.env.NODE_ENV === "test";
+const isTest = env.NODE_ENV === "test";
 
 // Helper to create a no-op middleware for tests
-const noOpMiddleware: RequestHandler = (_req, _res, next) => next();
+const noOpMiddleware = (req: any, res: any, next: any) => next();
 
 /**
  * Strict rate limiter for login endpoint.
@@ -16,8 +15,8 @@ const noOpMiddleware: RequestHandler = (_req, _res, next) => next();
 export const loginRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: config.security.rateLimit.login.windowMs,
-      max: config.security.rateLimit.login.max,
+      windowMs: rateLimitConfig.login.windowMs,
+      max: rateLimitConfig.login.max,
       message: "Too many login attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -31,8 +30,8 @@ export const loginRateLimiter = isTest
 export const registerRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: config.security.rateLimit.register.windowMs,
-      max: config.security.rateLimit.register.max,
+      windowMs: rateLimitConfig.register.windowMs,
+      max: rateLimitConfig.register.max,
       message: "Too many registration attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -45,8 +44,8 @@ export const registerRateLimiter = isTest
 export const passwordResetRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: config.security.rateLimit.passwordReset.windowMs,
-      max: config.security.rateLimit.passwordReset.max,
+      windowMs: rateLimitConfig.passwordReset.windowMs,
+      max: rateLimitConfig.passwordReset.max,
       message: "Too many password reset attempts, please try again later",
       standardHeaders: true,
       legacyHeaders: false,
@@ -58,9 +57,18 @@ export const passwordResetRateLimiter = isTest
 export const verificationRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
-      windowMs: config.security.rateLimit.verification.windowMs,
-      max: config.security.rateLimit.verification.max,
+      windowMs: rateLimitConfig.verification.windowMs,
+      max: rateLimitConfig.verification.max,
       message: "Too many verification attempts, please try again later",
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
+
+export const globalRateLimiter = isTest
+  ? noOpMiddleware
+  : rateLimit({
+      windowMs: rateLimitConfig.global.windowMs,
+      max: rateLimitConfig.global.max,
       standardHeaders: true,
       legacyHeaders: false,
     });
