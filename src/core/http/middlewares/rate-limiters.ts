@@ -1,6 +1,6 @@
 import { rateLimit } from "express-rate-limit";
 
-import { env } from "@/app/env";
+import { env } from "@/config/env";
 import { rateLimitConfig } from "@/config/rate-limit";
 
 const isTest = env.NODE_ENV === "test";

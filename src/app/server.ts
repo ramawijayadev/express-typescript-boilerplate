@@ -1,11 +1,11 @@
 import { appConfig } from "@/config/app";
+import { env } from "@/config/env";
 import { logger } from "@/core/logging/logger";
 import { initMetrics } from "@/core/observability/metrics";
 import { initTracing } from "@/core/observability/tracing";
 import { initJobs } from "@/jobs/index";
 
 import { createApp } from "./app";
-import { env } from "./env";
 
 const app = createApp();
 

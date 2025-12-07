@@ -1,4 +1,4 @@
-import { env } from "@/app/env";
+import { env } from "@/config/env";
 import { logger } from "@/core/logging/logger";
 import { emailSender } from "@/core/mail";
 

@@ -1,4 +1,4 @@
-import { env } from "@/app/env";
+import { env } from "@/config/env";
 
 import { ConsoleEmailSender } from "./console.sender";
 import { SmtpEmailSender } from "./smtp.sender";

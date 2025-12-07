@@ -1,4 +1,4 @@
-import { env } from "@/app/env";
+import { env } from "@/config/env";
 
 export const rateLimitConfig = {
   login: {

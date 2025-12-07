@@ -1,7 +1,7 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 
-import { env } from "@/app/env";
+import { env } from "@/config/env";
 import { swaggerSpec } from "@/config/swagger";
 import { errorHandler } from "@/core/http/errors/handler";
 import { registerMiddlewares } from "@/core/http/middlewares";

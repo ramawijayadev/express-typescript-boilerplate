@@ -4,7 +4,7 @@ import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
-import { env } from "@/app/env";
+import { env } from "@/config/env";
 import { queueConfig } from "@/config/queue";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
