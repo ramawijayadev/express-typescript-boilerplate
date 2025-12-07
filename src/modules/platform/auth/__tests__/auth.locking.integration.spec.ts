@@ -3,7 +3,7 @@
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { authConfig } from "@/config/auth";
@@ -11,16 +11,10 @@ import { hashPassword } from "@/core/auth/password";
 import { db } from "@/core/database/connection";
 
 describe("Auth Account Locking (Integration)", () => {
-  const app = createApp();
+  let app: ReturnType<typeof createApp>;
 
   beforeEach(async () => {
-    await db().userSession.deleteMany();
-    await db().user.deleteMany();
-  });
-
-  afterAll(async () => {
-    await db().userSession.deleteMany();
-    await db().user.deleteMany();
+    app = createApp();
   });
 
   const createUser = async () => {

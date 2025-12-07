@@ -98,11 +98,13 @@ describe("User Journey E2E", () => {
     worker.on("ready", () => null);
     worker.on("error", () => {});
     worker.on("failed", () => {});
+
+    // Manual cleanup because we skip global reset for this file
+    await db().user.deleteMany();
   });
 
   afterAll(async () => {
     await worker.close();
-    await db().user.deleteMany({ where: { email: testUser.email } });
   });
 
   it("Public Access Health Check", async () => {

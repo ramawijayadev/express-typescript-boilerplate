@@ -36,11 +36,6 @@ describe("Auth Verification & Password Reset Integration", () => {
   });
 
   beforeEach(async () => {
-    await db().emailVerificationToken.deleteMany();
-    await db().passwordResetToken.deleteMany();
-    await db().userSession.deleteMany();
-    await db().user.deleteMany();
-
     testUser = await db().user.create({
       data: {
         name: "Test User",

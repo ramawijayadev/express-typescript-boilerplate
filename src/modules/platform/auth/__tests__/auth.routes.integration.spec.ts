@@ -3,7 +3,7 @@
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/app/app";
 import { hashPassword } from "@/core/auth/password";
@@ -19,15 +19,11 @@ vi.mock("@/core/queue", () => ({
 }));
 
 describe("Auth routes (integration)", () => {
-  const app = createApp();
+  let app: ReturnType<typeof createApp>;
   const authRepository = new AuthRepository();
 
-  beforeEach(async () => {
-    await db().user.deleteMany();
-  });
-
-  afterAll(async () => {
-    await db().user.deleteMany();
+  beforeEach(() => {
+    app = createApp();
   });
 
   describe("POST /auth/register", () => {

@@ -3,7 +3,7 @@
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { generateAccessToken } from "@/core/auth/jwt";
@@ -14,7 +14,7 @@ describe("Users Routes Integration", () => {
   let userId: number;
   const app = createApp();
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const user = await db().user.create({
       data: {
         name: "Test User",
@@ -24,10 +24,6 @@ describe("Users Routes Integration", () => {
     });
     userId = user.id;
     token = generateAccessToken({ userId, email: "test@example.com" });
-  });
-
-  afterAll(async () => {
-    await db().user.deleteMany({ where: { email: { contains: "test-" } } });
   });
 
   describe("GET /api/v1/users/me", () => {

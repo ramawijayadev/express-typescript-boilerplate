@@ -3,7 +3,7 @@
  */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
 import { hashToken } from "@/core/auth/hash";
@@ -13,17 +13,11 @@ import { db } from "@/core/database/connection";
 import { AuthRepository } from "../auth.repository";
 
 describe("Auth Session Management (Integrations)", () => {
-  const app = createApp();
+  let app: ReturnType<typeof createApp>;
   const authRepository = new AuthRepository();
 
   beforeEach(async () => {
-    await db().userSession.deleteMany();
-    await db().user.deleteMany();
-  });
-
-  afterAll(async () => {
-    await db().userSession.deleteMany();
-    await db().user.deleteMany();
+    app = createApp();
   });
 
   const createUser = async () => {

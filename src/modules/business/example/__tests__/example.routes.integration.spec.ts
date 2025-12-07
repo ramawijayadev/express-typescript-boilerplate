@@ -6,7 +6,6 @@ import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { createApp } from "@/app/app";
-import { db } from "@/core/database/connection";
 
 describe("Example routes (integration)", () => {
   const baseUrl = "/api/v1/examples";
@@ -14,7 +13,6 @@ describe("Example routes (integration)", () => {
 
   beforeEach(async () => {
     app = createApp();
-    await db().example.deleteMany();
   });
 
   describe("GET /api/v1/examples (list)", () => {
