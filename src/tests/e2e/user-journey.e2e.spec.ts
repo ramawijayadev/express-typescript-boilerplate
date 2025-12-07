@@ -100,7 +100,7 @@ describe("User Journey E2E", () => {
     const redisOpts = {
       host: queueConfig.redis.host,
       port: Number(queueConfig.redis.port),
-      password: queueConfig.redis.password || undefined, // explicit undefined for exactOptionalPropertyTypes if needed, or better logic
+      ...(queueConfig.redis.password ? { password: queueConfig.redis.password } : {}),
     };
 
     worker = new Worker(emailWorkerName, emailWorkerHandler, {
