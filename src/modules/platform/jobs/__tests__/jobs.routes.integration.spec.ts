@@ -28,8 +28,6 @@ describe("Jobs Routes Integration", () => {
   });
 
   afterAll(async () => {
-
-
     const dlq = jobQueue.getDeadLetterQueue();
     const jobs = await dlq.getJobs(["completed", "failed", "waiting", "active"], 0, -1);
     for (const job of jobs) {

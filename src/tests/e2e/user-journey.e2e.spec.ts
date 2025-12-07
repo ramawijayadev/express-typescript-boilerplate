@@ -6,7 +6,6 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "@/app/app";
 import { env } from "@/app/env";
 import { queueConfig } from "@/config/queue";
-import { db } from "@/core/database/connection";
 import { emailWorkerHandler, emailWorkerName } from "@/jobs/handlers/send-email.job";
 
 const TEST_TIMEOUT = env.TEST_TIMEOUT_MS;
@@ -98,8 +97,6 @@ describe("User Journey E2E", () => {
     worker.on("ready", () => null);
     worker.on("error", () => {});
     worker.on("failed", () => {});
-
-
   });
 
   afterAll(async () => {
