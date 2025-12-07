@@ -6,8 +6,6 @@ import { loggingConfig } from "@/config/logging";
 
 import { requestContext } from "./context";
 
-import type { WriteStream } from "node:fs";
-
 const redacts = [
   "req.headers.authorization",
   "req.body.password",
@@ -18,17 +16,24 @@ const redacts = [
   "refreshToken",
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const streams: Array<{ stream: any }> = [{ stream: process.stdout }];
+const streams: pino.StreamEntry[] = [{ stream: process.stdout }];
 
 if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
-  streams.push({
-    stream: pino.destination({
-      dest: path.join(process.cwd(), loggingConfig.filePath, "app"),
-      minLength: 4096,
+  const rollingTransport = pino.transport({
+    target: "pino-roll",
+    options: {
+      file: path.join(process.cwd(), loggingConfig.filePath, "app"),
+      frequency: "daily",
+      size: "20m",
+      limit: { count: 14 },
+      dateFormat: "yyyy-MM-dd",
+      extension: ".log",
+      mkdir: true,
       sync: false,
-    }) as unknown as WriteStream,
+    },
   });
+
+  streams.push({ stream: rollingTransport });
 }
 
 /**
