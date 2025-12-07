@@ -36,8 +36,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
   try {
     const payload = verifyToken(token);
-
-    // We modify req.user directly but typed usage should happen in controllers
     req.user = { id: payload.userId };
     next();
   } catch (error) {

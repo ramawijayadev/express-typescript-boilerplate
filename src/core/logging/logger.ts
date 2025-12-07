@@ -24,8 +24,8 @@ const streams = [{ stream: process.stdout }];
 if (loggingConfig.driver === "file" || loggingConfig.isProduction) {
   streams.push({
     stream: pino.destination({
-      dest: path.join(process.cwd(), loggingConfig.filePath, "app"), // app.log
-      minLength: 4096, // Buffer
+      dest: path.join(process.cwd(), loggingConfig.filePath, "app"),
+      minLength: 4096,
       sync: false,
     }) as unknown as WriteStream & { fd: 1 },
   });

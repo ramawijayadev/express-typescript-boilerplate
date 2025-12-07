@@ -1,17 +1,27 @@
 import type { NextFunction, Request, Response } from "express";
 
-// Safe definition for Express Query Parameters ensuring no explicit 'any'
+/**
+ * Recursive definition for Express Query Parameters.
+ * Replaces the default 'any' with a type-safe structure.
+ */
 export interface SafeParsedQs {
   [key: string]: undefined | string | string[] | SafeParsedQs | SafeParsedQs[];
 }
 
-// Express uses 'any' for Params/Query/ResBody, and strict 'unknown' causes type incompatibility
+/**
+ * Strict wrapper around Express Request.
+ * Solves the compatibility issue where Express defaults to 'any' but TypeScript expects 'unknown'.
+ */
 export type TypedRequest<
   Body = unknown,
   Query = SafeParsedQs,
   Params = Record<string, string>,
 > = Request<Params, unknown, Body, Query>;
 
+/**
+ * Extension of TypedRequest that guarantees the existence of `req.user`.
+ * Used for protected routes.
+ */
 export interface AuthenticatedRequest<
   Body = unknown,
   Query = SafeParsedQs,
@@ -23,9 +33,12 @@ export interface AuthenticatedRequest<
 }
 
 /**
+ * Wraps a controller to provide strict typing for Body, Query, and Params.
+ * bridges the gap between untyped Express handlers and our strict Controllers.
+ *
  * @example
- * authRouter.post("/login", validateBody(loginSchema),
- *   typedHandler<LoginBody>(authController.login)
+ * router.post("/login",
+ * typedHandler<LoginBody>(authController.login)
  * );
  */
 export function typedHandler<Body = unknown, Query = SafeParsedQs, Params = Record<string, string>>(
@@ -45,9 +58,12 @@ export function typedHandler<Body = unknown, Query = SafeParsedQs, Params = Reco
 }
 
 /**
+ * Wraps a controller for protected routes.
+ * Ensures `req.user` is typed correctly.
+ *
  * @example
- * authRouter.post("/profile", authenticate,
- *   authenticatedHandler<UpdateProfileBody>(authController.updateProfile)
+ * router.get("/profile", authenticate,
+ * authenticatedHandler(authController.getProfile)
  * );
  */
 export function authenticatedHandler<

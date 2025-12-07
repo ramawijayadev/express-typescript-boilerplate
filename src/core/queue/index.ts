@@ -35,7 +35,7 @@ export class BullmqJobQueue implements JobQueue {
       port: Number(queueConfig.redis.port),
       maxRetriesPerRequest: null,
     };
-    // Proper handling for exactOptionalPropertyTypes
+
     if (queueConfig.redis.password) {
       Object.assign(redisOpts, { password: queueConfig.redis.password });
     }
@@ -85,7 +85,6 @@ export class BullmqJobQueue implements JobQueue {
   }
 }
 
-// In-memory queue for testing or local dev without Redis if needed
 export class InMemoryJobQueue implements JobQueue {
   constructor(private emailService: EmailSender) {}
 
