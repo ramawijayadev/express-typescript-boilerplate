@@ -35,10 +35,6 @@ export function validateBody<T extends ZodTypeAny>(schema: T): RequestHandler {
   };
 }
 
-/**
- * Validates request query parameters.
- * Coerced values are written back to `req.query`.
- */
 export function validateQuery<T extends ZodTypeAny>(schema: T): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {

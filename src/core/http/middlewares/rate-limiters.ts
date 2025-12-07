@@ -52,9 +52,6 @@ export const passwordResetRateLimiter = isTest
       legacyHeaders: false,
     });
 
-/**
- * Moderate rate limiter for email verification endpoints.
- */
 export const verificationRateLimiter = isTest
   ? noOpMiddleware
   : rateLimit({
