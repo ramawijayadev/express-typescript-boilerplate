@@ -58,8 +58,6 @@ const prismaErrorMapper: ErrorMapper = (err) => {
         message: "Record not found",
       };
     }
-
-    // Add other Prisma error codes here if needed (e.g. P2002 for Unique Constraint)
   }
   return null;
 };

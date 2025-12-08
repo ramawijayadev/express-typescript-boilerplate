@@ -44,7 +44,6 @@ healthRouter.get("/health", async (_req, res) => {
         : {}),
     };
   } catch {
-    // If jobs not initialized or error, skip job health
     jobsHealth = undefined;
   }
 

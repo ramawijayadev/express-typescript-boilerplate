@@ -17,7 +17,6 @@ const repo = new JobsRepository();
 const service = new JobsService(repo);
 const controller = new JobsController(service);
 
-// All routes require authentication
 jobsRouter.use(authenticate);
 
 jobsRouter.get("/failed", (req, res) => controller.listFailedJobs(req, res));

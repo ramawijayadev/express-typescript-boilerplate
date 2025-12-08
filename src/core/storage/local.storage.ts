@@ -25,7 +25,7 @@ export class LocalFileStorage implements FileStorage {
     try {
       await fs.mkdir(this.uploadDir, { recursive: true });
     } catch {
-      // Ignore if exists
+      // Ignore errors
     }
   }
 

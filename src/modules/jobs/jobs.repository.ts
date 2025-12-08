@@ -19,7 +19,7 @@ export class JobsRepository {
 
   async retryJob(job: Job): Promise<void> {
     const _originalQueue = (job.data as FailedJob).originalQueue;
-    const queue = jobQueue.getQueue(); // For now we only have email queue
+    const queue = jobQueue.getQueue();
 
     await queue.add((job.data as FailedJob).jobName, (job.data as FailedJob).data);
     await job.remove();

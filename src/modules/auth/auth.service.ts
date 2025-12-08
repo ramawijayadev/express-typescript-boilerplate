@@ -21,10 +21,6 @@ import type {
 export class AuthService {
   constructor(private readonly repo: AuthRepository) {}
 
-  /**
-   * Registers a new user and sends verification email.
-   * Throws 409 if email exists.
-   */
   async register(
     data: RegisterBody,
     meta?: { ip?: string; userAgent?: string },
@@ -41,27 +37,17 @@ export class AuthService {
     return this.createSession(user, meta);
   }
 
-  /**
-   * Authenticates a user and issues tokens.
-   * Throws 401 for invalid credentials/locked/disabled accounts.
-   */
   async login(data: LoginBody, meta?: { ip?: string; userAgent?: string }): Promise<AuthResponse> {
     const user = await this.repo.findByEmail(data.email);
 
-    // SECURITY: Always verify password to prevent timing attacks that could reveal valid emails
-    // Use a dummy hash if user doesn't exist to maintain constant-time response
     const passwordHash =
-      user?.password || "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHR2YWx1ZQ$dummy"; // dummy argon2 hash
+      user?.password || "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHR2YWx1ZQ$dummy";
 
     const isValidPassword = await verifyPassword(passwordHash, data.password);
 
-    // Check user existence and validity AFTER password verification
     if (!user || !user.password || !isValidPassword) {
-      // Increment failed login attempts if user exists
       if (user) {
         const updatedUser = await this.repo.incrementFailedLogin(user.id);
-
-        // Lock account if too many failed attempts
         if (updatedUser.failedLoginAttempts >= authConfig.locking.maxAttempts) {
           const lockDurationMs = authConfig.locking.durationMinutes * 60 * 1000;
           const lockedUntil = new Date(Date.now() + lockDurationMs);
@@ -72,12 +58,10 @@ export class AuthService {
       this.throwInvalidCredentials();
     }
 
-    // Check if account is active
     if (!user.isActive) {
       throw new AppError(StatusCodes.UNAUTHORIZED, "Account is disabled");
     }
 
-    // Check if account is locked
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       throw new AppError(
         StatusCodes.UNAUTHORIZED,
@@ -85,15 +69,11 @@ export class AuthService {
       );
     }
 
-    // Reset failed login attempts on successful login
     await this.repo.resetLoginStats(user.id);
 
     return this.createSession(user, meta);
   }
 
-  /**
-   * Creates a new session using user details.
-   */
   private async createSession(
     user: { id: number; name: string; email: string },
     meta?: { ip?: string; userAgent?: string },
@@ -127,10 +107,6 @@ export class AuthService {
     };
   }
 
-  /**
-   * Refreshes the access token using a valid refresh token.
-   * Rotates the refresh token for security.
-   */
   async refreshToken(token: string): Promise<RefreshTokenResponse> {
     try {
       verifyRefreshToken(token);
@@ -138,13 +114,11 @@ export class AuthService {
 
       const session = await this.repo.findSessionByHash(tokenHash);
       if (!session) {
-        // Token is valid JWT but not in DB -> possibly revoked or rotated
         throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid refresh token");
       }
 
-      // SECURITY: Check if session has expired based on database timestamp
       if (session.expiresAt < new Date()) {
-        await this.repo.revokeSession(session.id); // Clean up expired session
+        await this.repo.revokeSession(session.id);
         throw new AppError(StatusCodes.UNAUTHORIZED, "Session expired");
       }
 
@@ -175,9 +149,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Logs out a user by revoking the refresh token session.
-   */
   async logout(refreshToken: string): Promise<void> {
     const tokenHash = hashToken(refreshToken);
     const session = await this.repo.findSessionByHash(tokenHash);
@@ -187,16 +158,10 @@ export class AuthService {
     await this.repo.revokeSession(session.id);
   }
 
-  /**
-   * Revokes all sessions for a specific user.
-   */
   async revokeAllSessions(userId: number): Promise<void> {
     await this.repo.revokeAllUserSessions(userId);
   }
 
-  /**
-   * Retrieves the profile of a user.
-   */
   async getProfile(userId: number): Promise<ProfileResponse> {
     const user = await this.repo.findById(userId);
     if (!user) {
@@ -213,9 +178,6 @@ export class AuthService {
     };
   }
 
-  /**
-   * Sends a verification email to the user.
-   */
   async sendVerificationEmail(user: { id: number; email: string }) {
     const token = randomBytes(32).toString("hex");
     const tokenHash = hashToken(token);
@@ -236,25 +198,19 @@ export class AuthService {
     });
   }
 
-  /**
-   * Resends the verification email if not already verified.
-   */
   async resendVerification(userId: number) {
     const user = await this.repo.findById(userId);
     if (!user) {
-      return; // Fail silently or returns 200 as per requirements
+      return;
     }
 
     if (user.emailVerifiedAt) {
-      return; // Already verified
+      return;
     }
 
     await this.sendVerificationEmail(user);
   }
 
-  /**
-   * Verifies a user's email using a token.
-   */
   async verifyEmail(token: string) {
     const tokenHash = hashToken(token);
     const verificationToken = await this.repo.findEmailVerificationToken(tokenHash);
@@ -275,13 +231,10 @@ export class AuthService {
     await this.repo.markEmailVerificationTokenUsed(verificationToken.id);
   }
 
-  /**
-   * Initiates the password reset process.
-   */
   async forgotPassword(email: string) {
     const user = await this.repo.findByEmail(email);
     if (!user || !user.isActive) {
-      return; // Always return success
+      return;
     }
 
     const token = randomBytes(32).toString("hex");
@@ -301,9 +254,6 @@ export class AuthService {
     });
   }
 
-  /**
-   * Resets the user's password using a valid token.
-   */
   async resetPassword(token: string, newPassword: string) {
     const tokenHash = hashToken(token);
     const resetToken = await this.repo.findPasswordResetToken(tokenHash);

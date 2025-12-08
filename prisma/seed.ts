@@ -21,7 +21,6 @@ async function main() {
     });
   }
 
-  // Using createMany for better performance
   await prisma.example.createMany({
     data: examples,
   });
