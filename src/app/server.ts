@@ -44,3 +44,13 @@ async function shutdown(signal: string) {
 
 process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
+
+process.on("uncaughtException", (err) => {
+  logger.fatal({ err }, "Uncaught exception. Shutting down...");
+  shutdown("UNCAUGHT_EXCEPTION");
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  logger.fatal({ reason, promise }, "Unhandled promise rejection. Shutting down...");
+  shutdown("UNHANDLED_REJECTION");
+});
