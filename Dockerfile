@@ -1,4 +1,6 @@
-# Base Stage: Setup Node.js and pnpm
+# ============================================
+# Base Stage: Node + pnpm + basic tools
+# ============================================
 FROM node:22-alpine AS base
 
 # Enable pnpm package manager via corepack
@@ -7,7 +9,10 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable pnpm
 
 # Install dumb-init for proper signal handling (PID 1)
-RUN apk add --no-cache dumb-init openssl
+# libc6-compat sering dibutuhin Prisma di Alpine
+RUN apk add --no-cache dumb-init openssl libc6-compat
+
+WORKDIR /app
 
 # ============================================
 # Dependencies Stage: Install all dependencies
@@ -17,8 +22,7 @@ FROM base AS dependencies
 WORKDIR /app
 
 # Copy package manager files first for better layer caching
-COPY pnpm-lock.yaml ./
-COPY package.json ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install all dependencies (including devDependencies for build stage)
 RUN pnpm install --frozen-lockfile
@@ -30,17 +34,16 @@ FROM base AS builder
 
 WORKDIR /app
 
-# Copy entire source code
+# Copy only what's needed (thanks to .dockerignore, ini tetap bersih)
 COPY . .
 
-# Copy node_modules from dependencies stage
+# Reuse node_modules from dependencies stage
 COPY --from=dependencies /app/node_modules ./node_modules
 
 # Generate Prisma client
 # Note: Generates into node_modules/@prisma/client by default
 ARG DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
-ENV DATABASE_URL=${DATABASE_URL}
-RUN npx prisma generate
+RUN DATABASE_URL=$DATABASE_URL npx prisma generate
 
 # Build TypeScript to JavaScript (outputs to dist/)
 RUN pnpm build
@@ -71,7 +74,7 @@ COPY --from=builder /app/dist ./dist
 # Copy Prisma schema and migrations (needed for migration deployment)
 COPY --from=builder /app/prisma ./prisma
 
-# Copy package.json for metadata
+# Copy package.json for metadata (and for tools that read it)
 COPY --from=builder /app/package.json ./package.json
 
 # Change ownership to non-root user

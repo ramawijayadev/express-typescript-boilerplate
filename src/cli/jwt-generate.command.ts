@@ -46,7 +46,7 @@ export const jwtGenerateCommand = new Command("jwt:generate")
 
       fs.writeFileSync(envPath, newEnvContent);
 
-      logger.info("✅ JWT Secrets rotated. Added JWT_REFRESH_SECRET for better security.");
+      logger.info("JWT Secrets rotated. Added JWT_REFRESH_SECRET for better security.");
     } catch (error) {
       logger.error(error, "Failed to generate JWT secrets");
       process.exit(1);

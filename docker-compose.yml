@@ -1,29 +1,34 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: runner
+    container_name: express-app
     ports:
-      - "3000:3000"
+      - "3333:3000"
     env_file:
       - .env.example
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/express_boilerplate?schema=public
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - SMTP_HOST=mailpit
-      - SMTP_PORT=1025
-      - TEST_MAILPIT_URL=http://mailpit:8025
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/express_boilerplate?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      TEST_MAILPIT_URL: http://mailpit:8025
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_started
-    command: sh -c "npx prisma migrate deploy && node dist/app/server.js"
+    command: sh -c "node dist/app/server.js"
     networks:
       - app-network
+    restart: unless-stopped
 
   postgres:
     image: postgres:15-alpine
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -40,15 +45,18 @@ services:
       retries: 5
     networks:
       - app-network
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
+    container_name: redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
       - app-network
+    restart: unless-stopped
 
   mailpit:
     image: axllent/mailpit
@@ -58,15 +66,17 @@ services:
       - "1025:1025"
     networks:
       - app-network
+    restart: unless-stopped
 
   k6:
     image: grafana/k6:latest
-    ports:
-      - "6565:6565"
+    container_name: k6
     environment:
-      - K6_OUT=json=test_results.json
+      K6_OUT: json=/results/test_results.json
+    working_dir: /scripts
     volumes:
       - ./src/tests/perf:/scripts
+      - ./src/tests/perf/results:/results
     networks:
       - app-network
 
