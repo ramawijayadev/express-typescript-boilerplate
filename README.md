@@ -167,7 +167,7 @@ We maintain a strict set of living documentation to ensure code quality, consist
 
 - **[📖 Overview & Master Guide](docs/overview.md)** - The entry point to all technical standards.
 - **[🛠️ Setup Guide](docs/setup.md)** - Detailed installation instructions (Docker & Local).
-- **API Documentation** - Available at `/docs` (Swagger UI) when the server is running.
+-   **API Documentation** - Available at `/` (Swagger UI) when the server is running.
 
 ### 🛡️ Quality & Security
 

@@ -44,7 +44,7 @@ Wait until you see the log: `Server running on port 3000`.
 Your API is now accessible at `http://localhost:3333` (as mapped in `docker-compose.yml`).
 
 - **Health Check**: [http://localhost:3333/api/v1/health](http://localhost:3333/api/v1/health)
-- **API Docs (Swagger)**: [http://localhost:3333/docs](http://localhost:3333/docs)
+- **API Docs (Swagger)**: [http://localhost:3333/](http://localhost:3333/)
 - **Mailpit (Email Testing)**: [http://localhost:8025](http://localhost:8025)
 
 ---
