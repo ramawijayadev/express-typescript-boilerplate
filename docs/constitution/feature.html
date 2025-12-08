@@ -118,7 +118,6 @@
       margin-bottom: 0.5rem;
     }
 
-    /* Special Box for Intro */
     .intro-box {
       border-left: 4px solid var(--accent-color);
       background-color: var(--section-bg);
@@ -127,7 +126,6 @@
       border-radius: 0 8px 8px 0;
     }
 
-    /* CODE BLOCKS */
     code {
       font-family: 'JetBrains Mono', monospace;
       background-color: var(--code-bg);
@@ -158,7 +156,6 @@
       border: none;
     }
 
-    /* TIER BADGES */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -187,7 +184,6 @@
       color: var(--tier-3-text);
     }
 
-    /* MODULE BLOCK */
     .module-block {
       border: 1px solid var(--border-color);
       border-radius: 8px;
@@ -200,7 +196,6 @@
       margin-top: 0;
     }
 
-    /* CHECKLIST STYLE */
     .checklist {
       list-style: none;
       padding-left: 0;
@@ -212,9 +207,26 @@
       margin-bottom: 0.75rem;
     }
 
-    .checklist li::before {
-      content: '⬜';
-      /* Unicode box */
+    /* Checklist Icons */
+    .checklist li.done::before {
+      content: '✅';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 1.1em;
+    }
+
+    .checklist li.pending::before {
+      content: '🚧';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 1.1em;
+      opacity: 0.8;
+    }
+
+    .checklist li.todo::before {
+      content: 'Pk';
       position: absolute;
       left: 0;
       top: 2px;
@@ -222,7 +234,21 @@
       opacity: 0.4;
     }
 
-    /* TOC */
+    /* Pk is placeholder for checkbox, using unicode */
+    .checklist li.todo::before {
+      content: 'NB';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      font-size: 1.1em;
+      opacity: 0.4;
+    }
+
+    /* Unicode square */
+    .checklist li.todo::before {
+      content: '⬜';
+    }
+
     .toc {
       background-color: var(--section-bg);
       padding: 2rem;
@@ -296,9 +322,8 @@
 
   <div class="intro-box">
     <p style="margin:0;">
-      This document defines the <strong>Core Features</strong> provided by the backend starter kit. Its purpose is to
-      separate fundamental (Mandatory) features from additional ones, and to serve as a guide for implementing reusable
-      modules.
+      This document defines the <strong>Core Features</strong> provided by the backend starter kit. It outlines the
+      fundamental features available out-of-the-box and the roadmap for additional modules.
     </p>
   </div>
 
@@ -319,13 +344,10 @@
     <h2>1. Purpose & Scope</h2>
     <p>This document serves as the application functionality "blueprint".</p>
     <ul>
-      <li><strong>Standardization:</strong> Determines generic features that must always be present.</li>
-      <li><strong>Reusability:</strong> Guidance to ensure core modules can be reused in other projects.</li>
-      <li><strong>Prioritization:</strong> Separates development priorities (Must Have vs. Nice to Have).</li>
+      <li><strong>Standardization:</strong> Defines generic features that are always present.</li>
+      <li><strong>Reusability:</strong> Guidelines for creating modules that can be reused in other projects.</li>
+      <li><strong>Transparency:</strong> Clearly states what is currently implemented vs. what is planned.</li>
     </ul>
-    <p><strong>Scope:</strong> Focuses on module contracts, data structures (Entities), and primary responsibilities.
-      Assumes
-      implementation using Controller → Service → Repository architecture.</p>
   </section>
 
   <section id="tiering">
@@ -333,27 +355,26 @@
 
     <div style="margin-bottom: 1rem;">
       <span class="badge tier-1">Tier 1: Must Have</span>
-      <p style="margin-top: 0.5rem;">Core parts of the platform. The application is not considered "ready" without
-        these.</p>
+      <p style="margin-top: 0.5rem;">Core foundation. The boilerplate comes with these features ready to use.</p>
       <ul>
-        <li>Auth, User & Role, Generic CRUD, File Infra, Notification, Audit Log.</li>
+        <li>Auth, User Management, Generic CRUD, Notification System (Email).</li>
       </ul>
     </div>
 
     <div style="margin-bottom: 1rem;">
-      <span class="badge tier-2">Tier 2: Recommended</span>
-      <p style="margin-top: 0.5rem;">Often needed in modern applications; ideally available but can be disabled.
+      <span class="badge tier-2">Tier 2: Infrastructure</span>
+      <p style="margin-top: 0.5rem;">Essential infrastructure layers that are abstracted and ready for implementation.
       </p>
       <ul>
-        <li>Settings, Organization/Team, Activity Feed.</li>
+        <li>File Storage Interface, Job Queues, Structured Logging.</li>
       </ul>
     </div>
 
     <div>
-      <span class="badge tier-3">Tier 3: Optional</span>
-      <p style="margin-top: 0.5rem;">Ready-to-use patterns for specific/complex needs.</p>
+      <span class="badge tier-3">Tier 3: Planned / Optional</span>
+      <p style="margin-top: 0.5rem;">Patterns available for implementation when needed.</p>
       <ul>
-        <li>Workflow Status, Comment System, Tagging.</li>
+        <li>RBAC/Roles, Audit Log Entity, Settings, Activity Feed.</li>
       </ul>
     </div>
   </section>
@@ -363,183 +384,143 @@
 
     <div class="module-block">
       <h3>3.1. Auth Module</h3>
-      <p>Standard mechanism for authentication and credential management.</p>
-      <h4>Core Components</h4>
+      <p>Secure authentication mechanism with session management.</p>
+      <h4>Core Components (Implemented)</h4>
       <ul>
-        <li><strong>Entity:</strong> <code>UserCredential</code> (passwordHash, salt, lastLoginAt).</li>
-        <li><strong>Security:</strong> Access Token (JWT Short-lived) & Refresh Token (Long-lived).</li>
-        <li><strong>Flows:</strong> Register, Login, Logout, Forgot Password, Reset Password.</li>
-      </ul>
-      <h4>Minimum Quality</h4>
-      <ul>
-        <li>Hashing using <strong>Argon2</strong>.</li>
-        <li>Rate limiting on Login endpoints.</li>
+        <li><strong>Entities:</strong> <code>User</code> (contains password hash, lock status), <code>UserSession</code>
+          (refresh tokens).</li>
+        <li><strong>Security:</strong> Dual-token (Short-lived Access + Long-lived Refresh) with rotation.</li>
+        <li><strong>Features:</strong> Register, Login, Logout, Refresh Token, Email Verification, Password Reset,
+          Account Locking.</li>
+        <li><strong>Algorithm:</strong> <strong>Argon2</strong> hashing & timing-safe comparison.</li>
       </ul>
     </div>
 
     <div class="module-block">
-      <h3>3.2. User & Role Module</h3>
-      <p>Identity representation and access control.</p>
-      <h4>Core Components</h4>
+      <h3>3.2. User Management</h3>
+      <p>Identity representation.</p>
+      <h4>Core Components (Implemented)</h4>
       <ul>
-        <li><strong>Entity:</strong> <code>User</code> (id, email, name, status).</li>
-        <li><strong>Role:</strong> Simple RBAC (e.g., <code>admin</code>, <code>user</code>).</li>
-        <li><strong>Mapping:</strong> Many-to-Many relation <code>UserRole</code>.</li>
+        <li><strong>Entity:</strong> <code>User</code> (id, email, name, status, timestamps).</li>
+        <li><strong>Features:</strong> "Me" profile endpoint, Profile Update.</li>
+        <li><strong>Security:</strong> JWT-based Identity Middleware (<code>req.user</code>).</li>
       </ul>
     </div>
 
     <div class="module-block">
       <h3>3.3. Generic CRUD Pattern</h3>
-      <p>Standardization of data operations, pagination, and response formats.</p>
-      <h4>Endpoint Conventions</h4>
+      <p>Standardized patterns for data operations, pagination, and response formats.</p>
+      <h4>Implemented Standards</h4>
       <ul>
-        <li><code>GET /resource</code> (List + Pagination)</li>
-        <li><code>GET /resource/:id</code> (Detail)</li>
-        <li><code>POST /resource</code> (Create)</li>
-        <li><code>PUT /resource/:id</code> (Update)</li>
-        <li><code>DELETE /resource/:id</code> (Delete)</li>
-      </ul>
-      <h4>Standard Response Format</h4>
-      <pre><code>// Success Response
-{
-  "success": true,
-  "data": [ ... ],
-  "meta": { "page": 1, "total": 100 }
-}
-
-// Error Response
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Email is required"
-  }
-}</code></pre>
-    </div>
-
-    <div class="module-block">
-      <h3>3.4. File / Attachment Infrastructure</h3>
-      <p>Standard upload and file metadata storage.</p>
-      <h4>Core Components</h4>
-      <ul>
-        <li><strong>Entity:</strong> <code>File</code> (originalName, mimeType, size, url).</li>
-        <li><strong>Storage Abstraction:</strong> Interface supporting Local Driver (Dev) and S3/Object Storage
-          (Prod).</li>
+        <li><strong>Response:</strong> <code>{ success, data, meta, message }</code> standardized wrapper.</li>
+        <li><strong>Pagination:</strong> Standard query params (<code>page</code>, <code>limit</code>) and meta
+          response.</li>
+        <li><strong>Error Handling:</strong> Global exception handler with operational vs. programming error
+          distinction.</li>
       </ul>
     </div>
 
     <div class="module-block">
-      <h3>3.5. Notification Infrastructure</h3>
-      <p>Basic framework for sending notifications (Email first).</p>
-      <h4>Core Components</h4>
+      <h3>3.4. Notification Infrastructure</h3>
+      <p>Robust framework for sending asynchronous notifications.</p>
+      <h4>Core Components (Implemented)</h4>
       <ul>
-        <li><strong>Service:</strong> <code>sendEmail(to, templateId, variables)</code>.</li>
-        <li><strong>Templates:</strong> Reset Password, Email Verification, Welcome User.</li>
-      </ul>
-    </div>
-
-    <div class="module-block">
-      <h3>3.6. Audit Log Infrastructure</h3>
-      <p>Records security trails and system governance.</p>
-      <h4>Core Components</h4>
-      <ul>
-        <li><strong>Entity:</strong> <code>AuditLog</code> (actorId, action, targetType, targetId, metadata, ip).</li>
-        <li><strong>Trigger:</strong> Automatically records on Login (success/failure) and sensitive data mutations.
-        </li>
+        <li><strong>Queue:</strong> BullMQ-based email queue with retries and DLQ (Dead Letter Queue).</li>
+        <li><strong>Service:</strong> <code>emailSender</code> abstraction (SMTP/Console drivers).</li>
+        <li><strong>Workers:</strong> Dedicated background workers for processing email jobs.</li>
       </ul>
     </div>
   </section>
 
   <section id="tier2">
-    <h2>4. Tier 2 – Highly Recommended <span class="badge tier-2">Rec</span></h2>
+    <h2>4. Tier 2 – Infrastructure <span class="badge tier-2">Infra</span></h2>
 
     <div class="module-block">
-      <h3>4.1. Settings & Configuration Module</h3>
-      <p>Separating dynamic configuration from hardcoded code.</p>
+      <h3>4.1. File / Attachment Infrastructure</h3>
+      <p>Abstraction for file handling.</p>
+      <h4>Current State</h4>
       <ul>
-        <li><strong>SystemSetting:</strong> Global key-value store (e.g., Maintenance Mode toggle).</li>
-        <li><strong>UserPreference:</strong> Per-user settings (e.g., Theme, Notif Preference).</li>
+        <li><strong>Interface:</strong> <code>FileStorage</code> interface defined for modularity.</li>
+        <li><strong>Driver:</strong> <code>LocalFileStorage</code> implemented for development.</li>
+        <li><strong>Note:</strong> Database entity for Files is currently not enforced, allowing flexibility based on
+          business needs.</li>
       </ul>
     </div>
 
     <div class="module-block">
-      <h3>4.2. Organization / Team Module</h3>
-      <p>Supports multi-tenant models (SaaS/B2B).</p>
+      <h3>4.2. Observability Infrastructure</h3>
+      <p>System visibility and debugging tools.</p>
+      <h4>Implemented</h4>
       <ul>
-        <li><strong>Organization:</strong> Company group entity.</li>
-        <li><strong>Membership:</strong> Relation of User to Organization with specific roles (Owner, Member).</li>
-      </ul>
-    </div>
-
-    <div class="module-block">
-      <h3>4.3. Activity / Timeline Module</h3>
-      <p>Human-friendly activity feed (distinct from technical audit logs).</p>
-      <ul>
-        <li><strong>Feed:</strong> "User A commented on Order #123", "Status changed to Done".</li>
+        <li><strong>Logger:</strong> Pino (JSON structured logs) with redaction for sensitive data.</li>
+        <li><strong>Correlation:</strong> <code>x-request-id</code> tracking across logs and HTTP requests.</li>
+        <li><strong>Health:</strong> <code>/health</code> endpoint monitoring system and job queue status.</li>
       </ul>
     </div>
   </section>
 
   <section id="tier3">
-    <h2>5. Tier 3 – Optional / Advanced <span class="badge tier-3">Opt</span></h2>
+    <h2>5. Tier 3 – Planned / Optional <span class="badge tier-3">Opt</span></h2>
 
     <div class="module-block">
-      <h3>5.1. Generic Status / Workflow</h3>
-      <p>Pattern for entities with complex state machines (Draft → Review → Approved → Published).</p>
+      <h3>5.1. RBAC (Role-Based Access Control)</h3>
+      <p>Permissions and Role management.</p>
+      <ul>
+        <li><strong>Status:</strong> Policy-based structure exists in code (<code>acl.service.ts</code>), but DB Schema
+          for Roles/Permissions is not yet enforced to keep the starter lightweight.</li>
+      </ul>
     </div>
 
     <div class="module-block">
-      <h3>5.2. Comment / Discussion</h3>
-      <p>Comment system attachable to any entity (Polymorphic association).</p>
-    </div>
-
-    <div class="module-block">
-      <h3>5.3. Tag / Label System</h3>
-      <p>Flexible grouping system using tagging.</p>
+      <h3>5.2. Audit Log</h3>
+      <p>Forensic trail of actions.</p>
+      <ul>
+        <li><strong>Status:</strong> Covered by Structured Logging (Tier 2). A dedicated database entity
+          (<code>AuditLog</code>) is optional and can be added if strict compliance is required.</li>
+      </ul>
     </div>
   </section>
 
   <section id="convention">
     <h2>6. General Conventions</h2>
-    <p>Ground rules when creating new feature modules:</p>
+    <p>Rules for extending the boilerplate:</p>
     <h4>6.1. Naming</h4>
-    <p>Module names are lowercase (<code>auth</code>, <code>users</code>). Endpoint URLs are always plural
+    <p>Module names are lowercase (<code>auth</code>, <code>users</code>). Endpoint URLs are plural
       (<code>/api/v1/users</code>).</p>
 
-    <h4>6.2. Layering Pattern</h4>
-    <p>Data flow must be unidirectional: Routes → Controller → Service → Repository.</p>
+    <h4>6.2. Layering</h4>
+    <p>Unidirectional flow: Routes → Controller → Service → Repository.</p>
 
     <h4>6.3. API Contracts</h4>
-    <p>Use standardized Error Codes (e.g., <code>AUTH_INVALID_CREDENTIALS</code>, <code>PERMISSION_DENIED</code>) so
-      the frontend can easily process errors.</p>
+    <p>Use standard HTTP codes and the defined JSON response envelope.</p>
   </section>
 
   <section id="checklist">
     <h2>7. Implementation Checklist</h2>
-    <p>Use this list to validate starter kit feature completeness before release.</p>
+    <p>Current status of the starter kit features.</p>
 
-    <h3>Tier 1 – Mandatory</h3>
+    <h3>Core Features</h3>
     <ul class="checklist">
-      <li><strong>Auth:</strong> Login, Logout, Reset Password, Secure Token (JWT).</li>
-      <li><strong>User:</strong> Entity User & Role, Admin CRUD, Auth Middleware.</li>
-      <li><strong>CRUD:</strong> Base Service Pattern, Pagination, Standard JSON Response.</li>
-      <li><strong>File:</strong> Upload endpoint, Validation (size/mime), Storage logic.</li>
-      <li><strong>Notif:</strong> Email service wrapper, Basic templates.</li>
-      <li><strong>Audit:</strong> Entity Log, Hooks on critical events.</li>
+      <li class="done"><strong>Auth:</strong> Register, Login, Refresh Token, Secure Headers.</li>
+      <li class="done"><strong>Security:</strong> Rate Limiting, Helmet, HPP, CORS.</li>
+      <li class="done"><strong>User:</strong> Basic Entity & Profile Management.</li>
+      <li class="done"><strong>CRUD:</strong> Base Patterns & Response Wrappers.</li>
+      <li class="done"><strong>Jobs:</strong> Queue System (BullMQ) & Workers.</li>
+      <li class="done"><strong>Notif:</strong> Email Sending Infrastructure.</li>
     </ul>
 
-    <h3>Tier 2 – Recommended</h3>
+    <h3>Infrastructure</h3>
     <ul class="checklist">
-      <li><strong>Settings:</strong> System config CRUD.</li>
-      <li><strong>Org/Team:</strong> Team creation & membership logic.</li>
-      <li><strong>Activity:</strong> Public activity feed implementation.</li>
+      <li class="done"><strong>Logging:</strong> Structured JSON Logging.</li>
+      <li class="done"><strong>Config:</strong> Env Validation (Zod).</li>
+      <li class="pending"><strong>File:</strong> Storage Abstraction (Implemented), Upload Endpoint (Pending).</li>
+      <li class="pending"><strong>Audit:</strong> Via Logs (Implemented), Via DB Entity (Optional/Pending).</li>
     </ul>
 
-    <h3>Tier 3 – Optional</h3>
+    <h3>Advanced</h3>
     <ul class="checklist">
-      <li><strong>Workflow:</strong> State transition logic.</li>
-      <li><strong>Comments:</strong> Polymorphic comment system.</li>
-      <li><strong>Tags:</strong> Tagging logic.</li>
+      <li class="todo"><strong>RBAC:</strong> Database-level Role Management.</li>
+      <li class="todo"><strong>Settings:</strong> Dynamic System Config.</li>
     </ul>
   </section>
 
