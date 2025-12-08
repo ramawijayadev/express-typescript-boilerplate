@@ -153,7 +153,21 @@ We employ a comprehensive testing strategy:
     ```
 -   **Performance**: Load testing with k6 (see `src/tests/perf/`).
 
-## Documentation
+## 📚 Documentation
 
--   [Setup Guide](docs/setup.md): Detailed installation instructions.
--   **API Documentation**: Available at `/docs` (Swagger UI) when the server is running.
+We maintain a strict set of living documentation to ensure code quality, consistency, and security.
+
+### 🚀 Start Here
+-   **[📖 Overview & Master Guide](docs/overview.html)** - The entry point to all technical standards.
+-   **[🛠️ Setup Guide](docs/setup.md)** - Detailed installation instructions (Docker & Local).
+-   **API Documentation** - Available at `/docs` (Swagger UI) when the server is running.
+
+### 🛡️ Quality & Security
+-   **[🛡️ Audit Reports](docs/audit/security-audit-report.md)** - Comprehensive Security, Architecture, and Production Readiness assessments.
+
+### 📘 Core Handbooks (The Constitution)
+-   [🏛️ Architecture Handbook](docs/constitution/architecture.html) - Mental model, layers, and separation of concerns.
+-   [⚖️ Convention Handbook](docs/constitution/convention.html) - Naming, folder structure, and file patterns.
+-   [🧼 Clean Code Handbook](docs/constitution/clean-code.html) - TypeScript standards and best practices.
+-   [📦 Dependency Handbook](docs/constitution/dependency.html) - Approved libraries and tools.
+-   [🧩 Feature Handbook](docs/constitution/feature.html) - Guide to core modules and features.
