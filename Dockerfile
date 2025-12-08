@@ -34,14 +34,13 @@ FROM base AS builder
 
 WORKDIR /app
 
-# Copy only what's needed (thanks to .dockerignore, ini tetap bersih)
+# Copy only what's needed
 COPY . .
 
 # Reuse node_modules from dependencies stage
 COPY --from=dependencies /app/node_modules ./node_modules
 
 # Generate Prisma client
-# Note: Generates into node_modules/@prisma/client by default
 ARG DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 RUN DATABASE_URL=$DATABASE_URL npx prisma generate
 
