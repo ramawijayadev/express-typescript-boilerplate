@@ -17,7 +17,6 @@ export function createApp(configure?: (app: express.Express) => void) {
     app.get(
       "/",
       (_req, res, next) => {
-        // Redirect to Swagger UI if it defaults to /
         next();
       },
       swaggerUi.setup(swaggerSpec, {
