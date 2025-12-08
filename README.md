@@ -1,186 +1,159 @@
 # Express TypeScript Boilerplate
 
-Boilerplate untuk membangun REST API dengan struktur yang rapi dan siap dikembangkan ke skala lebih besar.
+A production-ready, highly opinionated boilerplate for building scalable REST APIs with Node.js, TypeScript, and Docker.
 
-Tech utama:
+Designed with **Clean Architecture** principles, this starter kit strictly enforces separation of concerns, strict type safety, and developer experience (DX). It comes pre-configured with a robust stack including PostgreSQL, Redis, BullMQ, and a comprehensive testing suite.
 
-- Node.js + TypeScript
-- Express
-- PostgreSQL + Prisma
-- Redis (cache & queue)
-- Pino (logging)
-- Vitest + Supertest (testing)
-- pnpm (package manager)
+## Key Features
 
----
+- **Strict Type Safety**: End-to-end type safety with TypeScript and Zod.
+- **Clean Architecture**: Modular structure separating core logic from framework details.
+- **Authentication**: Dual-token JWT system (Access & Refresh tokens) with rotation and blocking strategies.
+- **Background Jobs**: Asynchronous processing using BullMQ and Redis.
+- **Validation**: Runtime request validation using Zod.
+- **Documentation**: Auto-generated OpenAPI (Swagger) documentation.
+- **Testing**: Complete testing pyramid with Vitest (Unit), Supertest (Integration), E2E, and k6 (Performance).
+- **Security**: Hardened configs for Helmet, Rate Limiting, and safe secrets management.
+- **Developer Experience**: "Clone & Run" support via Docker, hot-reloading, and unified scripts.
 
-## 1. Struktur Project (Singkat)
+## Tech Stack
 
-```txt
-express-typescript-boilerplate/
-  package.json
-  tsconfig.json
-  tsconfig.build.json
-  .eslintrc.cjs
-  .prettierrc
-  .gitignore
-  .env.example
+- **Runtime**: Node.js v22+
+- **Language**: TypeScript v5+
+- **Framework**: Express v5
+- **Database**: PostgreSQL v15+, Prisma ORM
+- **Cache/Queue**: Redis v7, BullMQ
+- **Logging**: Pino
+- **Testing**: Vitest, Supertest, k6
+- **Package Manager**: pnpm
 
-  /logs/              # log file (ignored)
-  /scripts/           # helper scripts
-  /docs/              # dokumentasi (arsitektur, conventions, dll)
+## Prerequisites
 
-  /src
-    /app              # bootstrap app (express, env, server)
-    /config           # config app/db/logging/security/mail/queue
-    /core             # http, logging, security, db, queue, mail, storage, observability
-    /shared           # types, utils, errors, http response
-    /modules
-      /platform       # fitur core (auth, users, files, dll)
-      /business       # fitur domain / bisnis
-    /jobs             # background jobs & handlers
-    /cli              # command line tools (migrate, seed, dll)
-    /tests
-      /e2e            # end-to-end tests
-      /perf           # k6 performance tests
+- **Docker & Docker Compose** (Recommended for easiest setup)
+- **Node.js** v22+ (For local development)
+- **pnpm** v9+
+
+## Getting Started
+
+### 🚀 Option 1: Docker (Recommended)
+
+The easiest way to start. No local Node.js or Database required.
+
+1.  **Clone & Configure**:
+    ```bash
+    git clone <repo-url>
+    cd express-typescript-boilerplate
+    cp .env.example .env
+    ```
+
+2.  **Generate Secrets**:
+    ```bash
+    # Uses the container to generate secure JWT secrets
+    pnpm docker:setup
+    ```
+
+3.  **Start System**:
+    ```bash
+    docker-compose up
+    ```
+    The app will start at `http://localhost:3333`. The database will be automatically migrated and seeded.
+
+### 🛠️ Option 2: Manual Setup
+
+For developers who prefer running tools natively.
+
+1.  **Install Dependencies**:
+    ```bash
+    pnpm install
+    ```
+
+2.  **Configure Environment**:
+    ```bash
+    cp .env.example .env
+    pnpm cli jwt:generate
+    ```
+
+3.  **Setup Infrastructure**:
+    Ensure PostgreSQL and Redis are running (or use Docker for infra only):
+    ```bash
+    docker-compose up -d postgres redis mailpit
+    ```
+
+4.  **Initialize Database**:
+    ```bash
+    pnpm db:migrate
+    pnpm db:seed
+    ```
+
+5.  **Run Development Server**:
+    ```bash
+    pnpm dev
+    ```
+
+## Environment Variables
+
+Key variables found in `.env`:
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `NODE_ENV` | Environment mode | `production` |
+| `APP_PORT` | Application port | `3000` |
+| `DATABASE_URL` | Prisma DB Connection URL | `postgresql://...` |
+| `REDIS_HOST` | Redis Hostname | `redis` (or `localhost`) |
+| `JWT_SECRET` | Secret for signing Access Tokens | *Generated* |
+| `JWT_REFRESH_SECRET` | Secret for verifying Refresh Tokens | *Generated* |
+| `LOG_LEVEL` | Logging verbosity | `info` |
+
+See `.env.example` for the full list.
+
+## Project Structure
+
+```text
+src/
+├── app/            # Application bootstrap & server setup
+├── cli/            # Custom CLI commands (jwt:generate, etc.)
+├── config/         # Centralized configuration (Auth, DB, Logging)
+├── core/           # Framework-agnostic core logic
+├── jobs/           # Background job definitions and workers
+├── modules/        # Feature modules (Clean Architecture)
+│   ├── auth/       # Authentication logic
+│   ├── users/      # User management
+│   └── ...
+├── shared/         # Shared utilities, types, and constants
+└── tests/          # Test suites
+    ├── e2e/        # End-to-End tests
+    ├── perf/       # k6 Performance tests
+    └── setup.ts    # Global test setup
 ```
 
-Struktur module (contoh):
+## Scripts
 
-```txt
-src/modules/platform/users/
-  users.routes.ts
-  users.controller.ts
-  users.service.ts
-  users.repository.ts
-  users.schemas.ts
-  users.types.ts
-  users.mappers.ts
-  __tests__/
-    users.service.unit.spec.ts
-    users.repository.unit.spec.ts
-    users.routes.integration.spec.ts
-```
+| Script | Description |
+| :--- | :--- |
+| `pnpm dev` | Start dev server with hot-reloading |
+| `pnpm build` | Compile TypeScript to `dist/` |
+| `pnpm start` | Run the compiled production app |
+| `pnpm test` | Run all Unit and Integration tests |
+| `pnpm test:e2e` | Run End-to-End tests |
+| `pnpm db:migrate` | Run database migrations |
+| `pnpm db:seed` | Seed the database with sample data |
+| `pnpm docker:setup`| Helper to generate secrets via Docker |
 
----
+## Testing
 
-## 2. Prasyarat
+We employ a comprehensive testing strategy:
 
-- Node.js (LTS)
-- pnpm
-- PostgreSQL
-- Redis
-- Docker & Docker Compose (disarankan untuk lokal)
-- k6 (opsional, untuk performance testing)
+-   **Unit/Integration**: Powered by Vitest.
+    ```bash
+    pnpm test
+    ```
+-   **End-to-End (E2E)**: Tests full user journeys.
+    ```bash
+    pnpm test:e2e
+    ```
+-   **Performance**: Load testing with k6 (see `src/tests/perf/`).
 
----
+## Documentation
 
-## 3. Instalasi & Setup
-
-### 3.1. Install dependency
-
-```bash
-pnpm install
-```
-
-### 3.2. Setup environment
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` sesuai kebutuhan:
-
-- `NODE_ENV`
-- `PORT`
-- `DATABASE_URL`
-- `REDIS_URL`
-- `JWT_SECRET`
-- dll.
-
-### 3.3. Prisma & database
-
-```bash
-pnpm prisma migrate dev
-pnpm prisma generate
-```
-
----
-
-## 4. Script (Contoh)
-
-Tambahkan script berikut (atau serupa) di `package.json`:
-
-```jsonc
-{
-  "scripts": {
-    "dev": "tsx src/app/server.ts",
-    "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "start": "node dist/app/server.js",
-
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
-    "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
-
-    "test": "vitest",
-    "test:e2e": "vitest run src/tests/e2e --runInBand",
-  },
-}
-```
-
----
-
-## 5. Testing
-
-### Unit & Integration
-
-- Lokasi: `src/modules/**/__tests__/*.spec.ts`
-- Jalan:
-
-```bash
-pnpm test
-```
-
-### End-to-End
-
-- Lokasi: `src/tests/e2e/*.e2e.spec.ts`
-- Jalan (sesuai script):
-
-```bash
-pnpm test:e2e
-```
-
-### Performance (k6, opsional)
-
-- Lokasi: `src/tests/perf/*.js`
-
-#### Option 1: Local (Mac/Linux)
-
-Install k6: `brew install k6`
-Run:
-
-```bash
-k6 run src/tests/perf/k6-stress.js
-```
-
-#### Option 2: Docker
-
-Run via Docker Compose (no local install needed):
-
-```bash
-docker-compose run --rm k6 run /scripts/k6-stress.js
-```
-
----
-
-## 6. Dokumentasi Tambahan
-
-Dokumen pendukung (disarankan taruh di `/docs`):
-
-- `overview.html` – overview dokumentasi
-- `architecture.html` – penjelasan arsitektur & layering
-- `convention.html` – naming, struktur, pattern, testing
-- `depedency.html` – daftar dependency & peran masing-masing
-- `feature.html` – dokumentasi feature dasar
-
-Boilerplate ini dimaksudkan sebagai baseline. Module di `modules/platform` bisa dipakai ulang di banyak project, sedangkan `modules/business` berisi logic spesifik domain/aplikasi.
+-   [Setup Guide](docs/setup.md): Detailed installation instructions.
+-   **API Documentation**: Available at `/docs` (Swagger UI) when the server is running.
