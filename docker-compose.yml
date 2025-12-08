@@ -82,13 +82,15 @@ services:
 
   tests:
     image: node:22-alpine
-    container_name: express-typescript-boilerplate-app-test
+    container_name: tests
     working_dir: /app
     volumes:
       - .:/app
+      - /app/node_modules
     env_file:
       - .env.example
     environment:
+      IS_DOCKER: "true"
       NODE_ENV: test
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/express_boilerplate_test?schema=public
       REDIS_HOST: redis
@@ -103,7 +105,7 @@ services:
         condition: service_started
       mailpit:
         condition: service_started
-    command: sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && pnpm test"
+    command: sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && pnpm prisma generate && pnpm prisma db push && pnpm test"
     networks:
       - app-network
 
