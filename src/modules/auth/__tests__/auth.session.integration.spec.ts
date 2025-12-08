@@ -1,6 +1,3 @@
-/**
- * Integration tests for User Session management.
- */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -65,11 +62,9 @@ describe("Auth Session Management (Integrations)", () => {
       expect(newRefreshToken).toBeDefined();
       expect(newRefreshToken).not.toBe(oldRefreshToken);
 
-      // Verify old token is no longer valid (session hash updated)
       const sessionOld = await authRepository.findSessionByHash(hashToken(oldRefreshToken));
       expect(sessionOld).toBeNull();
 
-      // Verify new token maps to session
       const sessionNew = await authRepository.findSessionByHash(hashToken(newRefreshToken));
       expect(sessionNew).toBeDefined();
     });
@@ -107,7 +102,6 @@ describe("Auth Session Management (Integrations)", () => {
 
       expect(logoutRes.status).toBe(StatusCodes.OK);
 
-      // Verify session is revoked
       const session = await db().userSession.findFirst({
         where: { refreshTokenHash: hashToken(refreshToken) },
       });
@@ -122,10 +116,8 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const { accessToken, refreshToken } = loginRes.body.data.tokens;
 
-      // Logout
       await request(app).post("/api/v1/auth/logout").send({ refreshToken });
 
-      // Access token should still work for profile (stateless)
       const profileRes = await request(app)
         .get("/api/v1/auth/profile")
         .set("Authorization", `Bearer ${accessToken}`);
@@ -141,10 +133,8 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const { refreshToken } = loginRes.body.data.tokens;
 
-      // Logout
       await request(app).post("/api/v1/auth/logout").send({ refreshToken });
 
-      // Refresh attempt
       const refreshRes = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken });
@@ -157,33 +147,28 @@ describe("Auth Session Management (Integrations)", () => {
     it("should revoke all sessions for the user", async () => {
       const user = await createUser();
 
-      // Create session 1
       const loginRes1 = await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
         password: "Password123",
       });
       const token1 = loginRes1.body.data.tokens.accessToken;
 
-      // Create session 2 (simulate another device)
       await request(app).post("/api/v1/auth/login").send({
         email: "session_test@example.com",
         password: "Password123",
       });
 
-      // Verify both sessions active
       const countBefore = await db().userSession.count({
         where: { userId: user.id, revokedAt: null },
       });
       expect(countBefore).toBe(2);
 
-      // Revoke all
       const revokeRes = await request(app)
         .post("/api/v1/auth/revoke-all")
         .set("Authorization", `Bearer ${token1}`);
 
       expect(revokeRes.status).toBe(StatusCodes.OK);
 
-      // Verify all revoked
       const countAfter = await db().userSession.count({
         where: { userId: user.id, revokedAt: null },
       });
@@ -229,13 +214,11 @@ describe("Auth Session Management (Integrations)", () => {
       });
       const { refreshToken } = loginRes.body.data.tokens;
 
-      // Deactivate User
       await db().user.update({
         where: { id: user.id },
         data: { isActive: false },
       });
 
-      // Refresh Attempt
       const refreshRes = await request(app)
         .post("/api/v1/auth/refresh-token")
         .send({ refreshToken });

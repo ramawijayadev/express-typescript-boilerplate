@@ -1,4 +1,3 @@
-/** Validates system stability under sustained load. */
 import http from "k6/http";
 import { check, sleep } from "k6";
 

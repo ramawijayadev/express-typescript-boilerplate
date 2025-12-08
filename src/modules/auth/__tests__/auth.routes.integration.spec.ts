@@ -1,6 +1,3 @@
-/**
- * Integration tests for Auth Routes.
- */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";

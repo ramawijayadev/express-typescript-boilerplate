@@ -1,6 +1,3 @@
-/**
- * Unit tests for JobsService.
- */
 import { StatusCodes } from "http-status-codes";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

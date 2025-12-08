@@ -1,6 +1,3 @@
-/**
- * Integration tests for Jobs Routes.
- */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";

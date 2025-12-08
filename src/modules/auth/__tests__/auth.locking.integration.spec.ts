@@ -1,6 +1,3 @@
-/**
- * Integration tests for Account Locking mechanism.
- */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -68,7 +65,7 @@ describe("Auth Account Locking (Integration)", () => {
       where: { id: user.id },
       data: {
         failedLoginAttempts: authConfig.locking.maxAttempts,
-        lockedUntil: new Date(Date.now() + 1000 * 60 * 30), // 30 mins future
+        lockedUntil: new Date(Date.now() + 1000 * 60 * 30),
       },
     });
 
@@ -88,7 +85,7 @@ describe("Auth Account Locking (Integration)", () => {
       where: { id: user.id },
       data: {
         failedLoginAttempts: authConfig.locking.maxAttempts,
-        lockedUntil: new Date(Date.now() - 1000), // Past
+        lockedUntil: new Date(Date.now() - 1000),
       },
     });
 

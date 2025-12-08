@@ -1,4 +1,3 @@
-/** Validates system breaking point and recovery. */
 import http from "k6/http";
 import { check, sleep } from "k6";
 

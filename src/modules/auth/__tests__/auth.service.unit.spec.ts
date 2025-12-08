@@ -1,6 +1,3 @@
-/**
- * Unit tests for AuthService.
- */
 import { type User } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";

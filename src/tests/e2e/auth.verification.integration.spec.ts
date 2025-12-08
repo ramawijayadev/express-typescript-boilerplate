@@ -12,7 +12,6 @@ import { jobQueue } from "@/core/queue";
 import type { User } from "@prisma/client";
 import type { Express } from "express";
 
-// Mock job queue to avoid Redis dependency
 vi.mock("@/core/queue", () => ({
   jobQueue: {
     enqueueEmailVerification: vi.fn(),
@@ -166,7 +165,6 @@ describe("Auth Verification & Password Reset Integration", () => {
       expect(res.body.data.message).toBe("Password reset successfully");
 
       const updatedUser = await db().user.findUnique({ where: { id: testUser.id } });
-      // We can't check password directly but can check passwordChangedAt
       expect((updatedUser as User)?.passwordChangedAt).not.toBeNull();
 
       const usedToken = await db().passwordResetToken.findFirst({ where: { tokenHash } });

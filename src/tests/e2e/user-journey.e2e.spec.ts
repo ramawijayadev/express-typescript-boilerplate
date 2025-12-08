@@ -22,16 +22,14 @@ interface MailpitListResponse {
   messages: MailpitMessage[];
 }
 
-/** Clears Mailpit inbox. */
 async function deleteAllEmails() {
   try {
     await fetch(`${env.TEST_MAILPIT_URL}/api/v1/messages`, { method: "DELETE" });
   } catch {
-    //
+    // Ignore errors
   }
 }
 
-/** Retrieves latest email for recipient. */
 async function fetchLatestEmail(recipient: string) {
   try {
     const response = await fetch(`${env.TEST_MAILPIT_URL}/api/v1/messages`);
@@ -54,7 +52,6 @@ async function fetchLatestEmail(recipient: string) {
   }
 }
 
-/** Polls until email arrives for recipient. */
 async function waitForEmail(recipient: string, retries = 10): Promise<string | null> {
   for (let i = 0; i < retries; i++) {
     const email = await fetchLatestEmail(recipient);

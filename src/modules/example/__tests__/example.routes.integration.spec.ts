@@ -1,6 +1,3 @@
-/**
- * Integration tests for Example Routes.
- */
 import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -121,7 +118,6 @@ describe("Example routes (integration)", () => {
       const res = await request(app)
         .post(baseUrl)
         .send({
-          // missing `name`
           description: "no name field",
         })
         .expect(StatusCodes.UNPROCESSABLE_ENTITY);
@@ -194,7 +190,6 @@ describe("Example routes (integration)", () => {
         .put(`${baseUrl}/${id}`)
         .send({ name: "Resurrected?", description: "should not happen" });
 
-      // CURRENT BUG: Likely 200 OK
       expect(res.status).toBe(StatusCodes.NOT_FOUND);
       expect(res.body).toMatchObject({
         success: false,

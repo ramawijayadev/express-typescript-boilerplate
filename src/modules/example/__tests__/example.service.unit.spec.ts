@@ -1,6 +1,3 @@
-/**
- * Unit tests for ExampleService.
- */
 import { StatusCodes } from "http-status-codes";
 import { describe, expect, it, vi } from "vitest";
 
