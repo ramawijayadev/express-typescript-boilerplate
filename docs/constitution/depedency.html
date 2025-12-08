@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -14,7 +14,7 @@
       --text-main: #111827;
       --text-muted: #4b5563;
       --accent-color: #2563eb;
-      /* Konsisten Blue Tech */
+      /* Consistent Blue Tech */
       --border-color: #e5e7eb;
       --code-bg: #f3f4f6;
       --code-text: #db2777;
@@ -285,13 +285,13 @@
 
   <div class="intro-box">
     <p style="margin:0;">
-      <strong>Tujuan Dokumen:</strong> Mendefinisikan stack teknologi standar (Node.js, Express, PostgreSQL, Prisma,
-      Redis) untuk memastikan konsistensi, performa, dan kemudahan maintenance di seluruh project.
+      <strong>Document Purpose:</strong> Defines the standard technology stack (Node.js, Express, PostgreSQL, Prisma,
+      Redis) to ensure consistency, performance, and ease of maintenance across the entire project.
     </p>
   </div>
 
   <nav class="toc">
-    <h3>Daftar Isi</h3>
+    <h3>Table of Contents</h3>
     <ul>
       <li><a href="#legend">0. Legend</a></li>
       <li><a href="#baseline">1. Tech Baseline</a></li>
@@ -307,7 +307,7 @@
       <li><a href="#test">11. Testing</a></li>
       <li><a href="#ts">12. TypeScript Tooling</a></li>
       <li><a href="#lint">13. Linting & Formatting</a></li>
-      <li><a href="#install">14. Instalasi Awal</a></li>
+      <li><a href="#install">14. Initial Installation</a></li>
       <li><a href="#external">15. External Tools</a></li>
     </ul>
   </nav>
@@ -315,25 +315,25 @@
   <section id="legend">
     <h2>0. Legend</h2>
     <ul>
-      <li><span class="badge tag-core">CORE</span> <strong>Wajib.</strong> Aplikasi tidak akan berjalan atau melanggar
-        standar arsitektur tanpa ini.</li>
-      <li><span class="badge tag-rec">RECOMMENDED</span> <strong>Sangat Disarankan.</strong> Standar "Production Ready".
-        Boleh diganti jika ada alasan sangat kuat.</li>
-      <li><span class="badge tag-opt">OPTIONAL</span> <strong>Opsional.</strong> Gunakan hanya jika fitur tersebut
-        dibutuhkan.</li>
+      <li><span class="badge tag-core">CORE</span> <strong>Mandatory.</strong> Application will not run or will violate
+        architecture standards without this.</li>
+      <li><span class="badge tag-rec">RECOMMENDED</span> <strong>Highly Suggested.</strong> "Production Ready" standard.
+        Can be replaced only if there is a very strong reason.</li>
+      <li><span class="badge tag-opt">OPTIONAL</span> <strong>Optional.</strong> Use only if the specific feature is
+        required.</li>
     </ul>
   </section>
 
   <section id="baseline">
-    <h2>1. Tech Baseline & Prinsip</h2>
-    <p>Kami memilih teknologi yang <strong>stable, typed, dan mainstream</strong> untuk memudahkan onboarding.</p>
+    <h2>1. Tech Baseline & Principles</h2>
+    <p>We choose technologies that are <strong>stable, typed, and mainstream</strong> to facilitate onboarding.</p>
     <ul>
-      <li>Package Manager: <strong>pnpm</strong> (Wajib, untuk kecepatan dan efisiensi disk).</li>
+      <li>Package Manager: <strong>pnpm</strong> (Mandatory, for speed and disk efficiency).</li>
       <li>Runtime: <strong>Node.js</strong> (LTS Version).</li>
-      <li>Framework: <strong>Express</strong> (Standard industry).</li>
+      <li>Framework: <strong>Express</strong> (Industry standard).</li>
       <li>Language: <strong>TypeScript</strong> (Strict mode).</li>
-      <li>Database: <strong>PostgreSQL</strong> dengan <strong>Prisma ORM</strong>.</li>
-      <li>Testing: <strong>Vitest</strong> (Pengganti Jest yang lebih cepat).</li>
+      <li>Database: <strong>PostgreSQL</strong> with <strong>Prisma ORM</strong>.</li>
+      <li>Testing: <strong>Vitest</strong> (Faster replacement for Jest).</li>
     </ul>
   </section>
 
@@ -344,49 +344,49 @@
       <div class="dep-header">
         <span class="dep-name">express</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Web framework minimalis untuk routing dan middleware.</p>
+      <p class="dep-desc">Minimalist web framework for routing and middleware.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">zod</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Schema validation. Wajib digunakan untuk validasi env var dan request body/params.</p>
+      <p class="dep-desc">Schema validation. Mandatory for validating env vars and request body/params.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">dotenv</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Load environment variables dari file <code>.env</code>.</p>
+      <p class="dep-desc">Loads environment variables from a <code>.env</code> file.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">axios</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">HTTP Client berbasis Promise untuk request ke API eksternal.</p>
+      <p class="dep-desc">Promise-based HTTP Client for external API requests.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">uuid</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Generator ID unik (UUID v4) untuk keperluan non-database (misal: Request ID).</p>
+      <p class="dep-desc">Unique ID generator (UUID v4) for non-database purposes (e.g., Request ID).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">http-status-codes</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Konstanta standar untuk HTTP status codes (e.g. StatusCodes.OK).</p>
+      <p class="dep-desc">Standard constants for HTTP status codes (e.g., StatusCodes.OK).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">cookie-parser</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Middleware untuk mem-parsing cookie header dan mengisi req.cookies.</p>
+      <p class="dep-desc">Middleware to parse cookie headers and populate req.cookies.</p>
     </div>
   </section>
 
@@ -397,28 +397,28 @@
       <div class="dep-header">
         <span class="dep-name">helmet</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Mengamankan aplikasi dengan mengatur berbagai HTTP header (HSTS, XSS Filter, dll).</p>
+      <p class="dep-desc">Secures the app by setting various HTTP headers (HSTS, XSS Filter, etc.).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">cors</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Middleware untuk mengaktifkan Cross-Origin Resource Sharing.</p>
+      <p class="dep-desc">Middleware to enable Cross-Origin Resource Sharing.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">express-rate-limit</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Mencegah serangan brute-force/DDoS sederhana dengan membatasi request per IP.</p>
+      <p class="dep-desc">Prevents brute-force/simple DDoS attacks by limiting requests per IP.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">hpp</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Proteksi terhadap serangan HTTP Parameter Pollution.</p>
+      <p class="dep-desc">Protection against HTTP Parameter Pollution attacks.</p>
     </div>
   </section>
 
@@ -429,14 +429,14 @@
       <div class="dep-header">
         <span class="dep-name">jsonwebtoken</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Standar industri untuk stateless authentication (Access Token & Refresh Token).</p>
+      <p class="dep-desc">Industry standard for stateless authentication (Access Token & Refresh Token).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">argon2</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Algoritma hashing password pemenang kompetisi, lebih aman dan resisten GPU dibanding bcrypt.
+      <p class="dep-desc">Competition-winning password hashing algorithm, more secure and GPU-resistant than bcrypt.
       </p>
     </div>
   </section>
@@ -448,28 +448,28 @@
       <div class="dep-header">
         <span class="dep-name">@prisma/client</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Auto-generated & type-safe query builder untuk Node.js.</p>
+      <p class="dep-desc">Auto-generated & type-safe query builder for Node.js.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">prisma</span> <span class="badge tag-core">CORE</span> (Dev)
       </div>
-      <p class="dep-desc">CLI tool untuk deklarasi schema, migration management, dan generate client.</p>
+      <p class="dep-desc">CLI tool for schema declaration, migration management, and client generation.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">pg</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">PostgreSQL client for Node.js (driver native).</p>
+      <p class="dep-desc">PostgreSQL client for Node.js (native driver).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">@prisma/adapter-pg</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Driver adapter untuk menggunakan `pg` driver dengan Prisma (serverless ready).</p>
+      <p class="dep-desc">Driver adapter to use the `pg` driver with Prisma (serverless ready).</p>
     </div>
   </section>
 
@@ -480,15 +480,15 @@
       <div class="dep-header">
         <span class="dep-name">ioredis</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Client Redis yang robust dan support cluster, digunakan untuk caching dan session.</p>
+      <p class="dep-desc">Robust Redis client supporting clusters, used for caching and sessions.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">bullmq</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Message Queue berbasis Redis. Wajib digunakan untuk proses berat/async (e.g. kirim email,
-        generate PDF).</p>
+      <p class="dep-desc">Redis-based Message Queue. Mandatory for heavy/async processes (e.g. sending emails,
+        generating PDFs).</p>
     </div>
   </section>
 
@@ -499,21 +499,21 @@
       <div class="dep-header">
         <span class="dep-name">pino</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Logger low-overhead dengan output JSON (Wajib untuk production tracing).</p>
+      <p class="dep-desc">Low-overhead logger with JSON output (Mandatory for production tracing).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">pino-roll</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Log rotation utility untuk pino, memastikan log file tidak membengkak tanpa kendali.</p>
+      <p class="dep-desc">Log rotation utility for pino, ensuring log files don't grow uncontrollably.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">pino-pretty</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
       </div>
-      <p class="dep-desc">Memformat log JSON menjadi teks berwarna yang mudah dibaca saat development.</p>
+      <p class="dep-desc">Formats JSON logs into readable colored text during development.</p>
     </div>
   </section>
 
@@ -523,7 +523,7 @@
       <div class="dep-header">
         <span class="dep-name">nodemailer</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Module standar untuk pengiriman email via SMTP.</p>
+      <p class="dep-desc">Standard module for sending emails via SMTP.</p>
     </div>
   </section>
 
@@ -533,8 +533,8 @@
       <div class="dep-header">
         <span class="dep-name">socket.io</span> <span class="badge tag-opt">OPTIONAL</span>
       </div>
-      <p class="dep-desc">Engine WebSocket dengan fitur fallback dan room management. Gunakan jika butuh fitur live
-        chat/notif.</p>
+      <p class="dep-desc">WebSocket engine with fallback and room management features. Use if live chat/notifications
+        are needed.</p>
     </div>
   </section>
 
@@ -544,20 +544,21 @@
       <div class="dep-header">
         <span class="dep-name">swagger-ui-express</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Menyajikan antarmuka visual Swagger/OpenAPI di endpoint <code>/docs</code>.</p>
+      <p class="dep-desc">Serves the visual Swagger/OpenAPI interface at the <code>/docs</code> endpoint.</p>
     </div>
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">swagger-jsdoc</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Generate spesifikasi OpenAPI secara otomatis dari komentar JSDoc di kode (Legacy support).</p>
+      <p class="dep-desc">Generates OpenAPI specifications automatically from JSDoc comments in code (Legacy support).
+      </p>
     </div>
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">@asteasolutions/zod-to-openapi</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Generate OpenAPI definitions langsung dari Zod schema. Menjamin dokumentasi selalu sync dengan
-        validasi.</p>
+      <p class="dep-desc">Generates OpenAPI definitions directly from Zod schemas. Guarantees documentation is always in
+        sync with validation.</p>
     </div>
   </section>
 
@@ -567,28 +568,28 @@
       <div class="dep-header">
         <span class="dep-name">vitest</span> <span class="badge tag-core">CORE</span> (Dev)
       </div>
-      <p class="dep-desc">Test runner generasi baru (Vite-native). Lebih cepat dari Jest, konfigurasi minimal.</p>
+      <p class="dep-desc">Next-generation test runner (Vite-native). Faster than Jest, minimal configuration.</p>
     </div>
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">supertest</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
       </div>
-      <p class="dep-desc">HTTP assertion library untuk Integration Test dan E2E Test.</p>
+      <p class="dep-desc">HTTP assertion library for Integration and E2E Tests.</p>
     </div>
   </section>
 
   <section id="ts">
     <h2>12. TypeScript & Build Tooling</h2>
-    <p>Semua dependency di bawah ini adalah <strong>devDependencies</strong>:</p>
+    <p>All dependencies below are <strong>devDependencies</strong>:</p>
     <ul>
-      <li><code>typescript</code>: Compiler utama.</li>
-      <li><code>tsx</code>: Menjalankan file TypeScript langsung (pengganti <code>ts-node</code> yang lebih cepat).</li>
-      <li><code>rimraf</code>: Utilitas hapus folder (<code>rm -rf</code>) yang cross-platform (Windows/Linux aman).
+      <li><code>typescript</code>: Main compiler.</li>
+      <li><code>tsx</code>: Executes TypeScript files directly (faster replacement for <code>ts-node</code>).</li>
+      <li><code>rimraf</code>: Folder deletion utility (<code>rm -rf</code>) that is cross-platform.
       </li>
-      <li><code>concurrently</code>: Menjalankan multiple command secara paralel (e.g. server + worker).</li>
-      <li><code>cross-env</code>: Mengatur environment variable lintas platform (Windows/Linux).</li>
-      <li><code>nodemon</code>: Utility monitor perubahan file dan restart server otomatis.</li>
-      <li>Type definitions: <code>@types/node</code>, <code>@types/express</code>, dll.</li>
+      <li><code>concurrently</code>: Runs multiple commands in parallel (e.g. server + worker).</li>
+      <li><code>cross-env</code>: Sets environment variables across platforms (Windows/Linux).</li>
+      <li><code>nodemon</code>: Utility to monitor file changes and restart server automatically.</li>
+      <li>Type definitions: <code>@types/node</code>, <code>@types/express</code>, etc.</li>
     </ul>
   </section>
 
@@ -599,27 +600,27 @@
       <div class="dep-header">
         <span class="dep-name">eslint</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Static analysis untuk menemukan masalah kode (bug, unused var).</p>
+      <p class="dep-desc">Static analysis to find code issues (bugs, unused vars).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">prettier</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Code formatter otomatis. Menghilangkan debat masalah spasi vs tab.</p>
+      <p class="dep-desc">Automatic code formatter. Eliminates tabs vs spaces debates.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">husky & lint-staged</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Git hooks untuk menjalankan lint/test otomatis sebelum commit.</p>
+      <p class="dep-desc">Git hooks to run lint/test automatically before commit.</p>
     </div>
   </section>
 
   <section id="install">
-    <h2>14. Instalasi Awal</h2>
-    <p>Salin perintah di bawah untuk menginstall seluruh standar stack dalam satu kali jalan:</p>
+    <h2>14. Initial Installation</h2>
+    <p>Copy the commands below to install the entire standard stack in one go:</p>
 
     <h3>Production Dependencies</h3>
     <pre><code>pnpm add express zod dotenv axios uuid \
@@ -643,22 +644,22 @@ husky lint-staged cross-env concurrently \
 
   <section id="external">
     <h2>15. External Tools (Non-NPM)</h2>
-    <p>Tools berikut tidak diinstall via package.json, namun wajib ada di environment (Local/CI):</p>
+    <p>The following tools are not installed via package.json, but must be present in the environment (Local/CI):</p>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">Docker & Docker Compose</span>
       </div>
-      <p class="dep-desc">Menjalankan dependency infrastruktur (PostgreSQL, Redis) secara terisolasi tanpa mengotori OS
-        host.</p>
+      <p class="dep-desc">Runs infrastructure dependencies (PostgreSQL, Redis) in isolation without polluting the host
+        OS.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">k6</span>
       </div>
-      <p class="dep-desc">Load testing tool (ditulis dalam Go/JS). Digunakan untuk stress test API (lihat folder
-        <code>tests/perf</code>).
+      <p class="dep-desc">Load testing tool (written in Go/JS). Used for API stress tests (see <code>tests/perf</code>
+        folder).
       </p>
     </div>
   </section>

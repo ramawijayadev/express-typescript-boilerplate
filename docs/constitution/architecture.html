@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -177,12 +177,12 @@
 	<header>
 		<h1>Architecture Handbook</h1>
 		<div class="subtitle">
-			Panduan teknis arsitektur backend untuk aplikasi production-grade, scalable, dan maintainable.
+			Technical architecture guide for building production-grade, scalable, and maintainable backend applications.
 		</div>
 	</header>
 
 	<nav class="toc">
-		<h3>Daftar Isi</h3>
+		<h3>Table of Contents</h3>
 		<ul>
 			<li><a href="#intro">1. Purpose & Scope</a></li>
 			<li><a href="#mental-model">2. Mental Model</a></li>
@@ -200,256 +200,270 @@
 
 	<section id="intro">
 		<h2>1. Purpose & Scope</h2>
-		<p>Dokumen ini adalah "North Star" teknis untuk memastikan aplikasi yang dibangun:</p>
+		<p>This document serves as the technical "North Star" to ensure that applications built are:</p>
 		<ul>
-			<li><strong>Production-grade:</strong> Siap melayani user nyata, stabil, dan aman.</li>
-			<li><strong>Scalable:</strong> Relevan untuk tim kecil (MVP) hingga skala besar.</li>
-			<li><strong>Technology-agnostic:</strong> Fokus pada konsep struktur, bukan framework spesifik.</li>
+			<li><strong>Production-grade:</strong> Ready to serve real users, stable, and secure.</li>
+			<li><strong>Scalable:</strong> Relevant for small teams (MVP) up to large-scale operations.</li>
+			<li><strong>Technology-agnostic:</strong> Focused on structural concepts, not just specific frameworks.</li>
 		</ul>
 	</section>
 
 	<section id="mental-model">
-		<h2>2. Mental Model Arsitektur Backend</h2>
-		<p>Backend application dilihat sebagai kombinasi dari 7 layer utama:</p>
+		<h2>2. Mental Model</h2>
+		<p>The backend application is conceptualized as a combination of 7 primary layers:</p>
 		<ol>
-			<li><strong>Platform / Runtime Core</strong> (Fondasi)</li>
-			<li><strong>Domain & API Layer</strong> (Bisnis Logic)</li>
+			<li><strong>Platform / Runtime Core</strong> (Foundation)</li>
+			<li><strong>Domain & API Layer</strong> (Business Logic)</li>
 			<li><strong>Data & Integration Layer</strong> (Storage & External)</li>
-			<li><strong>Security & Access Layer</strong> (Keamanan)</li>
-			<li><strong>Communication Layer</strong> (Protokol)</li>
+			<li><strong>Security & Access Layer</strong> (Safety)</li>
+			<li><strong>Communication Layer</strong> (Protocol)</li>
 			<li><strong>Observability & Operations</strong> (Monitoring)</li>
 			<li><strong>Developer Experience & Quality</strong> (Tooling)</li>
 		</ol>
 		<blockquote>
-			Beberapa aspek adalah <strong>cross-cutting concerns</strong> (seperti Security, Logging, Config) yang
-			"menembus"
-			berbagai layer, namun didefinisikan kebijakannya di layer spesifik.
+			Some aspects are <strong>cross-cutting concerns</strong> (such as Security, Logging, and Config) that
+			permeate
+			multiple layers, but their policies are defined in specific layers.
 		</blockquote>
 	</section>
 
 	<section id="platform-core">
 		<h2>3. Platform / Runtime Core</h2>
-		<p>Layer fondasi teknis. Semua request bergantung pada bagian ini.</p>
+		<p>The technical foundation layer. All requests rely on this component.</p>
 
 		<h3>3.1. Config & Environment Management</h3>
-		<p><strong>Prinsip:</strong> Explicit Configuration.</p>
+		<p><strong>Principle:</strong> Explicit Configuration.</p>
 		<ul>
-			<li><strong>Environment Variables:</strong> Simpan rahasia (DB URL, Secrets) di environment, bukan code.
+			<li><strong>Environment Variables:</strong> Store secrets (DB URL, API Keys) in the environment, not in the
+				code.
 			</li>
-			<li><strong>Schema Validation:</strong> Aplikasi harus gagal start jika config wajib tidak valid.</li>
-			<li><strong>Abstraction:</strong> Gunakan satu objek config global (singleton) di dalam app.</li>
+			<li><strong>Schema Validation:</strong> The application must fail to start if mandatory configuration is
+				invalid.</li>
+			<li><strong>Abstraction:</strong> Use a single global configuration object (singleton) within the app.</li>
 		</ul>
-		<p><strong>Implementasi:</strong> Menggunakan Zod untuk validasi environment variables di
-			<code>src/app/env.ts</code>. Config dikelompokkan modular per domain di <code>src/config/</code> (app, auth,
+		<p><strong>Implementation:</strong> Uses Zod for environment variable validation in
+			<code>src/app/env.ts</code>. Configurations are grouped modularly by domain in <code>src/config/</code>
+			(app, auth,
 			database, logging, mail, queue, swagger).
 		</p>
 
 		<h3>3.2. HTTP Server & Routing</h3>
-		<p>Inisialisasi framework dan router global. Pastikan struktur URL konsisten (e.g., <code>/api/v1</code>) dan
-			routing dipecah per modul fitur.</p>
-		<p><strong>Implementasi:</strong> Express app dibootstrap di <code>src/app/app.ts</code> dengan routing terpusat
-			di <code>src/core/http/router.ts</code>. Semua endpoint mounted di <code>/api/v1</code>. Swagger UI tersedia
-			di root (<code>/</code>) untuk non-production.</p>
+		<p>Framework initialization and global routing. Ensure consistent URL structure (e.g., <code>/api/v1</code>) and
+			split routing per feature module.</p>
+		<p><strong>Implementation:</strong> The Express app is bootstrapped in <code>src/app/app.ts</code> with
+			centralized routing
+			in <code>src/core/http/router.ts</code>. All endpoints are mounted at <code>/api/v1</code>. Swagger UI is
+			available
+			at the root (<code>/</code>) for non-production environments.</p>
 
 		<h3>3.3. Global Middlewares</h3>
-		<p>Logic teknis yang berjalan sebelum business logic:</p>
+		<p>Technical logic executed before business logic:</p>
 		<ul>
 			<li>Body parser, CORS, Security headers (Helmet).</li>
-			<li>Request ID generator (untuk tracing).</li>
+			<li>Request ID generator (for tracing).</li>
 			<li>Rate limiter.</li>
 		</ul>
-		<p><strong>Implementasi:</strong> Stack middleware lengkap di <code>src/core/http/middlewares/index.ts</code>:
+		<p><strong>Implementation:</strong> The complete middleware stack is defined in
+			<code>src/core/http/middlewares/index.ts</code>:
 		</p>
 		<ul>
-			<li><strong>Helmet:</strong> HTTP security headers dengan CSP policy (konten dinamis untuk Swagger UI)</li>
-			<li><strong>CORS:</strong> Konfigurasi origin dari env var dengan support credentials</li>
-			<li><strong>HPP:</strong> Proteksi HTTP Parameter Pollution</li>
-			<li><strong>Rate Limiting:</strong> Configurable window & max requests (disabled di test environment)</li>
-			<li><strong>Body Size Limit:</strong> 10kb untuk mencegah DoS attacks</li>
-			<li><strong>Input Sanitization:</strong> Middleware custom untuk mencegah NoSQL/SQL injection</li>
-			<li><strong>Request ID:</strong> UUID generation atau dari header <code>x-request-id</code></li>
-			<li><strong>Request Logger:</strong> Structured logging untuk setiap HTTP request (method, path, status,
-				duration)</li>
+			<li><strong>Helmet:</strong> HTTP security headers with CSP policy (dynamic content allowed for Swagger UI).
+			</li>
+			<li><strong>CORS:</strong> Origin configuration via env vars with credentials support.</li>
+			<li><strong>HPP:</strong> Protection against HTTP Parameter Pollution.</li>
+			<li><strong>Rate Limiting:</strong> Configurable window & max requests (disabled in test environments).</li>
+			<li><strong>Body Size Limit:</strong> 10kb limit to prevent DoS attacks.</li>
+			<li><strong>Input Sanitization:</strong> Custom middleware to prevent NoSQL/SQL injection.</li>
+			<li><strong>Request ID:</strong> UUID generation or propagation from <code>x-request-id</code> header.</li>
+			<li><strong>Request Logger:</strong> Structured logging for every HTTP request (method, path, status,
+				duration).</li>
 		</ul>
 
 		<h3>3.4. Error Handling Strategy</h3>
-		<p>Menstandarkan representasi error ke client:</p>
+		<p>Standardizing error representation to the client:</p>
 		<ul>
-			<li><strong>Error Model:</strong> Struktur JSON standar (<code>success</code>, <code>message</code>,
-				<code>statusCode</code>, <code>errors</code> untuk validation, <code>requestId</code>).
+			<li><strong>Error Model:</strong> Standard JSON structure (<code>success</code>, <code>message</code>,
+				<code>statusCode</code>, <code>errors</code> for validation, <code>requestId</code>).
 			</li>
-			<li><strong>Error Mapping:</strong> Mapping jenis error ke HTTP status (400, 404, 500) menggunakan class
-				<code>AppError</code>.
+			<li><strong>Error Mapping:</strong> Mapping error types to HTTP status codes (400, 404, 500) using the
+				<code>AppError</code> class.
 			</li>
-			<li><strong>Global Handler:</strong> Centralized catch-all untuk logging (terpisah dari user response) dan
+			<li><strong>Global Handler:</strong> Centralized catch-all for logging (separate from user response) and
 				sanitization.</li>
 		</ul>
-		<p><strong>Implementasi:</strong> Class <code>AppError</code> di <code>src/shared/errors/AppError.ts</code>
-			untuk operational errors. Global error handler di <code>src/core/http/error-handler.ts</code> dengan
-			handling khusus untuk AppError, ZodError (validation), dan Prisma errors. Response helpers di
+		<p><strong>Implementation:</strong> The <code>AppError</code> class in
+			<code>src/shared/errors/AppError.ts</code>
+			handles operational errors. The global error handler in <code>src/core/http/error-handler.ts</code> handles
+			AppError, ZodError (validation), and Prisma errors. Response helpers are located in
 			<code>src/shared/http/api-response.ts</code> (ok, created, clientError, validationError, serverError).
 		</p>
 
 		<h3>3.5. Health Checks & Lifecycle</h3>
 		<ul>
-			<li><strong>Liveness Probe:</strong> Cek apakah proses hidup (untuk restart policy).</li>
-			<li><strong>Readiness Probe:</strong> Cek apakah siap terima traffic (stop traffic jika DB putus).</li>
-			<li><strong>Graceful Shutdown:</strong> Stop request baru, selesaikan request berjalan, tutup koneksi DB
-				dengan
-				rapi sebelum mati.</li>
+			<li><strong>Liveness Probe:</strong> Checks if the process is alive (for restart policies).</li>
+			<li><strong>Readiness Probe:</strong> Checks if the app is ready to accept traffic (stops traffic if DB is
+				down).</li>
+			<li><strong>Graceful Shutdown:</strong> Stops new requests, finishes in-flight requests, and closes DB
+				connections
+				cleanly before termination.</li>
 		</ul>
-		<p><strong>Implementasi:</strong> Endpoint <code>GET /api/v1/health</code> di
-			<code>src/modules/platform/health/health.routes.ts</code>. Response mencakup status server, version,
-			timestamp, dan job metrics (failed job count dengan alert threshold). Graceful shutdown di
-			<code>src/app/server.ts</code> menangani SIGINT/SIGTERM dengan menutup HTTP server, database connections,
-			dan background job workers.
+		<p><strong>Implementation:</strong> Endpoint <code>GET /api/v1/health</code> in
+			<code>src/modules/platform/health/health.routes.ts</code>. The response includes server status, version,
+			timestamp, and job metrics (failed job count with alert threshold). Graceful shutdown in
+			<code>src/app/server.ts</code> handles SIGINT/SIGTERM by closing the HTTP server, database connections,
+			and background job workers.
 		</p>
 	</section>
 
 	<section id="domain-api">
 		<h2>4. Domain & API Layer</h2>
-		<p>Layer yang berisi Business Logic dan Kontrak HTTP.</p>
+		<p>The layer containing Business Logic and HTTP Contracts.</p>
 
 		<h3>4.1. Domain Entities / Models</h3>
-		<p>Konsep bisnis murni (User, Order) dan aturannya. Tidak boleh bergantung pada detail framework HTTP.</p>
+		<p>Pure business concepts (User, Order) and their rules. Must not depend on HTTP framework details.</p>
 
 		<h3>4.2. Service / Use Case Layer</h3>
-		<p>Mengorkestrasi alur bisnis (Register, Checkout). Menghubungkan validasi, repository, dan logic lain.</p>
+		<p>Orchestrates business flow (Register, Checkout). Connects validation, repositories, and other logic.</p>
 
 		<h3>4.3. Validation (Request & Domain)</h3>
 		<ul>
-			<li><strong>Request Validation:</strong> Cek format input (Schema Zod/Joi).</li>
-			<li><strong>Domain Validation:</strong> Cek aturan bisnis (misal: Stok tidak cukup).</li>
+			<li><strong>Request Validation:</strong> Checks input format (Zod/Joi Schema).</li>
+			<li><strong>Domain Validation:</strong> Checks business rules (e.g., Insufficient stock).</li>
 		</ul>
 
 		<h3>4.4. CRUD Patterns & Response</h3>
-		<p>Standarisasi operasi Create, Read, Update, Delete:</p>
+		<p>Standardization of Create, Read, Update, Delete operations:</p>
 		<ul>
-			<li>Naming convention yang konsisten.</li>
-			<li><strong>Response Format:</strong> Struktur sukses seragam (<code>data</code>, <code>meta</code> untuk
+			<li>Consistent naming conventions.</li>
+			<li><strong>Response Format:</strong> Uniform success structure (<code>data</code>, <code>meta</code> for
 				pagination).</li>
 		</ul>
 
 		<h3>4.5. Routing & Controllers</h3>
-		<p>Controller hanya bertugas menerima input, memanggil service, dan me-mapping hasil ke HTTP response.
-			<strong>Hindari logic bisnis di controller.</strong>
+		<p>Controllers are strictly responsible for receiving input, calling services, and mapping results to HTTP
+			responses.
+			<strong>Avoid business logic in controllers.</strong>
 		</p>
 
 		<h3>4.6. API Versioning</h3>
-		<p>Gunakan strategi versioning (URL prefix <code>/v1/</code>) agar evolusi API tidak merusak client lama.</p>
+		<p>Use a versioning strategy (URL prefix <code>/v1/</code>) so that API evolution does not break existing
+			clients.</p>
 	</section>
 
 	<section id="data-integration">
 		<h2>5. Data & Integration Layer</h2>
 
 		<h3>5.1. Database & Repository Pattern</h3>
-		<p>Gunakan <strong>Repository Pattern</strong> (via Prisma ORM) untuk mengisolasi domain dari detail query
-			database,
-			memudahkan testing dan maintenance.</p>
-		<p><strong>Implementasi:</strong> Prisma Client di <code>src/core/database/connection.ts</code> dengan
-			PostgreSQL adapter (<code>@prisma/adapter-pg</code>) untuk serverless compatibility. Schema di
-			<code>prisma/schema.prisma</code> mencakup User, UserSession, PasswordResetToken, EmailVerificationToken,
-			Example. Repository pattern konsisten di semua modul (e.g., <code>auth.repository.ts</code>,
+		<p>Use the <strong>Repository Pattern</strong> (via Prisma ORM) to isolate the domain from database query
+			details,
+			facilitating testing and maintenance.</p>
+		<p><strong>Implementation:</strong> Prisma Client in <code>src/core/database/connection.ts</code> with the
+			PostgreSQL adapter (<code>@prisma/adapter-pg</code>) for serverless compatibility. The schema in
+			<code>prisma/schema.prisma</code> includes User, UserSession, PasswordResetToken, EmailVerificationToken,
+			and Example models. The repository pattern is consistent across all modules (e.g.,
+			<code>auth.repository.ts</code>,
 			<code>users.repository.ts</code>).
 		</p>
 
 		<h3>5.2. Caching Strategy</h3>
-		<p>Mengurangi latency data (Redis). Tentukan strategi <strong>TTL</strong> dan <strong>Invalidation</strong>
-			yang
-			jelas saat data berubah.</p>
-		<p><strong>Status:</strong> Redis client (ioredis) tersedia dan digunakan untuk queue infrastructure. Caching
-			layer belum diimplementasikan secara eksplisit.</p>
+		<p>Reducing data latency (Redis). Define clear <strong>TTL</strong> and <strong>Invalidation</strong> strategies
+			when data changes.</p>
+		<p><strong>Status:</strong> Redis client (ioredis) is available and used for the queue infrastructure. A caching
+			layer has not yet been explicitly implemented.</p>
 
 		<h3>5.3. Async Jobs (Message Queue)</h3>
-		<p>Menangani proses berat (email, report) secara background menggunakan Queue (BullMQ/Redis) dan Worker process
-			terpisah.
+		<p>Handling heavy processes (email, reports) in the background using a Queue (BullMQ/Redis) and separate Worker
+			processes.
 		</p>
-		<p><strong>Implementasi:</strong> BullMQ queue system di <code>src/core/queue/index.ts</code> dengan:</p>
+		<p><strong>Implementation:</strong> BullMQ queue system in <code>src/core/queue/index.ts</code> featuring:</p>
 		<ul>
-			<li><strong>Email Queue:</strong> Queue dedicated untuk email jobs (verification, password reset)</li>
-			<li><strong>Dead Letter Queue (DLQ):</strong> Queue terpisah untuk failed jobs setelah retry exhausted</li>
-			<li><strong>Worker:</strong> Background worker di <code>src/jobs/index.ts</code> dengan concurrency 5</li>
+			<li><strong>Email Queue:</strong> Dedicated queue for email jobs (verification, password reset).</li>
+			<li><strong>Dead Letter Queue (DLQ):</strong> Separate queue for failed jobs after retries are exhausted.
+			</li>
+			<li><strong>Worker:</strong> Background worker in <code>src/jobs/index.ts</code> with concurrency set to 5.
+			</li>
 			<li><strong>Job Handlers:</strong> Send email (<code>send-email.job.ts</code>), cleanup old failed jobs
-				(<code>cleanup-failed-jobs.job.ts</code>)</li>
-			<li><strong>Retry Policy:</strong> Configurable attempts dengan automatic DLQ migration</li>
-			<li><strong>Job Management API:</strong> Admin endpoints di <code>/api/v1/jobs</code> untuk list, retry,
-				remove, dan cleanup failed jobs</li>
-			<li><strong>Health Monitoring:</strong> Job metrics included dalam health check endpoint dengan alert
-				threshold</li>
+				(<code>cleanup-failed-jobs.job.ts</code>).</li>
+			<li><strong>Retry Policy:</strong> Configurable attempts with automatic DLQ migration.</li>
+			<li><strong>Job Management API:</strong> Admin endpoints at <code>/api/v1/jobs</code> to list, retry,
+				remove, and cleanup failed jobs.</li>
+			<li><strong>Health Monitoring:</strong> Job metrics included in the health check endpoint with alert
+				thresholds.
+			</li>
 		</ul>
 
 		<h3>5.4. File & Object Storage</h3>
-		<p>Menyimpan file binary (gambar, dokumen) di Object Storage (S3/MinIO), bukan di database. Database hanya
-			menyimpan
-			URL/Key-nya.</p>
-		<p><strong>Status:</strong> Storage abstraction layer tersedia di <code>src/core/storage/index.ts</code>, namun
-			belum ada implementasi konkret untuk S3/local storage dan belum ada file upload endpoint.</p>
+		<p>Store binary files (images, documents) in Object Storage (S3/MinIO), not in the database. The database only
+			stores the URL/Key.</p>
+		<p><strong>Status:</strong> Storage abstraction layer is available in <code>src/core/storage/index.ts</code>,
+			but
+			concrete implementations for S3/local storage and file upload endpoints are pending.</p>
 
 		<h3>5.5. Search Engine Integration</h3>
-		<p>Jika fitur pencarian kompleks dibutuhkan (Full-text search), sync data ke search engine khusus
+		<p>If complex search features are required (Full-text search), sync data to a dedicated search engine
 			(Elasticsearch/MeiliSearch).</p>
-		<p><strong>Status:</strong> Belum diimplementasikan.</p>
+		<p><strong>Status:</strong> Not yet implemented.</p>
 
 		<h3>5.6. External API Clients</h3>
-		<p>Wrapper untuk layanan pihak ketiga (Payment, SMS). Fokus pada penanganan <strong>Timeout</strong> dan
-			strategi
-			<strong>Retry</strong>.
+		<p>Wrappers for third-party services (Payment, SMS). Focus on handling <strong>Timeouts</strong> and
+			<strong>Retry</strong> strategies.
 		</p>
-		<p><strong>Status:</strong> Axios tersedia sebagai HTTP client, namun belum ada wrapper spesifik untuk external
-			APIs.</p>
+		<p><strong>Status:</strong> Axios is available as an HTTP client, but specific wrappers for external
+			APIs are not yet created.</p>
 	</section>
 
 	<section id="security">
 		<h2>6. Security & Access Layer</h2>
 
 		<h3>6.1. Authentication</h3>
-		<p>Identifikasi user (JWT, Session, OAuth). Pastikan mekanisme validasi token aman.</p>
-		<p><strong>Implementasi:</strong> Dual-token JWT system di <code>src/modules/platform/auth/</code>:</p>
+		<p>User identification (JWT, Session, OAuth). Ensure secure token validation mechanisms.</p>
+		<p><strong>Implementation:</strong> Dual-token JWT system in <code>src/modules/platform/auth/</code>:</p>
 		<ul>
-			<li><strong>Access Token:</strong> Short-lived JWT (configurable expiry) untuk authorization</li>
-			<li><strong>Refresh Token:</strong> Long-lived hashed token stored di database (UserSession table)</li>
-			<li><strong>Token Rotation:</strong> Refresh token di-hash dan rotated setiap refresh untuk security</li>
-			<li><strong>Session Management:</strong> Track user agent, IP address, last used timestamp</li>
-			<li><strong>Account Locking:</strong> Failed login tracking dengan automatic account lock setelah threshold
+			<li><strong>Access Token:</strong> Short-lived JWT (configurable expiry) for authorization.</li>
+			<li><strong>Refresh Token:</strong> Long-lived hashed token stored in the database (UserSession table).</li>
+			<li><strong>Token Rotation:</strong> Refresh tokens are hashed and rotated upon every refresh for security.
 			</li>
-			<li><strong>Email Verification:</strong> Token-based dengan expiry</li>
-			<li><strong>Password Reset Flow:</strong> Secure token generation dan validation</li>
+			<li><strong>Session Management:</strong> Tracking user agent, IP address, and last used timestamp.</li>
+			<li><strong>Account Locking:</strong> Failed login tracking with automatic account lock after a threshold.
+			</li>
+			<li><strong>Email Verification:</strong> Token-based with expiry.</li>
+			<li><strong>Password Reset Flow:</strong> Secure token generation and validation.</li>
 		</ul>
 
 		<h3>6.2. Authorization</h3>
-		<p>Kontrol akses (RBAC/Permission-based). Menentukan "siapa boleh melakukan apa" terhadap resource tertentu.</p>
-		<p><strong>Status:</strong> Middleware authentication (<code>authenticate.middleware.ts</code>) tersedia untuk
-			verify JWT dan attach user ke request context. RBAC/permission system belum diimplementasikan.</p>
+		<p>Access control (RBAC/Permission-based). Determining "who is allowed to do what" on specific resources.</p>
+		<p><strong>Status:</strong> Authentication middleware (<code>authenticate.middleware.ts</code>) is available to
+			verify JWTs and attach the user to the request context. RBAC/permission systems are not yet implemented.</p>
 
 		<h3>6.3. Security Hardening</h3>
-		<p>Implementasi pertahanan lapis tambahan: Rate Limiter, Input Sanitization (XSS/SQLi), CORS policy ketat, dan
-			proteksi Brute-force.</p>
-		<p><strong>Implementasi:</strong> Comprehensive security middleware stack (lihat section 3.3). Password hashing
-			menggunakan <strong>Argon2</strong> (more secure than bcrypt). Timing-safe comparisons untuk token
-			validation.</p>
+		<p>Implementation of additional defense layers: Rate Limiter, Input Sanitization (XSS/SQLi), strict CORS policy,
+			and
+			Brute-force protection.</p>
+		<p><strong>Implementation:</strong> Comprehensive security middleware stack (see section 3.3). Password hashing
+			uses <strong>Argon2</strong> (more secure than bcrypt). Timing-safe comparisons for token validation.</p>
 
 		<h3>6.4. Secrets Management</h3>
-		<p>Manajemen enkripsi dan keys. <strong>Jangan pernah commit secrets ke repo.</strong> Gunakan Secret Manager
-			atau
-			Env Vars terenkripsi.</p>
-		<p><strong>Implementasi:</strong> Semua secrets di environment variables dengan validation via Zod schema. JWT
-			secrets, database URLs, Redis credentials, SMTP credentials managed via <code>.env</code> (gitignored).
-			<code>.env.example</code> provided sebagai template.
+		<p>Management of encryption and keys. <strong>Never commit secrets to the repo.</strong> Use a Secret Manager
+			or encrypted Env Vars.</p>
+		<p><strong>Implementation:</strong> All secrets via environment variables with validation via Zod schema. JWT
+			secrets, database URLs, Redis credentials, and SMTP credentials managed via <code>.env</code> (gitignored).
+			<code>.env.example</code> is provided as a template.
 		</p>
 
 		<h3>6.5. Audit Log</h3>
-		<p>Mencatat jejak aktivitas kritis ("Siapa", "Melakukan Apa", "Kapan") untuk keperluan forensik, keamanan, dan
-			compliance.</p>
-		<p><strong>Status:</strong> Belum diimplementasikan. Structured logging tersedia namun belum ada dedicated audit
-			log table atau tracking untuk sensitive operations.</p>
+		<p>Recording critical activity trails ("Who", "Did What", "When") for forensics, security, and compliance.</p>
+		<p><strong>Status:</strong> Not yet implemented. Structured logging is available, but there is no dedicated
+			audit
+			log table or tracking for sensitive operations.</p>
 	</section>
 
 	<section id="communication">
 		<h2>7. Communication Layer</h2>
 		<ul>
-			<li><strong>HTTP REST/GraphQL:</strong> Komunikasi request-response standar.</li>
-			<li><strong>Real-Time (WebSocket/SSE):</strong> Untuk notifikasi langsung atau chat.</li>
-			<li><strong>Event-Driven (Pub/Sub):</strong> Integrasi antar-modul yang <em>loosely-coupled</em> via event
+			<li><strong>HTTP REST/GraphQL:</strong> Standard request-response communication.</li>
+			<li><strong>Real-Time (WebSocket/SSE):</strong> For live notifications or chat.</li>
+			<li><strong>Event-Driven (Pub/Sub):</strong> Integrations between modules that are <em>loosely-coupled</em>
+				via an event
 				bus.
 			</li>
 		</ul>
@@ -459,112 +473,116 @@
 		<h2>8. Observability & Operations</h2>
 
 		<h3>8.1. Structured Logging</h3>
-		<p>Log dalam format JSON. Wajib menyertakan context (RequestId, UserId) dan Log Level yang tepat.</p>
-		<p><strong>Implementasi:</strong> Pino logger di <code>src/core/logging/logger.ts</code> dengan fitur:</p>
+		<p>Logs in JSON format. Must include context (RequestId, UserId) and appropriate Log Levels.</p>
+		<p><strong>Implementation:</strong> Pino logger in <code>src/core/logging/logger.ts</code> featuring:</p>
 		<ul>
-			<li><strong>JSON Output:</strong> Structured logging untuk easy parsing (production)</li>
-			<li><strong>Pretty Print:</strong> Human-readable format untuk development (pino-pretty)</li>
-			<li><strong>Request Correlation:</strong> Automatic request ID attachment di setiap log entry</li>
-			<li><strong>Context Enrichment:</strong> Support untuk menambahkan contextual data (userId, path, etc)</li>
-			<li><strong>Log Rotation:</strong> Pino-roll configured untuk daily rotation dan retention policy</li>
-			<li><strong>Log Levels:</strong> debug, info, warn, error properly utilized di seluruh codebase</li>
+			<li><strong>JSON Output:</strong> Structured logging for easy parsing (production).</li>
+			<li><strong>Pretty Print:</strong> Human-readable format for development (pino-pretty).</li>
+			<li><strong>Request Correlation:</strong> Automatic request ID attachment to every log entry.</li>
+			<li><strong>Context Enrichment:</strong> Support for adding contextual data (userId, path, etc.).</li>
+			<li><strong>Log Rotation:</strong> Pino-roll configured for daily rotation and retention policy.</li>
+			<li><strong>Log Levels:</strong> debug, info, warn, error properly utilized throughout the codebase.</li>
 		</ul>
 
 		<h3>8.2. Metrics & Monitoring</h3>
-		<p>Memantau kesehatan sistem: Throughput (RPS), Latency (p95, p99), Error Rate, dan Resource Usage.</p>
-		<p><strong>Implementasi:</strong> Metrics initialization di <code>src/core/observability/metrics.ts</code>
-			(dipanggil di server bootstrap). Infrastructure ready untuk metrics collection.</p>
+		<p>Monitoring system health: Throughput (RPS), Latency (p95, p99), Error Rate, and Resource Usage.</p>
+		<p><strong>Implementation:</strong> Metrics initialization in <code>src/core/observability/metrics.ts</code>
+			(called during server bootstrap). Infrastructure is ready for metrics collection.</p>
 
 		<h3>8.3. Tracing</h3>
-		<p>Menggunakan <code>TraceId</code> / <code>CorrelationId</code> untuk melacak perjalanan request melintasi
-			berbagai
-			komponen sistem.</p>
-		<p><strong>Implementasi:</strong> Request ID middleware generates UUID untuk setiap request. Tracing
-			initialization di <code>src/core/observability/tracing.ts</code>. ID propagated via HTTP headers
-			(<code>x-request-id</code>) dan included di semua log entries dan API responses.</p>
+		<p>Using <code>TraceId</code> / <code>CorrelationId</code> to track the request journey across various
+			system components.</p>
+		<p><strong>Implementation:</strong> Request ID middleware generates a UUID for every request. Tracing
+			initialization in <code>src/core/observability/tracing.ts</code>. IDs are propagated via HTTP headers
+			(<code>x-request-id</code>) and included in all log entries and API responses.</p>
 
 		<h3>8.4. Alerting Hooks</h3>
-		<p>Notifikasi otomatis (Slack/PagerDuty) ketika metrik kritis (Error rate, Latency) melebihi ambang batas wajar.
+		<p>Automatic notifications (Slack/PagerDuty) when critical metrics (Error rate, Latency) exceed reasonable
+			thresholds.
 		</p>
-		<p><strong>Status:</strong> Health check endpoint menyediakan job metrics dengan alert threshold, namun belum
-			ada integrasi dengan external alerting systems.</p>
+		<p><strong>Status:</strong> Health check endpoint provides job metrics with alert thresholds, but integration
+			with
+			external alerting systems is not yet implemented.</p>
 	</section>
 
 	<section id="dx-quality">
 		<h2>9. Developer Experience & Quality</h2>
 
 		<h3>9.1. Automated Testing Strategy</h3>
-		<p>Piramida testing untuk menjamin kualitas:</p>
+		<p>Testing pyramid to ensure quality:</p>
 		<ul>
-			<li><strong>Unit Test:</strong> Logic terkecil terisolasi.</li>
-			<li><strong>Integration Test:</strong> Interaksi antar modul/DB.</li>
-			<li><strong>E2E Test (API Flow):</strong> Skenario user penuh dari awal sampai akhir.</li>
-			<li><strong>Load/Stress Test (k6):</strong> Uji performa dan ketahanan beban.</li>
+			<li><strong>Unit Test:</strong> Smallest logic isolated.</li>
+			<li><strong>Integration Test:</strong> Interaction between modules/DB.</li>
+			<li><strong>E2E Test (API Flow):</strong> Full user scenarios from start to finish.</li>
+			<li><strong>Load/Stress Test (k6):</strong> Performance and load resilience testing.</li>
 		</ul>
-		<p><strong>Implementasi:</strong> Vitest sebagai test runner di <code>src/tests/</code>:</p>
+		<p><strong>Implementation:</strong> Vitest as the test runner in <code>src/tests/</code>:</p>
 		<ul>
-			<li><strong>Vitest:</strong> Modern test runner dengan Vite-native compilation (faster than Jest)</li>
-			<li><strong>Supertest:</strong> HTTP assertion library untuk integration testing</li>
-			<li><strong>Test Organization:</strong> Feature-based dengan <code>__tests__</code> folders di setiap module
+			<li><strong>Vitest:</strong> Modern test runner with Vite-native compilation (faster than Jest).</li>
+			<li><strong>Supertest:</strong> HTTP assertion library for integration testing.</li>
+			<li><strong>Test Organization:</strong> Feature-based with <code>__tests__</code> folders in every module.
 			</li>
 			<li><strong>Naming Convention:</strong> <code>*.unit.spec.ts</code>, <code>*.integration.spec.ts</code>,
-				<code>*.e2e.spec.ts</code></li>
-			<li><strong>Setup:</strong> Global test setup di <code>src/tests/setup.ts</code> untuk database connection
-				dan cleanup</li>
-			<li><strong>Coverage:</strong> Auth flow, user journey, API response format, error handling</li>
+				<code>*.e2e.spec.ts</code>.
+			</li>
+			<li><strong>Setup:</strong> Global test setup in <code>src/tests/setup.ts</code> for database connection
+				and cleanup.</li>
+			<li><strong>Coverage:</strong> Auth flow, user journey, API response format, error handling.</li>
 		</ul>
 
 		<h3>9.2. Documentation</h3>
-		<p>OpenAPI/Swagger yang <strong>generated from code</strong> (via zod-to-openapi) sebagai kontrak (Single Source
-			of Truth) dengan Frontend/Client.</p>
-		<p><strong>Implementasi:</strong> Code-first OpenAPI documentation:</p>
+		<p>OpenAPI/Swagger that is <strong>generated from code</strong> (via zod-to-openapi) serving as the contract
+			(Single Source
+			of Truth) with Frontend/Client.</p>
+		<p><strong>Implementation:</strong> Code-first OpenAPI documentation:</p>
 		<ul>
-			<li><strong>@asteasolutions/zod-to-openapi:</strong> Generate spec dari Zod schemas</li>
-			<li><strong>Registry Pattern:</strong> Each route file exports OpenAPIRegistry dengan path definitions</li>
-			<li><strong>Swagger UI:</strong> Mounted di root (<code>/</code>) untuk non-production environments</li>
-			<li><strong>Config:</strong> Swagger spec generator di <code>src/config/swagger.ts</code></li>
-			<li><strong>Auto-sync:</strong> Documentation always in sync dengan validation schemas</li>
+			<li><strong>@asteasolutions/zod-to-openapi:</strong> Generates spec from Zod schemas.</li>
+			<li><strong>Registry Pattern:</strong> Each route file exports an OpenAPIRegistry with path definitions.
+			</li>
+			<li><strong>Swagger UI:</strong> Mounted at the root (<code>/</code>) for non-production environments.</li>
+			<li><strong>Config:</strong> Swagger spec generator in <code>src/config/swagger.ts</code>.</li>
+			<li><strong>Auto-sync:</strong> Documentation is always in sync with validation schemas.</li>
 		</ul>
 
 		<h3>9.3. Code Quality & Standards</h3>
-		<p>Otomatisasi Linter (ESLint) dan Formatter (Prettier) via <strong>Git Hooks</strong> (Husky) untuk standar
-			kode
-			yang konsisten.</p>
-		<p><strong>Implementasi:</strong> ESLint + Prettier dengan TypeScript support. Husky + lint-staged configured
-			untuk pre-commit hooks. Import sorting, no unused vars, consistent naming enforced.</p>
+		<p>Automated Linter (ESLint) and Formatter (Prettier) via <strong>Git Hooks</strong> (Husky) for consistent code
+			standards.</p>
+		<p><strong>Implementation:</strong> ESLint + Prettier with TypeScript support. Husky + lint-staged configured
+			for pre-commit hooks. Import sorting, no unused vars, and consistent naming enforced.</p>
 
 		<h3>9.4. CI Pipeline & Local Dev</h3>
 		<ul>
-			<li><strong>CI Pipeline:</strong> Otomatis jalankan test dan lint sebelum merge.</li>
-			<li><strong>Local Environment:</strong> Setup development lokal yang mudah dan standar menggunakan
+			<li><strong>CI Pipeline:</strong> Automatically runs tests and linting before merge.</li>
+			<li><strong>Local Environment:</strong> Easy and standardized local development setup using
 				<strong>Docker</strong>.
 			</li>
 		</ul>
-		<p><strong>Implementasi:</strong> Docker Compose setup di <code>docker-compose.yml</code> untuk PostgreSQL dan
-			Redis. Development workflow dengan <code>pnpm dev</code> untuk hot reload via nodemon + tsx. Scripts
-			tersedia untuk db migration, testing, linting.</p>
+		<p><strong>Implementation:</strong> Docker Compose setup in <code>docker-compose.yml</code> for PostgreSQL and
+			Redis. Development workflow with <code>pnpm dev</code> for hot reload via nodemon + tsx. Scripts are
+			available for db migration, testing, and linting.</p>
 	</section>
 
 	<section id="advanced">
 		<h2>10. Advanced Topics</h2>
-		<p>Referensi pengembangan untuk skala lanjut:</p>
+		<p>Development references for larger scales:</p>
 		<ul>
-			<li><strong>Performance Strategy:</strong> Caching aggressive, stateless scaling.</li>
-			<li><strong>Data Lifecycle:</strong> Kebijakan retensi dan backup data.</li>
-			<li><strong>Multi-Tenancy:</strong> Isolasi data untuk aplikasi SaaS B2B.</li>
-			<li><strong>Feature Flags:</strong> Rilis fitur bertahap tanpa deploy ulang.</li>
-			<li><strong>CQRS:</strong> Pemisahan model baca dan tulis untuk performa tinggi.</li>
-			<li><strong>ADR (Architectural Decision Records):</strong> Dokumentasi historis alasan keputusan teknis
-				diambil.
+			<li><strong>Performance Strategy:</strong> Aggressive caching, stateless scaling.</li>
+			<li><strong>Data Lifecycle:</strong> Data retention and backup policies.</li>
+			<li><strong>Multi-Tenancy:</strong> Data isolation for SaaS B2B applications.</li>
+			<li><strong>Feature Flags:</strong> Incremental feature releases without redeployment.</li>
+			<li><strong>CQRS:</strong> Separation of read and write models for high performance.</li>
+			<li><strong>ADR (Architectural Decision Records):</strong> Historical documentation of technical decisions.
 			</li>
-			<li><strong>Operational Playbook:</strong> Checklist standar penanganan insiden produksi.</li>
+			<li><strong>Operational Playbook:</strong> Standard checklists for handling production incidents.</li>
 		</ul>
 	</section>
 
 	<section id="summary">
 		<h2>11. Summary</h2>
-		<p>Aplikasi backend <strong>production-grade</strong> adalah orkestrasi dari seluruh layer di atas. Dokumen ini
-			berfungsi sebagai peta konsep agar implementasi kode tetap terarah, konsisten, dan berkualitas tinggi.</p>
+		<p>A <strong>production-grade</strong> backend application is an orchestration of all the layers above. This
+			document
+			serves as a conceptual map to ensure code implementation remains directed, consistent, and of high quality.
+		</p>
 	</section>
 
 </body>
