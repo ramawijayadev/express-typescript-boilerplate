@@ -308,7 +308,7 @@
 				cleanly before termination.</li>
 		</ul>
 		<p><strong>Implementation:</strong> Endpoint <code>GET /api/v1/health</code> in
-			<code>src/modules/platform/health/health.routes.ts</code>. The response includes server status, version,
+			<code>src/modules/health/health.routes.ts</code>. The response includes server status, version,
 			timestamp, and job metrics (failed job count with alert threshold). Graceful shutdown in
 			<code>src/app/server.ts</code> handles SIGINT/SIGTERM by closing the HTTP server, database connections,
 			and background job workers.
@@ -317,10 +317,13 @@
 
 	<section id="domain-api">
 		<h2>4. Domain & API Layer</h2>
-		<p>The layer containing Business Logic and HTTP Contracts.</p>
+		<p>The layer containing Business Logic and HTTP Contracts. The code uses a <strong>Flat Module
+				Structure</strong>.</p>
 
 		<h3>4.1. Domain Entities / Models</h3>
-		<p>Pure business concepts (User, Order) and their rules. Must not depend on HTTP framework details.</p>
+		<p>Pure business concepts (User, Order) and their rules. Modules are located directly under
+			<code>src/modules/</code> (e.g., <code>src/modules/auth</code>, <code>src/modules/users</code>) without
+			nested categorical folders.</p>
 
 		<h3>4.2. Service / Use Case Layer</h3>
 		<p>Orchestrates business flow (Register, Checkout). Connects validation, repositories, and other logic.</p>
@@ -417,7 +420,7 @@
 
 		<h3>6.1. Authentication</h3>
 		<p>User identification (JWT, Session, OAuth). Ensure secure token validation mechanisms.</p>
-		<p><strong>Implementation:</strong> Dual-token JWT system in <code>src/modules/platform/auth/</code>:</p>
+		<p><strong>Implementation:</strong> Dual-token JWT system in <code>src/modules/auth/</code>:</p>
 		<ul>
 			<li><strong>Access Token:</strong> Short-lived JWT (configurable expiry) for authorization.</li>
 			<li><strong>Refresh Token:</strong> Long-lived hashed token stored in the database (UserSession table).</li>
