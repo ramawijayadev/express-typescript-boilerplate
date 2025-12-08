@@ -1,3 +1,5 @@
+![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)
+
 # Express TypeScript Boilerplate
 
 A production-ready, highly opinionated boilerplate for building scalable REST APIs with Node.js, TypeScript, and Docker.
@@ -180,3 +182,15 @@ We maintain a strict set of living documentation to ensure code quality, consist
 - [🧼 Clean Code Handbook](docs/constitution/clean-code.md) - TypeScript standards and best practices.
 - [📦 Dependency Handbook](docs/constitution/dependency.md) - Approved libraries and tools.
 - [🧩 Feature Handbook](docs/constitution/feature.md) - Guide to core modules and features.
+
+### 👥 Credits
+
+**Express TypeScript Boilerplate** is proudly built and maintained by:
+
+- **Rama Wijaya** - _Initial Work & Architecture_ - [@ramawijayadev](https://github.com/ramawijayadev)
+
+### 📄 License
+
+This project is open-sourced software licensed under the **[ISC License](LICENSE)**.
+
+You are free to use, modify, and distribute this software as long as the copyright header is left intact.
