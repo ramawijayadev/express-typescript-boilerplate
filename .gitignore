@@ -1,33 +1,47 @@
-# Dependencies
+# ------------------------------------
+# Dependencies & Core Builds
+# ------------------------------------
 node_modules/
-
-
-# Build
 dist/
 
-# Logs
-logs/
-*.log
-pnpm-debug.log*
-
-# Env
-.env*
-!.env.example
-
-# Coverage
-coverage/
-
-# TypeScript
+# ------------------------------------
+# TypeScript/Build Artifacts
+# ------------------------------------
 *.tsbuildinfo
 
-# Prisma
-# Prisma
-/src/generated/prisma
+# ------------------------------------
+# Environment & Secrets
+# ------------------------------------
+.env
+.env.*
+!.env.example
 
-# Junk
+# ------------------------------------
+# Logs & Debugging
+# ------------------------------------
+logs/
+*.log
+.pnpm-store
+pnpm-debug.log*
+npm-debug.log*
+
+# ------------------------------------
+# Testing, Cache & Artifacts
+# ------------------------------------
+coverage/
+.vitest/
+.cache/
+test_results.json
+*.jsonl
+
+# ------------------------------------
+# Database & Prisma
+# ------------------------------------
+/src/generated/prisma 
+
+# ------------------------------------
+# OS & Editor Files
+# ------------------------------------
 .DS_Store
-
 .vscode/
 *.swp
-
-

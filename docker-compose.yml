@@ -3,7 +3,7 @@ services:
     build:
       context: .
       target: runner
-    container_name: express-app
+    container_name: express-typescript-boilerplate-app
     ports:
       - "3333:3000"
     env_file:
@@ -77,6 +77,33 @@ services:
     volumes:
       - ./src/tests/perf:/scripts
       - ./src/tests/perf/results:/results
+    networks:
+      - app-network
+
+  tests:
+    image: node:22-alpine
+    container_name: express-typescript-boilerplate-app-test
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env.example
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/express_boilerplate_test?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      TEST_MAILPIT_URL: http://mailpit:8025
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    command: sh -c "corepack enable pnpm && pnpm install --frozen-lockfile && pnpm test"
     networks:
       - app-network
 
