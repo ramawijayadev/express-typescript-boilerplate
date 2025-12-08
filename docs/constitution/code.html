@@ -2,243 +2,424 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>TypeScript Clean Code Constitution</title>
-    <meta name="description"
-        content="Strict coding standards and conventions for TypeScript development using Feature-Based Architecture.">
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            color: #333;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Clean Code Constitution</title>
+	<style>
+		/* DESIGN SYSTEM: Matches Architecture, Convention, & Dependency Handbook */
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-        h1,
-        h2,
-        h3 {
-            color: #111;
-        }
+		:root {
+			--bg-color: #ffffff;
+			--text-main: #111827;
+			--text-muted: #4b5563;
+			--accent-color: #2563eb;
+			--border-color: #e5e7eb;
+			--code-bg: #f3f4f6;
+			--code-text: #db2777;
+			--section-bg: #f9fafb;
 
-        code {
-            background: #f4f4f4;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.9em;
-            color: #d63384;
-        }
+			/* Status Colors */
+			--status-forbidden: #ef4444;
+			/* Red */
+			--status-required: #2563eb;
+			/* Blue */
+			--status-warning: #d97706;
+			/* Orange */
+		}
 
-        pre {
-            background: #f4f4f4;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-        }
+		html {
+			scroll-behavior: smooth;
+		}
 
-        pre code {
-            background: none;
-            color: #333;
-            padding: 0;
-        }
+		body {
+			font-family: 'Inter', sans-serif;
+			line-height: 1.6;
+			color: var(--text-main);
+			max-width: 850px;
+			margin: 0 auto;
+			padding: 60px 24px;
+			background-color: var(--bg-color);
+		}
 
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-weight: 700;
+			color: var(--text-main);
+			letter-spacing: -0.025em;
+		}
 
-        .forbidden {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef9a9a;
-        }
+		h1 {
+			font-size: 3.5rem;
+			line-height: 1.1;
+			margin-bottom: 0.5rem;
+			letter-spacing: -0.04em;
+		}
 
-        .required {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #a5d6a7;
-        }
+		.subtitle {
+			font-size: 1.5rem;
+			font-weight: 500;
+			color: var(--text-muted);
+			margin-bottom: 2rem;
+			border-bottom: 1px solid var(--border-color);
+			padding-bottom: 2rem;
+		}
 
-        hr {
-            border: 0;
-            border-top: 1px solid #eee;
-            margin: 2rem 0;
-        }
-    </style>
+		h2 {
+			font-size: 1.8rem;
+			margin-top: 3.5rem;
+			margin-bottom: 1.5rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid var(--text-main);
+		}
+
+		h3 {
+			font-size: 1.25rem;
+			margin-top: 2rem;
+			margin-bottom: 0.75rem;
+			color: var(--text-main);
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		p {
+			margin-bottom: 1.25rem;
+			color: var(--text-muted);
+		}
+
+		strong {
+			color: var(--text-main);
+			font-weight: 600;
+		}
+
+		ul,
+		ol {
+			margin-bottom: 1.5rem;
+			padding-left: 1.5rem;
+			color: var(--text-muted);
+		}
+
+		li {
+			margin-bottom: 0.5rem;
+		}
+
+		/* Special Box for Intro */
+		.intro-box {
+			border-left: 4px solid var(--accent-color);
+			background-color: var(--section-bg);
+			padding: 1.5rem;
+			margin-bottom: 3rem;
+			border-radius: 0 8px 8px 0;
+		}
+
+		/* CODE BLOCKS */
+		code {
+			font-family: 'JetBrains Mono', monospace;
+			background-color: var(--code-bg);
+			color: var(--code-text);
+			padding: 0.2em 0.4em;
+			border-radius: 4px;
+			font-size: 0.85em;
+			font-weight: 500;
+		}
+
+		pre {
+			background-color: var(--code-bg);
+			padding: 1.5rem;
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+			overflow-x: auto;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 0.85em;
+			line-height: 1.5;
+			margin-bottom: 1.5rem;
+			color: var(--text-main);
+		}
+
+		pre code {
+			background-color: transparent;
+			padding: 0;
+			color: inherit;
+			border: none;
+		}
+
+		/* BADGES */
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-family: 'Inter', sans-serif;
+			font-size: 0.7rem;
+			font-weight: 800;
+			padding: 4px 8px;
+			border-radius: 6px;
+			text-transform: uppercase;
+			color: white;
+			letter-spacing: 0.05em;
+			vertical-align: middle;
+			transform: translateY(-2px);
+			margin-right: 8px;
+		}
+
+		.bg-forbidden {
+			background-color: var(--status-forbidden);
+		}
+
+		.bg-required {
+			background-color: var(--status-required);
+		}
+
+		.bg-warning {
+			background-color: var(--status-warning);
+		}
+
+		/* TOC */
+		.toc {
+			background-color: var(--section-bg);
+			padding: 2rem;
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+			margin-bottom: 4rem;
+		}
+
+		.toc h3 {
+			margin-top: 0;
+			font-size: 0.875rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: var(--text-muted);
+		}
+
+		.toc ul {
+			list-style: none;
+			padding-left: 0;
+			margin-bottom: 0;
+		}
+
+		.toc li {
+			margin-bottom: 0.5rem;
+		}
+
+		.toc a {
+			text-decoration: none;
+			color: var(--accent-color);
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+
+		.toc a:hover {
+			color: var(--text-main);
+			text-decoration: underline;
+		}
+
+		/* Article Card Style */
+		article {
+			border: 1px solid var(--border-color);
+			border-radius: 8px;
+			padding: 1.5rem;
+			margin-bottom: 2rem;
+			background: white;
+		}
+
+		article h3 {
+			margin-top: 0;
+			border-bottom: 1px solid var(--border-color);
+			padding-bottom: 0.75rem;
+			margin-bottom: 1rem;
+		}
+
+		@media print {
+			body {
+				padding: 0;
+				color: #000;
+			}
+
+			h2 {
+				break-before: auto;
+				page-break-after: avoid;
+				border-bottom: 1px solid #000;
+			}
+
+			.toc {
+				display: none;
+			}
+
+			article {
+				break-inside: avoid;
+				border: 1px solid #ccc;
+			}
+		}
+	</style>
 </head>
 
 <body>
 
-    <main>
-        <header>
-            <h1>TypeScript Clean Code Constitution</h1>
-            <dl>
-                <dt>Version</dt>
-                <dd>1.1.0 (Strict Enforcement Update)</dd>
-                <dt>Context</dt>
-                <dd>Feature-Based Architecture (Controller-Service-Repository)</dd>
-                <dt>Enforcement</dt>
-                <dd><strong>Draconian / CI-Gated</strong> (Violations = Build Failure)</dd>
-            </dl>
-            <hr>
-        </header>
+	<header>
+		<h1>Clean Code Constitution</h1>
+		<div class="subtitle">Strict coding standards and conventions for TypeScript development.</div>
+	</header>
 
-        <section id="core-philosophy">
-            <h2>I. The Core Narrative</h2>
-            <p><strong>Definition:</strong> Clean Code in TypeScript is defined by Predictability and Type Integrity.
-            </p>
-            <ol>
-                <li>
-                    <strong>Type Safety is Documentation:</strong> Do not write comments explaining <em>what</em> a
-                    variable is. Define a Type/Interface that makes it self-evident.
-                </li>
-                <li>
-                    <strong>The "Sterile Zone" Principle:</strong> The application core (Service/Repository) is a
-                    sterile environment. Data from the outside world (HTTP requests, APIs) must be sanitized, validated,
-                    and typed immediately upon entry (at the Controller level).
-                </li>
-                <li>
-                    <strong>Honesty:</strong> The code must be honest about its state. We do not hide errors, and we do
-                    not lie about types using <code>any</code>.
-                </li>
-            </ol>
-        </section>
+	<div class="intro-box">
+		<p style="margin:0;">
+			<strong>Context:</strong> Feature-Based Architecture (Controller-Service-Repository).<br>
+			<strong>Enforcement:</strong> <span style="color: var(--status-forbidden); font-weight: bold;">Draconian /
+				CI-Gated</span>. Violations will cause build failures.
+		</p>
+	</div>
 
-        <hr>
+	<nav class="toc">
+		<h3>Index</h3>
+		<ul>
+			<li><a href="#philosophy">1. The Core Narrative</a></li>
+			<li><a href="#implementation">2. Implementation Pattern</a></li>
+			<li><a href="#directives">3. Primary Directives</a></li>
+			<li><a href="#protocols">4. Edge Case Protocols</a></li>
+			<li><a href="#syntax">5. Modern Syntax & Style</a></li>
+		</ul>
+	</nav>
 
-        <section id="architecture">
-            <h2>II. Architectural Implementation</h2>
-            <p>The codebase follows a strict <strong>Feature-Based Module</strong> pattern.</p>
-            <pre><code>
-src/features/&lt;feature_name&gt;/
-├── &lt;feature&gt;.controller.ts  // Gatekeeper: Validates Input (Zod) -> Calls Service
+	<section id="philosophy">
+		<h2>1. The Core Narrative</h2>
+		<p><strong>Definition:</strong> Clean Code in this project is defined by Predictability and Type Integrity.</p>
+		<ol>
+			<li>
+				<strong>Type Safety is Documentation:</strong> Do not write comments explaining <em>what</em> a variable
+				is. Define a Type/Interface that makes it self-evident.
+			</li>
+			<li>
+				<strong>The "Sterile Zone" Principle:</strong> The application core (Service/Repository) is a sterile
+				environment. Data from the outside world (HTTP requests) must be sanitized, validated, and typed
+				immediately upon entry (at the Controller level).
+			</li>
+			<li>
+				<strong>Honesty:</strong> The code must be honest about its state. We do not hide errors, and we do not
+				lie about types using <code>any</code>.
+			</li>
+		</ol>
+	</section>
+
+	<section id="implementation">
+		<h2>2. Implementation Pattern</h2>
+		<p>The codebase follows a strict <strong>Feature-Based Module</strong> pattern nested under
+			<code>src/modules</code>.
+		</p>
+		<pre><code>src/modules/&lt;domain&gt;/&lt;feature&gt;/
+├── &lt;feature&gt;.controller.ts  // Gatekeeper: Validate (Zod) -> Call Service
 ├── &lt;feature&gt;.service.ts     // Brain: Pure Logic, DTO in/out, No HTTP objects
 ├── &lt;feature&gt;.repository.ts  // Storage: DB interaction, Returns Entities
-├── &lt;feature&gt;.routes.ts      // Router: Definitions only
-└── &lt;feature&gt;.types.ts       // Contracts: Interfaces & DTOs
-            </code></pre>
-        </section>
+├── &lt;feature&gt;.routes.ts      // Router: Route definitions & Middleware
+├── &lt;feature&gt;.schemas.ts     // Contracts: Zod Schemas
+└── &lt;feature&gt;.types.ts       // Contracts: TypeScript Interfaces</code></pre>
+	</section>
 
-        <hr>
+	<section id="directives">
+		<h2>3. The Primary Directives</h2>
 
-        <section id="primary-directives">
-            <h2>III. The Primary Directives (Mandatory Rules)</h2>
+		<article id="zero-any-policy">
+			<h3>A. The "Zero Any" Policy 🚫</h3>
+			<p>The usage of <code>any</code> defeats the purpose of TypeScript. It is banned in all forms.</p>
+			<ul>
+				<li><span class="badge bg-forbidden">FORBIDDEN</span> <strong>Explicit Any:</strong>
+					<code>const x: any</code>.
+				</li>
+				<li><span class="badge bg-forbidden">FORBIDDEN</span> <strong>Stealth Any:</strong>
+					<ul>
+						<li><code>z.any()</code> in Zod Schemas (Use <code>z.unknown()</code>).</li>
+						<li><code>Record&lt;string, any&gt;</code> (Use <code>Record&lt;string, unknown&gt;</code>).
+						</li>
+						<li><code>JSON.parse()</code> without immediate Zod validation/Type Guard.</li>
+					</ul>
+				</li>
+				<li><span class="badge bg-forbidden">FORBIDDEN</span> <strong>Silencers:</strong>
+					<code>// @ts-ignore</code> or <code>eslint-disable</code> (Unless strictly justified with a
+					comment).
+				</li>
+			</ul>
+		</article>
 
-            <article id="zero-any-policy">
-                <h3>A. The "Zero Any" Policy 🚫</h3>
-                <p>The usage of <code>any</code> defeats the purpose of TypeScript. It is banned in all forms.</p>
-                <ul>
-                    <li><span class="badge forbidden">FORBIDDEN</span> <strong>Explicit Any:</strong>
-                        <code>const x: any</code>.
-                    </li>
-                    <li><span class="badge forbidden">FORBIDDEN</span> <strong>Stealth Any:</strong>
-                        <ul>
-                            <li><code>z.any()</code> in Zod Schemas (Use <code>z.unknown()</code>).</li>
-                            <li><code>Record&lt;string, any&gt;</code> (Use <code>Record&lt;string, unknown&gt;</code>).
-                            </li>
-                            <li><code>JSON.parse()</code> without immediate Zod validation/Type Guard.</li>
-                        </ul>
-                    </li>
-                    <li><span class="badge forbidden">FORBIDDEN</span> <strong>Silencers:</strong>
-                        <code>// @ts-ignore</code> or <code>eslint-disable</code> (Unless strictly justified with a
-                        comment).
-                    </li>
-                </ul>
-            </article>
+		<article id="observability">
+			<h3>B. Observability & Logging 🔇</h3>
+			<ul>
+				<li><span class="badge bg-forbidden">FORBIDDEN</span> <strong>Console Log:</strong> Usage of
+					<code>console.log</code>, <code>console.error</code>, or <code>console.warn</code> in source code.
+				</li>
+				<li><span class="badge bg-required">REQUIRED</span> <strong>Logger Service:</strong> Use the
+					standardized <strong>Pino Logger</strong> (<code>@/core/logging/logger</code>).</li>
+				<li><span class="badge bg-required">REQUIRED</span> <strong>Structured Logs:</strong> Logs must be
+					structured objects, not random strings, to facilitate observability.</li>
+			</ul>
+		</article>
 
-            <article id="observability">
-                <h3>B. Observability & Logging 🔇</h3>
-                <ul>
-                    <li><span class="badge forbidden">FORBIDDEN</span> <strong>Console Log:</strong> Usage of
-                        <code>console.log</code>, <code>console.error</code>, or <code>console.warn</code> in source
-                        code (`src/`).
-                    </li>
-                    <li><span class="badge required">REQUIRED</span> <strong>Logger Service:</strong> Use the
-                        application's standardized <strong>Logger</strong> adapter (e.g., Winston/Pino wrapper).</li>
-                    <li><span class="badge required">REQUIRED</span> <strong>Structured Logs:</strong> Logs must be
-                        structured objects, not random strings, to facilitate observability.</li>
-                </ul>
-            </article>
+		<article id="input-validation">
+			<h3>C. Input Validation (The Border Patrol) 🛡️</h3>
+			<ul>
+				<li><span class="badge bg-required">REQUIRED</span> <strong>Zod Validation:</strong> All external inputs
+					(API bodies, params) must be validated using <strong>Zod</strong> schemas at the Controller/Route
+					level.</li>
+				<li><span class="badge bg-required">REQUIRED</span> <strong>Safe Typed Request:</strong> Use
+					<code>TypedRequest&lt;Params, Res, Body, Query&gt;</code> wrappers or Express Generics instead of
+					raw <code>Request</code>.
+				</li>
+			</ul>
+		</article>
 
-            <article id="input-validation">
-                <h3>C. Input Validation (The Border Patrol) 🛡️</h3>
-                <ul>
-                    <li><span class="badge required">REQUIRED</span> <strong>Zod Validation:</strong> All external
-                        inputs (API bodies, params) must be validated using <strong>Zod</strong> schemas at the
-                        Controller level.</li>
-                    <li><span class="badge required">REQUIRED</span> <strong>Safe Typed Request:</strong> Use
-                        <code>TypedRequest&lt;Params, Res, Body, Query&gt;</code> generic wrappers instead of raw
-                        Express Request.
-                    </li>
-                </ul>
-            </article>
+		<article id="testing-standards">
+			<h3>D. Testing Standards 🧪</h3>
+			<ul>
+				<li><span class="badge bg-required">REQUIRED</span> <strong>Silence:</strong> Tests must not output logs
+					to the console. Mock the Logger.</li>
+				<li><span class="badge bg-forbidden">FORBIDDEN</span> <strong>Loose Mocks:</strong> Do not mock data
+					using <code>as any</code>. Define partial interfaces or use test data builders.</li>
+				<li><span class="badge bg-required">REQUIRED</span> <strong>Strict Assertions:</strong> Use
+					<code>expect(obj).toEqual(...)</code> over <code>toBeTruthy()</code> to prevent false positives.
+				</li>
+			</ul>
+		</article>
+	</section>
 
-            <article id="testing-standards">
-                <h3>D. Testing Standards 🧪</h3>
-                <ul>
-                    <li><span class="badge required">REQUIRED</span> <strong>Silence:</strong> Tests must not output
-                        logs to the console. Mock the Logger.</li>
-                    <li><span class="badge forbidden">FORBIDDEN</span> <strong>Loose Mocks:</strong> Do not mock data
-                        using <code>as any</code>. Define partial interfaces or use test data builders.</li>
-                    <li><span class="badge required">REQUIRED</span> <strong>Strict Assertions:</strong> Use
-                        <code>expect(obj).toEqual(...)</code> over <code>toBeTruthy()</code> to prevent false positives
-                        on objects.
-                    </li>
-                </ul>
-            </article>
-        </section>
+	<section id="protocols">
+		<h2>4. Edge Case Protocols</h2>
 
-        <hr>
+		<article>
+			<h3>Protocol 1: Handling Dynamic Objects</h3>
+			<p>If an object has dynamic keys but consistent values, use <code>Record</code> with unknown.</p>
+			<pre><code>const config: Record&lt;string, unknown&gt; = { ... }</code></pre>
+		</article>
 
-        <section id="edge-case-protocols">
-            <h2>IV. Edge Case Protocols</h2>
+		<article>
+			<h3>Protocol 2: The "Safety Harness" (3rd Party Libraries)</h3>
+			<p>If an external library returns <code>any</code>, establish a "Casting Boundary" immediately in a
+				dedicated adapter or type file.</p>
+			<pre><code>// Allowed ONLY in adapter/type files:
+const result = library.getData() as unknown as ExpectedType;</code></pre>
+		</article>
 
-            <article>
-                <h3>Protocol 1: Handling Dynamic Objects</h3>
-                <p>If an object has dynamic keys but consistent values, use <code>Record</code> with unknown.</p>
-                <pre><code>const config: Record&lt;string, unknown&gt; = { ... }</code></pre>
-            </article>
+		<article>
+			<h3>Protocol 3: Array Access Safety</h3>
+			<p>Assume array access can always be undefined (TSConfig <code>noUncheckedIndexedAccess</code> is ON).</p>
+			<pre><code>const user = users[0]; // Type is User | undefined
+if (!user) throw new AppError(404, "User not found");</code></pre>
+		</article>
+	</section>
 
-            <article>
-                <h3>Protocol 2: The "Safety Harness" (3rd Party Libraries)</h3>
-                <p>If an external library returns <code>any</code>, establish a "Casting Boundary" immediately in a
-                    dedicated adapter or type file.</p>
-                <pre><code>
-// Allowed ONLY in adapter/type files:
-const result = library.getData() as unknown as ExpectedType;
-                </code></pre>
-            </article>
+	<section id="syntax">
+		<h2>5. Modern Syntax & Style</h2>
+		<ul>
+			<li><strong>Null Checks:</strong> Use Optional Chaining (<code>?.</code>) and Nullish Coalescing
+				(<code>??</code>).</li>
+			<li><strong>Immutability:</strong> Prefer spread operator (<code>...</code>) over mutation.</li>
+			<li><strong>Imports:</strong> Sort imports automatically. No empty lines inside import groups.</li>
+			<li><strong>Async:</strong> No floating promises. Always <code>await</code> or return.</li>
+		</ul>
+	</section>
 
-            <article>
-                <h3>Protocol 3: Array Access Safety</h3>
-                <p>Assume array access can always be undefined (TSConfig <code>noUncheckedIndexedAccess</code> is ON).
-                </p>
-                <pre><code>
-const user = users[0]; // Type is User | undefined
-if (!user) throw new Error("User not found");
-                </code></pre>
-            </article>
-        </section>
-
-        <hr>
-
-        <section id="modern-syntax">
-            <h2>V. Modern Syntax & Style</h2>
-            <ul>
-                <li><strong>Null Checks:</strong> Use Optional Chaining (<code>?.</code>) and Nullish Coalescing
-                    (<code>??</code>).</li>
-                <li><strong>Immutability:</strong> Prefer spread operator (<code>...</code>) over mutation.</li>
-                <li><strong>Imports:</strong> Sort imports automatically. No empty lines inside import groups.</li>
-                <li><strong>Async:</strong> No floating promises. Always <code>await</code> or return.</li>
-            </ul>
-        </section>
-
-    </main>
+	<footer
+		style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; color: var(--text-muted); font-size: 0.875rem;">
+		<p>Clean Code Constitution &mdash; Internal Developer Reference</p>
+	</footer>
 
 </body>
 
