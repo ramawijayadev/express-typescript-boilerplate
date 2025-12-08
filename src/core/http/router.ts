@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-import { exampleRouter } from "@/modules/business/example/example.routes";
-import { authRouter } from "@/modules/platform/auth/auth.routes";
-import { healthRouter } from "@/modules/platform/health/health.routes";
-import { jobsRouter } from "@/modules/platform/jobs/jobs.routes";
-import { usersRouter } from "@/modules/platform/users/users.routes";
+import { authRouter } from "@/modules/auth/auth.routes";
+import { exampleRouter } from "@/modules/example/example.routes";
+import { healthRouter } from "@/modules/health/health.routes";
+import { jobsRouter } from "@/modules/jobs/jobs.routes";
+import { usersRouter } from "@/modules/users/users.routes";
 
 import type { Express } from "express";
 

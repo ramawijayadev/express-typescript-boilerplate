@@ -1,11 +1,11 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 
 import { env } from "@/config/env";
-import { exampleRegistry } from "@/modules/business/example/example.routes";
-import { authRegistry } from "@/modules/platform/auth/auth.routes";
-import { healthRegistry } from "@/modules/platform/health/health.routes";
-import { jobsRegistry } from "@/modules/platform/jobs/jobs.routes";
-import { userRegistry } from "@/modules/platform/users/users.routes";
+import { authRegistry } from "@/modules/auth/auth.routes";
+import { exampleRegistry } from "@/modules/example/example.routes";
+import { healthRegistry } from "@/modules/health/health.routes";
+import { jobsRegistry } from "@/modules/jobs/jobs.routes";
+import { userRegistry } from "@/modules/users/users.routes";
 
 import { appConfig } from "./app";
 
