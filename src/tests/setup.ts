@@ -1,12 +1,6 @@
-import path from "node:path";
-
-import dotenv from "dotenv";
 import { afterAll, beforeAll, beforeEach } from "vitest";
 
 import { db, disconnectAll } from "@/core/database/connection";
-
-const isDocker = process.env.IS_DOCKER === "true";
-dotenv.config({ path: path.resolve(process.cwd(), ".env.test"), override: !isDocker });
 
 let dbResetDoneForFile = false;
 

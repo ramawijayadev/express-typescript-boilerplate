@@ -12,7 +12,7 @@ export default defineConfig({
       JWT_ACCESS_EXPIRATION: "1m",
       JWT_REFRESH_EXPIRATION: "5m",
     },
-    setupFiles: ["./src/tests/setup.ts"], // Global setup
+    setupFiles: ["./src/tests/load-env.ts", "./src/tests/setup.ts"], // Global setup
     fileParallelism: false,
   },
   resolve: {

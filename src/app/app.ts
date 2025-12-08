@@ -13,21 +13,26 @@ export function createApp(configure?: (app: express.Express) => void) {
 
   registerMiddlewares(app);
 
+  // Swagger UI
   if (env.NODE_ENV !== "production") {
+    app.use("/docs", swaggerUi.serve);
     app.get(
-      "/",
+      "/docs",
       swaggerUi.setup(swaggerSpec, {
         swaggerOptions: {
           defaultModelsExpandDepth: -1,
         },
       }),
     );
-    app.use("/", swaggerUi.serve);
-  } else {
-    app.get("/", (_req, res) => {
-      res.json({ message: "API is running. Documentation available in development mode." });
-    });
   }
+
+  // Root endpoint
+  app.get("/", (_req, res) => {
+    res.json({
+      message: "API is running",
+      docs: env.NODE_ENV !== "production" ? "/docs" : undefined,
+    });
+  });
 
   registerRoutes(app);
   if (configure) {
