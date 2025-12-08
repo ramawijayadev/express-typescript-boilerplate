@@ -24,6 +24,9 @@ WORKDIR /app
 # Copy package manager files first for better layer caching
 COPY package.json pnpm-lock.yaml ./
 
+# Copy Prisma schema for postinstall generation
+COPY prisma ./prisma
+
 # Install all dependencies (including devDependencies for build stage)
 RUN pnpm install --frozen-lockfile
 
