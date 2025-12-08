@@ -493,6 +493,24 @@
 
     <h4>6.3. API Contracts</h4>
     <p>Use standard HTTP codes and the defined JSON response envelope.</p>
+    <pre><code>// Success
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "OK",
+  "data": { ... },
+  "meta": { ... }, // Optional (Pagination)
+  "requestId": "uuid"
+}
+
+// Error
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Validation Failed",
+  "errors": [ ... ],
+  "requestId": "uuid"
+}</code></pre>
   </section>
 
   <section id="checklist">

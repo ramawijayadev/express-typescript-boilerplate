@@ -403,7 +403,11 @@ authRouter.post(
 
     <h3>7.2. Controller Response <span class="badge bg-wajib">MANDATORY</span></h3>
     <p>Use the helper functions from <code>@/shared/http/api-response</code>.</p>
-    <pre><code>return ok(res, data);
+    <pre><code>// 200 OK
+return ok(res, data);
+// { success: true, statusCode: 200, message: "OK", data: ..., requestId: "..." }
+
+// 201 Created
 return created(res, newUser);</code></pre>
   </section>
 

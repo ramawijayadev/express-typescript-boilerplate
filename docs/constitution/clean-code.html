@@ -306,7 +306,7 @@
 		<p>The codebase follows a strict <strong>Feature-Based Module</strong> pattern nested under
 			<code>src/modules</code>.
 		</p>
-		<pre><code>src/modules/&lt;domain&gt;/&lt;feature&gt;/
+		<pre><code>src/modules/&lt;feature&gt;/
 ├── &lt;feature&gt;.controller.ts  // Gatekeeper: Validate (Zod) -> Call Service
 ├── &lt;feature&gt;.service.ts     // Brain: Pure Logic, DTO in/out, No HTTP objects
 ├── &lt;feature&gt;.repository.ts  // Storage: DB interaction, Returns Entities

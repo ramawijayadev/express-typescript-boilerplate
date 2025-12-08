@@ -323,7 +323,8 @@
 		<h3>4.1. Domain Entities / Models</h3>
 		<p>Pure business concepts (User, Order) and their rules. Modules are located directly under
 			<code>src/modules/</code> (e.g., <code>src/modules/auth</code>, <code>src/modules/users</code>) without
-			nested categorical folders.</p>
+			nested categorical folders.
+		</p>
 
 		<h3>4.2. Service / Use Case Layer</h3>
 		<p>Orchestrates business flow (Register, Checkout). Connects validation, repositories, and other logic.</p>
@@ -338,14 +339,26 @@
 		<p>Standardization of Create, Read, Update, Delete operations:</p>
 		<ul>
 			<li>Consistent naming conventions.</li>
-			<li><strong>Response Format:</strong> Uniform success structure (<code>data</code>, <code>meta</code> for
-				pagination).</li>
+			<li><strong>Response Format:</strong> Uniform success structure (<code>data</code>, <code>meta</code>,
+				<code>moduleId</code>, <code>requestId</code>).</li>
 		</ul>
+		<pre><code>// Success
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "...",
+  "data": { ... },
+  "requestId": "..."
+}</code></pre>
 
-		<h3>4.5. Routing & Controllers</h3>
+		<h3>4.5. Routing, Controllers & DI</h3>
 		<p>Controllers are strictly responsible for receiving input, calling services, and mapping results to HTTP
 			responses.
 			<strong>Avoid business logic in controllers.</strong>
+		</p>
+		<p><strong>Dependency Injection:</strong> We use <strong>Manual Injection</strong> in the
+			<code>*.routes.ts</code> files. The Router instantiates the Controller, Service, and Repository, wiring them
+			together explicitly. We avoid complex DI containers.
 		</p>
 
 		<h3>4.6. API Versioning</h3>
