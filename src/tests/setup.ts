@@ -5,8 +5,9 @@ import { afterAll, beforeAll, beforeEach } from "vitest";
 
 import { db, disconnectAll } from "@/core/database/connection";
 
-// Explicitly load .env.test to ensure we use the test database
 dotenv.config({ path: path.resolve(process.cwd(), ".env.test"), override: true });
+
+let dbResetDoneForFile = false;
 
 const resetDatabase = async () => {
   const tablenames = await db().$queryRaw<
@@ -25,43 +26,42 @@ const resetDatabase = async () => {
 };
 
 beforeAll(() => {
-  // 🛡️ SAFETY GUARD: Prevent running tests against non-test databases
   const dbUrl = process.env.DATABASE_URL;
 
   if (!dbUrl || !dbUrl.includes("_test")) {
-    // eslint-disable-next-line no-console
-    console.error("\n🚨 CRITICAL ERROR: Test runner is NOT connected to a Test Database!");
-    // eslint-disable-next-line no-console
-    console.error(`   Current DATABASE_URL: ${dbUrl}`);
-    // eslint-disable-next-line no-console
-    console.error(
-      "   Tests must run against a database ending in '_test'. Aborting to prevent data loss.\n",
+    throw new Error(
+      [
+        "\n🚨 CRITICAL ERROR: Test runner is NOT connected to a Test Database!",
+        `   Current DATABASE_URL: ${dbUrl}`,
+        "   Tests must run against a database ending in '_test'. Aborting to prevent data loss.\n",
+      ].join("\n"),
     );
-    process.exit(1);
   }
 
-  // Initialize reset flag for the current test file
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (globalThis as any).__db_reset_done_for_file = false;
+  dbResetDoneForFile = false;
 
   const isLocal =
     process.env.DATABASE_URL?.includes("localhost") ||
     process.env.DATABASE_URL?.includes("127.0.0.1") ||
-    process.env.DATABASE_URL?.includes("postgres"); // 'postgres' service name in docker
+    process.env.DATABASE_URL?.includes("postgres");
   const isTestEnv = process.env.NODE_ENV === "test";
-
-  if (!isTestEnv) {
-    // Silent
-  }
 
   if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
     throw new Error(
-      "⛔️ FATAL: Attempting to run tests in PRODUCTION/STAGING environment. Aborting to protect data.",
+      "FATAL: Attempting to run tests in PRODUCTION/STAGING environment. Aborting to protect data.",
     );
   }
 
   if (!isLocal && !process.env.CI) {
-    // Silent
+    throw new Error(
+      "Refusing to run tests against a non-local database outside CI. Check your DATABASE_URL and environment.",
+    );
+  }
+
+  if (!isTestEnv) {
+    throw new Error(
+      "Tests must run with NODE_ENV='test'. Aborting to avoid unpredictable behavior.",
+    );
   }
 });
 
@@ -69,13 +69,9 @@ beforeEach(async (context) => {
   const isUserJourney = context.task.file?.name?.includes("user-journey");
 
   if (isUserJourney) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const resetDone = (globalThis as any).__db_reset_done_for_file;
-
-    if (!resetDone) {
+    if (!dbResetDoneForFile) {
       await resetDatabase();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__db_reset_done_for_file = true;
+      dbResetDoneForFile = true;
     }
     return;
   }
