@@ -7,7 +7,7 @@ services:
     ports:
       - "3333:3000"
     env_file:
-      - .env.example
+      - .env
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/express_boilerplate?schema=public
@@ -21,7 +21,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: sh -c "npx prisma generate && npx prisma db push && pnpm dev"
+    command: sh -c "npx prisma generate && npx prisma db push && npx prisma db seed && pnpm dev"
     volumes:
       - .:/app
       - /app/node_modules
