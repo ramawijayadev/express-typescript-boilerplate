@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Backend Starterkit Overview</title>
+  <title>Backend Starter Kit Overview</title>
   <style>
     /* DESIGN SYSTEM: The Master Theme */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -28,8 +28,8 @@
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
       color: var(--text-main);
-      max-width: 1000px;
-      /* Lebih lebar dikit buat Grid */
+      max-width: 1100px;
+      /* Slightly wider to accommodate more cards */
       margin: 0 auto;
       padding: 60px 24px;
       background-color: var(--bg-color);
@@ -76,7 +76,7 @@
       font-weight: 500;
       color: var(--text-muted);
       margin-bottom: 3rem;
-      max-width: 600px;
+      max-width: 700px;
     }
 
     /* HERO SECTION */
@@ -86,10 +86,10 @@
       border-bottom: 1px solid var(--border-color);
     }
 
-    /* GRID SYSTEM FOR THE 4 PILLARS */
+    /* GRID SYSTEM */
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 2rem;
       margin-bottom: 4rem;
     }
@@ -100,6 +100,8 @@
       border-radius: 12px;
       padding: 2rem;
       transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
     }
 
     .card:hover {
@@ -119,6 +121,8 @@
       padding-left: 1.2rem;
       color: var(--text-muted);
       font-size: 0.95rem;
+      flex-grow: 1;
+      /* Pushes button to bottom */
     }
 
     .card li {
@@ -134,6 +138,7 @@
       color: var(--text-main);
       border-bottom: 2px solid var(--accent-color);
       transition: color 0.2s;
+      width: fit-content;
     }
 
     .btn-link:hover {
@@ -185,52 +190,66 @@
 <body>
 
   <header class="hero">
-    <h1>Backend Starterkit</h1>
+    <h1>Backend Starter Kit</h1>
     <div class="subtitle">
-      Dokumentasi induk, standar teknis, dan filosofi pengembangan aplikasi backend production-grade.
+      The master documentation, technical standards, and development philosophy for production-grade backend
+      applications.
     </div>
     <p>
-      Kitab ini adalah titik awal (Entry Point). Starterkit ini dirancang untuk mencapai keseimbangan antara
-      <strong>Kecepatan Development</strong> (MVP) dan <strong>Kestabilan Jangka Panjang</strong> (Scalability).
+      This is your <strong>Entry Point</strong>. This starter kit is engineered to strike a balance between
+      <strong>Development Speed</strong> (MVP) and <strong>Long-term Stability</strong> (Scalability).
     </p>
   </header>
 
   <section>
-    <h2>The 4 Pillars</h2>
-    <p>Ekosistem starterkit ini dibangun di atas 4 pilar dokumentasi utama:</p>
+    <h2>The Documentation Pillars</h2>
+    <p>The ecosystem is built upon these core handbooks found in the <code>docs/constitution/</code> directory:</p>
 
     <div class="grid-container">
 
       <article class="card">
         <span class="card-icon">🏛️</span>
         <h3>1. Architecture Handbook</h3>
-        <p>Peta mental ("The Map") tentang bagaimana sistem bekerja secara konseptual.</p>
+        <p>The "Mental Map" of how the system works conceptually.</p>
         <ul>
-          <li><strong>Mental Model:</strong> 7 Layer (Platform, Domain, Data, Security, etc).</li>
-          <li><strong>Decoupling:</strong> Pemisahan tegas Controller vs Service vs Repository.</li>
-          <li><strong>Observability:</strong> Strategi Logging & Tracing sejak hari pertama.</li>
-          <li><strong>Philosophy:</strong> Production-grade & Agnostic.</li>
+          <li><strong>Mental Model:</strong> 7 Layers (Platform, Domain, Data, Security, etc).</li>
+          <li><strong>Decoupling:</strong> Strict separation of Controller vs Service vs Repository.</li>
+          <li><strong>Observability:</strong> Logging & Tracing strategies from day one.</li>
+          <li><strong>Philosophy:</strong> Production-grade & Framework Agnostic.</li>
         </ul>
-        <a href="architecture.html" class="btn-link">Buka Architecture.html →</a>
+        <a href="constitution/architecture.html" class="btn-link">Open Architecture.html →</a>
       </article>
 
       <article class="card">
         <span class="card-icon">⚖️</span>
         <h3>2. Convention Handbook</h3>
-        <p>Hukum dan aturan main ("The Law") agar kode seragam dan mudah ditebak.</p>
+        <p>The "Law" and ground rules ensuring code consistency and predictability.</p>
         <ul>
           <li><strong>Structure:</strong> Feature-based folder structure (Colocation).</li>
           <li><strong>Naming:</strong> Kebab-case files, PascalCase classes.</li>
           <li><strong>Routing:</strong> Plural nouns, standard CRUD verbs.</li>
-          <li><strong>Testing:</strong> Penempatan file test di dalam modul (<code>__tests__</code>).</li>
+          <li><strong>Testing:</strong> Placing tests inside modules (<code>__tests__</code>).</li>
         </ul>
-        <a href="convention.html" class="btn-link">Buka Convention.html →</a>
+        <a href="constitution/convention.html" class="btn-link">Open Convention.html →</a>
+      </article>
+
+      <article class="card">
+        <span class="card-icon">🧼</span>
+        <h3>3. Clean Code Constitution</h3>
+        <p>Strict TypeScript standards enforced via CI/CD.</p>
+        <ul>
+          <li><strong>Zero Any Policy:</strong> Strict typing enforcement.</li>
+          <li><strong>Input Validation:</strong> Zod at the gates.</li>
+          <li><strong>Observability:</strong> No <code>console.log</code> allowed.</li>
+          <li><strong>Modern Syntax:</strong> Immutability and async/await best practices.</li>
+        </ul>
+        <a href="constitution/clean-code-constitution.html" class="btn-link">Open Clean-Code.html →</a>
       </article>
 
       <article class="card">
         <span class="card-icon">📦</span>
-        <h3>3. Dependency Handbook</h3>
-        <p>Kotak peralatan ("The Tools") yang digunakan. Stabil, Typed, dan Mainstream.</p>
+        <h3>4. Dependency Handbook</h3>
+        <p>The "Toolbox". Technologies that are Stable, Typed, and Mainstream.</p>
         <div style="margin-bottom: 1rem;">
           <span class="tech-badge">Node.js</span>
           <span class="tech-badge">Express</span>
@@ -242,20 +261,20 @@
           <span class="tech-badge">Zod</span>
           <span class="tech-badge">Pino</span>
         </div>
-        <p>Mendefinisikan mana library <strong>CORE</strong> (Wajib) dan mana yang <strong>RECOMMENDED</strong>.</p>
-        <a href="depedency.html" class="btn-link">Buka Depedency.html →</a>
+        <p>Defines which libraries are <strong>CORE</strong> (Mandatory) and which are <strong>RECOMMENDED</strong>.</p>
+        <a href="constitution/dependency.html" class="btn-link">Open Dependency.html →</a>
       </article>
 
       <article class="card">
         <span class="card-icon">🧩</span>
-        <h3>4. Feature Handbook</h3>
-        <p>Cetak biru ("The Blueprint") fungsionalitas modul reusable.</p>
+        <h3>5. Feature Handbook</h3>
+        <p>The "Blueprint" for reusable functional modules.</p>
         <ul>
-          <li><strong>Tier 1 (Wajib):</strong> Auth, User, Generic CRUD, File Infra.</li>
-          <li><strong>Tier 2 (Rec):</strong> Settings, Organization, Activity Feed.</li>
-          <li><strong>Tier 3 (Opt):</strong> Workflow, Comments, Tags.</li>
+          <li><strong>Tier 1 (Mandatory):</strong> Auth, User, Generic CRUD, Notification Infra.</li>
+          <li><strong>Tier 2 (Rec):</strong> File Storage, Job Queues, Observability.</li>
+          <li><strong>Tier 3 (Opt):</strong> RBAC, Audit Logs, Workflow.</li>
         </ul>
-        <a href="feature.html" class="btn-link">Buka Feature.html →</a>
+        <a href="constitution/feature.html" class="btn-link">Open Feature.html →</a>
       </article>
 
     </div>
@@ -263,21 +282,23 @@
 
   <section style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 4rem;">
     <h2 style="border: none; margin-bottom: 1rem;">🚀 Quick Start Philosophy</h2>
-    <p>Bagaimana cara menggunakan starterkit ini secara efektif?</p>
+    <p>How to use this starter kit effectively?</p>
     <ol style="margin-bottom: 0;">
-      <li><strong>Baca Architecture:</strong> Pahami dulu "Kenapa" kita menyusun folder seperti ini.</li>
-      <li><strong>Install Dependency:</strong> Ikuti panduan instalasi <code>pnpm</code> di <em>Dependency
+      <li><strong>Read Architecture:</strong> Understand "Why" we organize folders this way.</li>
+      <li><strong>Install Dependencies:</strong> Follow the <code>pnpm</code> installation guide in the <em>Dependency
           Handbook</em>.</li>
-      <li><strong>Ikuti Convention:</strong> Saat menulis fitur baru, contek struktur nama file dan kode dari
-        <em>Convention Handbook</em>.</li>
-      <li><strong>Gunakan Core Feature:</strong> Jangan buat Auth atau Upload dari nol, gunakan modul yang didefinisikan
-        di <em>Feature Handbook</em>.</li>
+      <li><strong>Follow Conventions:</strong> When writing new features, mimic the file structure and code style from
+        the <em>Convention Handbook</em> and <em>Clean Code Constitution</em>.</li>
+      <li><strong>Use Core Features:</strong> Do not build Auth or Uploads from scratch; use the modules defined in the
+        <em>Feature Handbook</em>.
+      </li>
     </ol>
   </section>
 
   <footer>
-    <p>Backend Starterkit Documentation Suite &mdash; Internal Developer Reference</p>
-    <p style="opacity: 0.6; font-size: 0.8rem;">Architecture &bull; Convention &bull; Dependency &bull; Feature</p>
+    <p>Backend Starter Kit Documentation Suite &mdash; Internal Developer Reference</p>
+    <p style="opacity: 0.6; font-size: 0.8rem;">Architecture &bull; Convention &bull; Clean Code &bull; Dependency
+      &bull; Feature</p>
   </footer>
 
 </body>
