@@ -2,7 +2,6 @@ import type { PaginatedMeta } from "@/shared/types/pagination";
 
 import type { Request } from "express";
 
-/** Constructs navigation links for paginated responses. */
 export function generatePaginationLinks(
   req: Request,
   meta: PaginatedMeta,

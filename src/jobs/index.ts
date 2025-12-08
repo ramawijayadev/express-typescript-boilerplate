@@ -8,7 +8,6 @@ import { emailWorkerHandler, emailWorkerName } from "./send-email.job";
 
 let worker: Worker | undefined;
 
-/** Starts background job workers. */
 export function initJobs() {
   const redisOpts = {
     host: queueConfig.redis.host,
@@ -62,7 +61,6 @@ export function initJobs() {
   logger.info("Background jobs initialized");
 }
 
-/** Gracefully terminates workers to allow active jobs to finish. */
 export async function shutdownJobs() {
   if (worker) {
     await worker.close();
