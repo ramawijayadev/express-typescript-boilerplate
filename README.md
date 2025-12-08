@@ -40,6 +40,7 @@ Designed with **Clean Architecture** principles, this starter kit strictly enfor
 The easiest way to start. No local Node.js or Database required.
 
 1.  **Clone & Configure**:
+
     ```bash
     git clone <repo-url>
     cd express-typescript-boilerplate
@@ -47,6 +48,7 @@ The easiest way to start. No local Node.js or Database required.
     ```
 
 2.  **Generate Secrets**:
+
     ```bash
     # Uses the container to generate secure JWT secrets
     pnpm docker:setup
@@ -63,11 +65,13 @@ The easiest way to start. No local Node.js or Database required.
 For developers who prefer running tools natively.
 
 1.  **Install Dependencies**:
+
     ```bash
     pnpm install
     ```
 
 2.  **Configure Environment**:
+
     ```bash
     cp .env.example .env
     pnpm cli jwt:generate
@@ -75,11 +79,13 @@ For developers who prefer running tools natively.
 
 3.  **Setup Infrastructure**:
     Ensure PostgreSQL and Redis are running (or use Docker for infra only):
+
     ```bash
     docker-compose up -d postgres redis mailpit
     ```
 
 4.  **Initialize Database**:
+
     ```bash
     pnpm db:migrate
     pnpm db:seed
@@ -94,15 +100,15 @@ For developers who prefer running tools natively.
 
 Key variables found in `.env`:
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `NODE_ENV` | Environment mode | `production` |
-| `APP_PORT` | Application port | `3000` |
-| `DATABASE_URL` | Prisma DB Connection URL | `postgresql://...` |
-| `REDIS_HOST` | Redis Hostname | `redis` (or `localhost`) |
-| `JWT_SECRET` | Secret for signing Access Tokens | *Generated* |
-| `JWT_REFRESH_SECRET` | Secret for verifying Refresh Tokens | *Generated* |
-| `LOG_LEVEL` | Logging verbosity | `info` |
+| Variable             | Description                         | Default                  |
+| :------------------- | :---------------------------------- | :----------------------- |
+| `NODE_ENV`           | Environment mode                    | `production`             |
+| `APP_PORT`           | Application port                    | `3000`                   |
+| `DATABASE_URL`       | Prisma DB Connection URL            | `postgresql://...`       |
+| `REDIS_HOST`         | Redis Hostname                      | `redis` (or `localhost`) |
+| `JWT_SECRET`         | Secret for signing Access Tokens    | _Generated_              |
+| `JWT_REFRESH_SECRET` | Secret for verifying Refresh Tokens | _Generated_              |
+| `LOG_LEVEL`          | Logging verbosity                   | `info`                   |
 
 See `.env.example` for the full list.
 
@@ -128,46 +134,49 @@ src/
 
 ## Scripts
 
-| Script | Description |
-| :--- | :--- |
-| `pnpm dev` | Start dev server with hot-reloading |
-| `pnpm build` | Compile TypeScript to `dist/` |
-| `pnpm start` | Run the compiled production app |
-| `pnpm test` | Run all Unit and Integration tests |
-| `pnpm test:e2e` | Run End-to-End tests |
-| `pnpm db:migrate` | Run database migrations |
-| `pnpm db:seed` | Seed the database with sample data |
-| `pnpm docker:setup`| Helper to generate secrets via Docker |
+| Script              | Description                           |
+| :------------------ | :------------------------------------ |
+| `pnpm dev`          | Start dev server with hot-reloading   |
+| `pnpm build`        | Compile TypeScript to `dist/`         |
+| `pnpm start`        | Run the compiled production app       |
+| `pnpm test`         | Run all Unit and Integration tests    |
+| `pnpm test:e2e`     | Run End-to-End tests                  |
+| `pnpm db:migrate`   | Run database migrations               |
+| `pnpm db:seed`      | Seed the database with sample data    |
+| `pnpm docker:setup` | Helper to generate secrets via Docker |
 
 ## Testing
 
 We employ a comprehensive testing strategy:
 
--   **Unit/Integration**: Powered by Vitest.
-    ```bash
-    pnpm test
-    ```
--   **End-to-End (E2E)**: Tests full user journeys.
-    ```bash
-    pnpm test:e2e
-    ```
--   **Performance**: Load testing with k6 (see `src/tests/perf/`).
+- **Unit/Integration**: Powered by Vitest.
+  ```bash
+  pnpm test
+  ```
+- **End-to-End (E2E)**: Tests full user journeys.
+  ```bash
+  pnpm test:e2e
+  ```
+- **Performance**: Load testing with k6 (see `src/tests/perf/`).
 
 ## 📚 Documentation
 
 We maintain a strict set of living documentation to ensure code quality, consistency, and security.
 
 ### 🚀 Start Here
--   **[📖 Overview & Master Guide](docs/overview.md)** - The entry point to all technical standards.
--   **[🛠️ Setup Guide](docs/setup.md)** - Detailed installation instructions (Docker & Local).
--   **API Documentation** - Available at `/docs` (Swagger UI) when the server is running.
+
+- **[📖 Overview & Master Guide](docs/overview.md)** - The entry point to all technical standards.
+- **[🛠️ Setup Guide](docs/setup.md)** - Detailed installation instructions (Docker & Local).
+- **API Documentation** - Available at `/docs` (Swagger UI) when the server is running.
 
 ### 🛡️ Quality & Security
--   **[🛡️ Audit Reports](docs/audit/security-audit-report.md)** - Comprehensive Security, Architecture, and Production Readiness assessments.
+
+- **[🛡️ Audit Reports](docs/audit/security-audit-report.md)** - Comprehensive Security, Architecture, and Production Readiness assessments.
 
 ### 📘 Core Handbooks (The Constitution)
--   [🏛️ Architecture Handbook](docs/constitution/architecture.md) - Mental model, layers, and separation of concerns.
--   [⚖️ Convention Handbook](docs/constitution/convention.md) - Naming, folder structure, and file patterns.
--   [🧼 Clean Code Handbook](docs/constitution/clean-code.md) - TypeScript standards and best practices.
--   [📦 Dependency Handbook](docs/constitution/dependency.md) - Approved libraries and tools.
--   [🧩 Feature Handbook](docs/constitution/feature.md) - Guide to core modules and features.
+
+- [🏛️ Architecture Handbook](docs/constitution/architecture.md) - Mental model, layers, and separation of concerns.
+- [⚖️ Convention Handbook](docs/constitution/convention.md) - Naming, folder structure, and file patterns.
+- [🧼 Clean Code Handbook](docs/constitution/clean-code.md) - TypeScript standards and best practices.
+- [📦 Dependency Handbook](docs/constitution/dependency.md) - Approved libraries and tools.
+- [🧩 Feature Handbook](docs/constitution/feature.md) - Guide to core modules and features.

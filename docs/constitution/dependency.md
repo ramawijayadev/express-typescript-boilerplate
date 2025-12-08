@@ -5,6 +5,7 @@
 > **Document Purpose:** Defines the standard technology stack (Node.js, Express, PostgreSQL, Prisma, Redis) to ensure consistency, performance, and ease of maintenance across the entire project. This document serves as the **Single Source of Truth** for all installed packages.
 
 ## Table of Contents
+
 - [0. Legend](#0-legend)
 - [1. Core Runtime & Config](#1-core-runtime--config)
 - [2. HTTP & API Machinery](#2-http--api-machinery)
@@ -22,6 +23,7 @@
 - [14. External Infra](#14-external-infra-non-npm)
 
 ## 0. Legend
+
 - **[CORE]** **Mandatory.** Application will not run or will violate architecture standards without this.
 - **[RECOMMENDED]** **Highly Suggested.** "Production Ready" standard. Can be replaced only if there is a very strong reason.
 - **[OPTIONAL]** **Optional.** Use only if the specific feature is required.
@@ -140,6 +142,7 @@ Blazing fast unit test framework. The replacement for Jest.
 High-level abstraction for testing HTTP, used for E2E testing.
 
 ## 12. Developer Experience (DX)
+
 Everything related to Code Quality and Linting.
 
 **eslint** **[CORE]** (Dev)
@@ -178,6 +181,7 @@ Run multiple commands concurrently. Helpful for starting multiple watchers.
 Run scripts that set and use environment variables across platforms.
 
 ## 14. External Infra (Non-NPM)
+
 The following tools are required in the environment but not listed in package.json.
 
 **Docker & Docker Compose**
@@ -187,4 +191,5 @@ Containerization platform. Required for spinning up Postgres and Redis locally.
 CI/CD Environment (e.g. GitHub Actions) for running automated tests.
 
 ---
+
 Dependency Handbook — Internal Developer Reference
