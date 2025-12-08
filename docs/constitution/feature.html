@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -296,8 +296,9 @@
 
   <div class="intro-box">
     <p style="margin:0;">
-      Dokumen ini mendefinisikan <strong>Core Feature</strong> yang disediakan oleh starterkit backend. Tujuannya adalah
-      memisahkan fitur fundamental (Wajib) dari fitur tambahan, serta menjadi pedoman implementasi module yang reusable.
+      This document defines the <strong>Core Features</strong> provided by the backend starter kit. Its purpose is to
+      separate fundamental (Mandatory) features from additional ones, and to serve as a guide for implementing reusable
+      modules.
     </p>
   </div>
 
@@ -306,24 +307,25 @@
     <ul>
       <li><a href="#purpose">1. Purpose & Scope</a></li>
       <li><a href="#tiering">2. Tiering Overview</a></li>
-      <li><a href="#tier1">3. Tier 1 – Wajib</a></li>
-      <li><a href="#tier2">4. Tier 2 – Sangat Disarankan</a></li>
-      <li><a href="#tier3">5. Tier 3 – Opsional / Advanced</a></li>
-      <li><a href="#convention">6. Konvensi Umum</a></li>
-      <li><a href="#checklist">7. Checklist Implementasi</a></li>
+      <li><a href="#tier1">3. Tier 1 – Mandatory</a></li>
+      <li><a href="#tier2">4. Tier 2 – Highly Recommended</a></li>
+      <li><a href="#tier3">5. Tier 3 – Optional / Advanced</a></li>
+      <li><a href="#convention">6. General Conventions</a></li>
+      <li><a href="#checklist">7. Implementation Checklist</a></li>
     </ul>
   </nav>
 
   <section id="purpose">
     <h2>1. Purpose & Scope</h2>
-    <p>Dokumen ini menjadi "blueprint" fungsionalitas aplikasi.</p>
+    <p>This document serves as the application functionality "blueprint".</p>
     <ul>
-      <li><strong>Standardisasi:</strong> Menentukan feature generik yang harus selalu ada.</li>
-      <li><strong>Reusability:</strong> Panduan agar modul inti bisa dipakai ulang di project lain.</li>
-      <li><strong>Prioritas:</strong> Memisahkan prioritas pengerjaan (Must Have vs Nice to Have).</li>
+      <li><strong>Standardization:</strong> Determines generic features that must always be present.</li>
+      <li><strong>Reusability:</strong> Guidance to ensure core modules can be reused in other projects.</li>
+      <li><strong>Prioritization:</strong> Separates development priorities (Must Have vs. Nice to Have).</li>
     </ul>
-    <p><strong>Scope:</strong> Fokus pada kontrak modul, struktur data (Entity), dan tanggung jawab utama. Asumsi
-      implementasi menggunakan arsitektur Controller → Service → Repository.</p>
+    <p><strong>Scope:</strong> Focuses on module contracts, data structures (Entities), and primary responsibilities.
+      Assumes
+      implementation using Controller → Service → Repository architecture.</p>
   </section>
 
   <section id="tiering">
@@ -331,7 +333,8 @@
 
     <div style="margin-bottom: 1rem;">
       <span class="badge tier-1">Tier 1: Must Have</span>
-      <p style="margin-top: 0.5rem;">Bagian inti dari platform. Aplikasi tidak dianggap "siap" tanpa ini.</p>
+      <p style="margin-top: 0.5rem;">Core parts of the platform. The application is not considered "ready" without
+        these.</p>
       <ul>
         <li>Auth, User & Role, Generic CRUD, File Infra, Notification, Audit Log.</li>
       </ul>
@@ -339,7 +342,7 @@
 
     <div style="margin-bottom: 1rem;">
       <span class="badge tier-2">Tier 2: Recommended</span>
-      <p style="margin-top: 0.5rem;">Sering dibutuhkan di aplikasi modern, idealnya tersedia tapi bisa dinonaktifkan.
+      <p style="margin-top: 0.5rem;">Often needed in modern applications; ideally available but can be disabled.
       </p>
       <ul>
         <li>Settings, Organization/Team, Activity Feed.</li>
@@ -348,7 +351,7 @@
 
     <div>
       <span class="badge tier-3">Tier 3: Optional</span>
-      <p style="margin-top: 0.5rem;">Pattern siap pakai untuk kebutuhan spesifik/kompleks.</p>
+      <p style="margin-top: 0.5rem;">Ready-to-use patterns for specific/complex needs.</p>
       <ul>
         <li>Workflow Status, Comment System, Tagging.</li>
       </ul>
@@ -356,39 +359,39 @@
   </section>
 
   <section id="tier1">
-    <h2>3. Tier 1 – Wajib <span class="badge tier-1">Core</span></h2>
+    <h2>3. Tier 1 – Mandatory <span class="badge tier-1">Core</span></h2>
 
     <div class="module-block">
       <h3>3.1. Auth Module</h3>
-      <p>Mekanisme standar autentikasi dan manajemen credential.</p>
-      <h4>Komponen Inti</h4>
+      <p>Standard mechanism for authentication and credential management.</p>
+      <h4>Core Components</h4>
       <ul>
         <li><strong>Entity:</strong> <code>UserCredential</code> (passwordHash, salt, lastLoginAt).</li>
         <li><strong>Security:</strong> Access Token (JWT Short-lived) & Refresh Token (Long-lived).</li>
         <li><strong>Flows:</strong> Register, Login, Logout, Forgot Password, Reset Password.</li>
       </ul>
-      <h4>Kualitas Minimal</h4>
+      <h4>Minimum Quality</h4>
       <ul>
-        <li>Hashing menggunakan <strong>Argon2</strong>.</li>
-        <li>Rate limiting pada endpoint Login.</li>
+        <li>Hashing using <strong>Argon2</strong>.</li>
+        <li>Rate limiting on Login endpoints.</li>
       </ul>
     </div>
 
     <div class="module-block">
       <h3>3.2. User & Role Module</h3>
-      <p>Representasi identitas dan kontrol akses.</p>
-      <h4>Komponen Inti</h4>
+      <p>Identity representation and access control.</p>
+      <h4>Core Components</h4>
       <ul>
         <li><strong>Entity:</strong> <code>User</code> (id, email, name, status).</li>
-        <li><strong>Role:</strong> RBAC Sederhana (e.g., <code>admin</code>, <code>user</code>).</li>
-        <li><strong>Mapping:</strong> Relasi Many-to-Many <code>UserRole</code>.</li>
+        <li><strong>Role:</strong> Simple RBAC (e.g., <code>admin</code>, <code>user</code>).</li>
+        <li><strong>Mapping:</strong> Many-to-Many relation <code>UserRole</code>.</li>
       </ul>
     </div>
 
     <div class="module-block">
       <h3>3.3. Generic CRUD Pattern</h3>
-      <p>Standarisasi operasi data, pagination, dan format response.</p>
-      <h4>Konvensi Endpoint</h4>
+      <p>Standardization of data operations, pagination, and response formats.</p>
+      <h4>Endpoint Conventions</h4>
       <ul>
         <li><code>GET /resource</code> (List + Pagination)</li>
         <li><code>GET /resource/:id</code> (Detail)</li>
@@ -396,7 +399,7 @@
         <li><code>PUT /resource/:id</code> (Update)</li>
         <li><code>DELETE /resource/:id</code> (Delete)</li>
       </ul>
-      <h4>Response Format Standard</h4>
+      <h4>Standard Response Format</h4>
       <pre><code>// Success Response
 {
   "success": true,
@@ -416,19 +419,19 @@
 
     <div class="module-block">
       <h3>3.4. File / Attachment Infrastructure</h3>
-      <p>Standar upload dan penyimpanan metadata file.</p>
-      <h4>Komponen Inti</h4>
+      <p>Standard upload and file metadata storage.</p>
+      <h4>Core Components</h4>
       <ul>
         <li><strong>Entity:</strong> <code>File</code> (originalName, mimeType, size, url).</li>
-        <li><strong>Storage Abstraction:</strong> Interface yang mendukung Local Driver (Dev) dan S3/Object Storage
+        <li><strong>Storage Abstraction:</strong> Interface supporting Local Driver (Dev) and S3/Object Storage
           (Prod).</li>
       </ul>
     </div>
 
     <div class="module-block">
       <h3>3.5. Notification Infrastructure</h3>
-      <p>Kerangka dasar pengiriman notifikasi (Email first).</p>
-      <h4>Komponen Inti</h4>
+      <p>Basic framework for sending notifications (Email first).</p>
+      <h4>Core Components</h4>
       <ul>
         <li><strong>Service:</strong> <code>sendEmail(to, templateId, variables)</code>.</li>
         <li><strong>Templates:</strong> Reset Password, Email Verification, Welcome User.</li>
@@ -437,91 +440,92 @@
 
     <div class="module-block">
       <h3>3.6. Audit Log Infrastructure</h3>
-      <p>Mencatat jejak keamanan dan governance sistem.</p>
-      <h4>Komponen Inti</h4>
+      <p>Records security trails and system governance.</p>
+      <h4>Core Components</h4>
       <ul>
         <li><strong>Entity:</strong> <code>AuditLog</code> (actorId, action, targetType, targetId, metadata, ip).</li>
-        <li><strong>Trigger:</strong> Otomatis mencatat saat Login (sukses/gagal) dan mutasi data sensitif.</li>
+        <li><strong>Trigger:</strong> Automatically records on Login (success/failure) and sensitive data mutations.
+        </li>
       </ul>
     </div>
   </section>
 
   <section id="tier2">
-    <h2>4. Tier 2 – Sangat Disarankan <span class="badge tier-2">Rec</span></h2>
+    <h2>4. Tier 2 – Highly Recommended <span class="badge tier-2">Rec</span></h2>
 
     <div class="module-block">
       <h3>4.1. Settings & Configuration Module</h3>
-      <p>Memisahkan konfigurasi dinamis dari hardcoded code.</p>
+      <p>Separating dynamic configuration from hardcoded code.</p>
       <ul>
-        <li><strong>SystemSetting:</strong> Key-value store global (misal: Maintenance Mode toggle).</li>
-        <li><strong>UserPreference:</strong> Setting per user (misal: Theme, Notif Preference).</li>
+        <li><strong>SystemSetting:</strong> Global key-value store (e.g., Maintenance Mode toggle).</li>
+        <li><strong>UserPreference:</strong> Per-user settings (e.g., Theme, Notif Preference).</li>
       </ul>
     </div>
 
     <div class="module-block">
       <h3>4.2. Organization / Team Module</h3>
-      <p>Mendukung model multi-tenant (SaaS/B2B).</p>
+      <p>Supports multi-tenant models (SaaS/B2B).</p>
       <ul>
-        <li><strong>Organization:</strong> Entity grup perusahaan.</li>
-        <li><strong>Membership:</strong> Relasi User ke Organization dengan role spesifik (Owner, Member).</li>
+        <li><strong>Organization:</strong> Company group entity.</li>
+        <li><strong>Membership:</strong> Relation of User to Organization with specific roles (Owner, Member).</li>
       </ul>
     </div>
 
     <div class="module-block">
       <h3>4.3. Activity / Timeline Module</h3>
-      <p>Feed aktivitas yang ramah manusia (beda dengan audit log teknis).</p>
+      <p>Human-friendly activity feed (distinct from technical audit logs).</p>
       <ul>
-        <li><strong>Feed:</strong> "User A mengomentari Order #123", "Status berubah jadi Done".</li>
+        <li><strong>Feed:</strong> "User A commented on Order #123", "Status changed to Done".</li>
       </ul>
     </div>
   </section>
 
   <section id="tier3">
-    <h2>5. Tier 3 – Opsional / Advanced <span class="badge tier-3">Opt</span></h2>
+    <h2>5. Tier 3 – Optional / Advanced <span class="badge tier-3">Opt</span></h2>
 
     <div class="module-block">
       <h3>5.1. Generic Status / Workflow</h3>
-      <p>Pola untuk entity dengan state machine yang kompleks (Draft → Review → Approved → Published).</p>
+      <p>Pattern for entities with complex state machines (Draft → Review → Approved → Published).</p>
     </div>
 
     <div class="module-block">
       <h3>5.2. Comment / Discussion</h3>
-      <p>Sistem komentar yang bisa ditempel ke entity apa saja (Polymorphic association).</p>
+      <p>Comment system attachable to any entity (Polymorphic association).</p>
     </div>
 
     <div class="module-block">
       <h3>5.3. Tag / Label System</h3>
-      <p>Sistem grouping fleksibel menggunakan tagging.</p>
+      <p>Flexible grouping system using tagging.</p>
     </div>
   </section>
 
   <section id="convention">
-    <h2>6. Konvensi Umum</h2>
-    <p>Aturan main saat membuat feature module baru:</p>
-    <h4>6.1. Penamaan</h4>
-    <p>Module name lowercase (<code>auth</code>, <code>users</code>). Endpoint URL selalu plural
+    <h2>6. General Conventions</h2>
+    <p>Ground rules when creating new feature modules:</p>
+    <h4>6.1. Naming</h4>
+    <p>Module names are lowercase (<code>auth</code>, <code>users</code>). Endpoint URLs are always plural
       (<code>/api/v1/users</code>).</p>
 
-    <h4>6.2. Pola Layering</h4>
-    <p>Alur data wajib searah: Routes → Controller → Service → Repository.</p>
+    <h4>6.2. Layering Pattern</h4>
+    <p>Data flow must be unidirectional: Routes → Controller → Service → Repository.</p>
 
-    <h4>6.3. Kontrak API</h4>
-    <p>Gunakan Error Code terstandar (misal: <code>AUTH_INVALID_CREDENTIALS</code>, <code>PERMISSION_DENIED</code>) agar
-      frontend mudah memproses error.</p>
+    <h4>6.3. API Contracts</h4>
+    <p>Use standardized Error Codes (e.g., <code>AUTH_INVALID_CREDENTIALS</code>, <code>PERMISSION_DENIED</code>) so
+      the frontend can easily process errors.</p>
   </section>
 
   <section id="checklist">
-    <h2>7. Checklist Implementasi</h2>
-    <p>Gunakan daftar ini untuk memvalidasi kelengkapan fitur starterkit sebelum release.</p>
+    <h2>7. Implementation Checklist</h2>
+    <p>Use this list to validate starter kit feature completeness before release.</p>
 
-    <h3>Tier 1 – Wajib</h3>
+    <h3>Tier 1 – Mandatory</h3>
     <ul class="checklist">
       <li><strong>Auth:</strong> Login, Logout, Reset Password, Secure Token (JWT).</li>
-      <li><strong>User:</strong> Entity User & Role, CRUD Admin, Middleware Auth.</li>
+      <li><strong>User:</strong> Entity User & Role, Admin CRUD, Auth Middleware.</li>
       <li><strong>CRUD:</strong> Base Service Pattern, Pagination, Standard JSON Response.</li>
       <li><strong>File:</strong> Upload endpoint, Validation (size/mime), Storage logic.</li>
-      <li><strong>Notif:</strong> Email service wrapper, Template dasar.</li>
-      <li><strong>Audit:</strong> Entity Log, Hooks pada critical event.</li>
+      <li><strong>Notif:</strong> Email service wrapper, Basic templates.</li>
+      <li><strong>Audit:</strong> Entity Log, Hooks on critical events.</li>
     </ul>
 
     <h3>Tier 2 – Recommended</h3>

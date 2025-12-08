@@ -27,6 +27,8 @@
       /* Blue 600 */
       --badge-opt: #64748b;
       /* Slate 500 */
+      --badge-dev: #7c3aed;
+      /* Violet 600 */
     }
 
     html {
@@ -102,6 +104,8 @@
 
     li {
       margin-bottom: 0.5rem;
+      /* Avoid breaking badges inside list items */
+      page-break-inside: avoid;
     }
 
     /* Special Box for Intro */
@@ -163,6 +167,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .dep-name {
@@ -203,6 +208,10 @@
 
     .tag-opt {
       background-color: var(--badge-opt);
+    }
+
+    .tag-dev {
+      background-color: var(--badge-dev);
     }
 
     /* TOC */
@@ -286,7 +295,8 @@
   <div class="intro-box">
     <p style="margin:0;">
       <strong>Document Purpose:</strong> Defines the standard technology stack (Node.js, Express, PostgreSQL, Prisma,
-      Redis) to ensure consistency, performance, and ease of maintenance across the entire project.
+      Redis) to ensure consistency, performance, and ease of maintenance across the entire project. This document serves
+      as the **Single Source of Truth** for all installed packages.
     </p>
   </div>
 
@@ -294,21 +304,20 @@
     <h3>Table of Contents</h3>
     <ul>
       <li><a href="#legend">0. Legend</a></li>
-      <li><a href="#baseline">1. Tech Baseline</a></li>
-      <li><a href="#runtime">2. Core Runtime & HTTP</a></li>
+      <li><a href="#runtime">1. Core Runtime & Config</a></li>
+      <li><a href="#http">2. HTTP & API Machinery</a></li>
       <li><a href="#security">3. Security & Hardening</a></li>
-      <li><a href="#auth">4. Auth & Crypto</a></li>
+      <li><a href="#auth">4. Authentication & Crypto</a></li>
       <li><a href="#db">5. Database & Migrations</a></li>
       <li><a href="#cache">6. Cache & Queue</a></li>
-      <li><a href="#logging">7. Logging & Obs</a></li>
-      <li><a href="#mail">8. Mailing System</a></li>
-      <li><a href="#realtime">9. Real-time</a></li>
+      <li><a href="#logging">7. Logging & Observability</a></li>
+      <li><a href="#utilities">8. Utilities & Helpers</a></li>
+      <li><a href="#cli">9. Command Line Interface</a></li>
       <li><a href="#docs">10. API Documentation</a></li>
-      <li><a href="#test">11. Testing</a></li>
-      <li><a href="#ts">12. TypeScript Tooling</a></li>
-      <li><a href="#lint">13. Linting & Formatting</a></li>
-      <li><a href="#install">14. Initial Installation</a></li>
-      <li><a href="#external">15. External Tools</a></li>
+      <li><a href="#test">11. Testing & QA</a></li>
+      <li><a href="#dev">12. Developer Experience</a></li>
+      <li><a href="#build">13. Build & Compiler</a></li>
+      <li><a href="#external">14. External Infra</a></li>
     </ul>
   </nav>
 
@@ -321,97 +330,88 @@
         Can be replaced only if there is a very strong reason.</li>
       <li><span class="badge tag-opt">OPTIONAL</span> <strong>Optional.</strong> Use only if the specific feature is
         required.</li>
-    </ul>
-  </section>
-
-  <section id="baseline">
-    <h2>1. Tech Baseline & Principles</h2>
-    <p>We choose technologies that are <strong>stable, typed, and mainstream</strong> to facilitate onboarding.</p>
-    <ul>
-      <li>Package Manager: <strong>pnpm</strong> (Mandatory, for speed and disk efficiency).</li>
-      <li>Runtime: <strong>Node.js</strong> (LTS Version).</li>
-      <li>Framework: <strong>Express</strong> (Industry standard).</li>
-      <li>Language: <strong>TypeScript</strong> (Strict mode).</li>
-      <li>Database: <strong>PostgreSQL</strong> with <strong>Prisma ORM</strong>.</li>
-      <li>Testing: <strong>Vitest</strong> (Faster replacement for Jest).</li>
+      <li><span class="badge tag-dev">DEV</span> <strong>Development.</strong> Only needed for local dev, testing, or
+        building.</li>
     </ul>
   </section>
 
   <section id="runtime">
-    <h2>2. Core Runtime & HTTP</h2>
+    <h2>1. Core Runtime & Config</h2>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">express</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Minimalist web framework for routing and middleware.</p>
+      <p class="dep-desc">Minimalist web framework for routing and middleware. The backbone of the application.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">zod</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Schema validation. Mandatory for validating env vars and request body/params.</p>
+      <p class="dep-desc">TypeScript-first schema validation. Mandatory for validating environment variables (`env.ts`),
+        request bodies, and database inputs.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">dotenv</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Loads environment variables from a <code>.env</code> file.</p>
+      <p class="dep-desc">Loads environment variables from a `.env` file into `process.env`. Critical for configuration
+        management.</p>
+    </div>
+  </section>
+
+  <section id="http">
+    <h2>2. HTTP & API Machinery</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">cookie-parser</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Parse Cookie header and populate `req.cookies` with an object keyed by the cookie names.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">axios</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Promise-based HTTP Client for external API requests.</p>
+      <p class="dep-desc">Promise-based HTTP Client for making external API requests (outbound calls).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">uuid</span> <span class="badge tag-rec">RECOMMENDED</span>
+        <span class="dep-name">socket.io</span> <span class="badge tag-opt">OPTIONAL</span>
       </div>
-      <p class="dep-desc">Unique ID generator (UUID v4) for non-database purposes (e.g., Request ID).</p>
-    </div>
-
-    <div class="dep-item">
-      <div class="dep-header">
-        <span class="dep-name">http-status-codes</span> <span class="badge tag-rec">RECOMMENDED</span>
-      </div>
-      <p class="dep-desc">Standard constants for HTTP status codes (e.g., StatusCodes.OK).</p>
-    </div>
-
-    <div class="dep-item">
-      <div class="dep-header">
-        <span class="dep-name">cookie-parser</span> <span class="badge tag-rec">RECOMMENDED</span>
-      </div>
-      <p class="dep-desc">Middleware to parse cookie headers and populate req.cookies.</p>
+      <p class="dep-desc">Enables real-time, bidirectional, and event-based communication. Use only for websocket
+        features.</p>
     </div>
   </section>
 
   <section id="security">
-    <h2>3. Security & HTTP Hardening</h2>
+    <h2>3. Security & Hardening</h2>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">helmet</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Secures the app by setting various HTTP headers (HSTS, XSS Filter, etc.).</p>
+      <p class="dep-desc">Helps secure Express apps by setting various HTTP headers (security defaults).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">cors</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Middleware to enable Cross-Origin Resource Sharing.</p>
+      <p class="dep-desc">Provides a Connect/Express middleware that can be used to enable Cross-Origin Resource Sharing
+        with various options.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">express-rate-limit</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Prevents brute-force/simple DDoS attacks by limiting requests per IP.</p>
+      <p class="dep-desc">Basic rate-limiting middleware for Express. Use to limit repeated requests to public APIs
+        (brute-force protection).</p>
     </div>
 
     <div class="dep-item">
@@ -423,21 +423,22 @@
   </section>
 
   <section id="auth">
-    <h2>4. Auth & Crypto</h2>
+    <h2>4. Authentication & Crypto</h2>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">jsonwebtoken</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Industry standard for stateless authentication (Access Token & Refresh Token).</p>
+      <p class="dep-desc">Implementation of JSON Web Tokens (standard). Used for creating and verifying access/refresh
+        tokens.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">argon2</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Competition-winning password hashing algorithm, more secure and GPU-resistant than bcrypt.
-      </p>
+      <p class="dep-desc">Secure password hashing algorithm. Winner of the Password Hashing Competition. Superior to
+        bcrypt.</p>
     </div>
   </section>
 
@@ -448,28 +449,29 @@
       <div class="dep-header">
         <span class="dep-name">@prisma/client</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Auto-generated & type-safe query builder for Node.js.</p>
-    </div>
-
-    <div class="dep-item">
-      <div class="dep-header">
-        <span class="dep-name">prisma</span> <span class="badge tag-core">CORE</span> (Dev)
-      </div>
-      <p class="dep-desc">CLI tool for schema declaration, migration management, and client generation.</p>
+      <p class="dep-desc">Auto-generated, type-safe query builder for Node.js & TypeScript.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">pg</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">PostgreSQL client for Node.js (native driver).</p>
+      <p class="dep-desc">Non-blocking PostgreSQL client for Node.js (native driver).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">@prisma/adapter-pg</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Driver adapter to use the `pg` driver with Prisma (serverless ready).</p>
+      <p class="dep-desc">Driver adapter to use the `pg` driver with Prisma, enabling serverless/edge compatibility if
+        needed.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">prisma</span> <span class="badge tag-dev">DEV</span>
+      </div>
+      <p class="dep-desc">CLI for managing your database schema, migrations, and generating the client.</p>
     </div>
   </section>
 
@@ -480,15 +482,15 @@
       <div class="dep-header">
         <span class="dep-name">ioredis</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Robust Redis client supporting clusters, used for caching and sessions.</p>
+      <p class="dep-desc">A robust, performance-focused, and full-featured Redis client for Node.js.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">bullmq</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Redis-based Message Queue. Mandatory for heavy/async processes (e.g. sending emails,
-        generating PDFs).</p>
+      <p class="dep-desc">Message Queue based on Redis. Used for handling asynchronous background jobs (email, data
+        processing).</p>
     </div>
   </section>
 
@@ -499,168 +501,211 @@
       <div class="dep-header">
         <span class="dep-name">pino</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Low-overhead logger with JSON output (Mandatory for production tracing).</p>
+      <p class="dep-desc">Very low overhead Node.js logger. Outputs structured JSON logs mandatory for production.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">pino-roll</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Log rotation utility for pino, ensuring log files don't grow uncontrollably.</p>
+      <p class="dep-desc">Transport for pino that implements log rotation (file management based on size/date).</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">pino-pretty</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
+        <span class="dep-name">pino-pretty</span> <span class="badge tag-dev">DEV</span>
       </div>
-      <p class="dep-desc">Formats JSON logs into readable colored text during development.</p>
+      <p class="dep-desc">Basic beautifier for Pino logs. Used only in development for readable console output.</p>
     </div>
   </section>
 
-  <section id="mail">
-    <h2>8. Mailing System</h2>
+  <section id="utilities">
+    <h2>8. Utilities & Helpers</h2>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">uuid</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">For the generation of RFC4122 UUIDs (mostly v4). Used for Request IDs and non-DB IDs.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">http-status-codes</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Constants enumerating the HTTP status codes. Prevents magic numbers (e.g., using
+        `StatusCodes.OK` instead of `200`).</p>
+    </div>
+
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">nodemailer</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">Standard module for sending emails via SMTP.</p>
+      <p class="dep-desc">Send emails from Node.js – easy as cake! Used for transactional emails.</p>
     </div>
   </section>
 
-  <section id="realtime">
-    <h2>9. Real-time Communication</h2>
+  <section id="cli">
+    <h2>9. Command Line Interface</h2>
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">socket.io</span> <span class="badge tag-opt">OPTIONAL</span>
+        <span class="dep-name">commander</span> <span class="badge tag-rec">RECOMMENDED</span>
       </div>
-      <p class="dep-desc">WebSocket engine with fallback and room management features. Use if live chat/notifications
-        are needed.</p>
+      <p class="dep-desc">The complete solution for Node.js command-line interfaces. Used for the internal project CLI
+        (`pnpm cli`).</p>
     </div>
   </section>
 
   <section id="docs">
     <h2>10. API Documentation</h2>
-    <div class="dep-item">
-      <div class="dep-header">
-        <span class="dep-name">swagger-ui-express</span> <span class="badge tag-rec">RECOMMENDED</span>
-      </div>
-      <p class="dep-desc">Serves the visual Swagger/OpenAPI interface at the <code>/docs</code> endpoint.</p>
-    </div>
-    <div class="dep-item">
-      <div class="dep-header">
-        <span class="dep-name">swagger-jsdoc</span> <span class="badge tag-rec">RECOMMENDED</span>
-      </div>
-      <p class="dep-desc">Generates OpenAPI specifications automatically from JSDoc comments in code (Legacy support).
-      </p>
-    </div>
+
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">@asteasolutions/zod-to-openapi</span> <span class="badge tag-core">CORE</span>
       </div>
-      <p class="dep-desc">Generates OpenAPI definitions directly from Zod schemas. Guarantees documentation is always in
-        sync with validation.</p>
+      <p class="dep-desc">Generates OpenAPI (Swagger) definitions from Zod schemas. Ensures code-first documentation
+        source of truth.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">swagger-ui-express</span> <span class="badge tag-rec">RECOMMENDED</span>
+      </div>
+      <p class="dep-desc">Serve auto-generated Swagger UI generated API docs from express. The visual frontend for docs.
+      </p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">swagger-jsdoc</span> <span class="badge tag-opt">OPTIONAL</span>
+      </div>
+      <p class="dep-desc">Generates openapi specification based on JSDoc comments. Kept for legacy support or specific
+        edge cases.</p>
     </div>
   </section>
 
   <section id="test">
-    <h2>11. Testing</h2>
+    <h2>11. Testing & QA</h2>
+
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">vitest</span> <span class="badge tag-core">CORE</span> (Dev)
       </div>
-      <p class="dep-desc">Next-generation test runner (Vite-native). Faster than Jest, minimal configuration.</p>
+      <p class="dep-desc">Blazing fast unit test framework. The replacement for Jest.</p>
     </div>
+
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">supertest</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
       </div>
-      <p class="dep-desc">HTTP assertion library for Integration and E2E Tests.</p>
+      <p class="dep-desc">High-level abstraction for testing HTTP, used for E2E testing.</p>
     </div>
   </section>
 
-  <section id="ts">
-    <h2>12. TypeScript & Build Tooling</h2>
-    <p>All dependencies below are <strong>devDependencies</strong>:</p>
-    <ul>
-      <li><code>typescript</code>: Main compiler.</li>
-      <li><code>tsx</code>: Executes TypeScript files directly (faster replacement for <code>ts-node</code>).</li>
-      <li><code>rimraf</code>: Folder deletion utility (<code>rm -rf</code>) that is cross-platform.
-      </li>
-      <li><code>concurrently</code>: Runs multiple commands in parallel (e.g. server + worker).</li>
-      <li><code>cross-env</code>: Sets environment variables across platforms (Windows/Linux).</li>
-      <li><code>nodemon</code>: Utility to monitor file changes and restart server automatically.</li>
-      <li>Type definitions: <code>@types/node</code>, <code>@types/express</code>, etc.</li>
-    </ul>
-  </section>
-
-  <section id="lint">
-    <h2>13. Linting, Formatting & DX</h2>
+  <section id="dev">
+    <h2>12. Developer Experience (DX)</h2>
+    <p>Everything related to Code Quality and Linting.</p>
 
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">eslint</span> <span class="badge tag-core">CORE</span>
+        <span class="dep-name">eslint</span> <span class="badge tag-core">CORE</span> (Dev)
       </div>
-      <p class="dep-desc">Static analysis to find code issues (bugs, unused vars).</p>
+      <p class="dep-desc">Pluggable and configurable linter tool for identifying and reporting on patterns in
+        JavaScript.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">prettier</span> <span class="badge tag-core">CORE</span>
+        <span class="dep-name">prettier</span> <span class="badge tag-core">CORE</span> (Dev)
       </div>
-      <p class="dep-desc">Automatic code formatter. Eliminates tabs vs spaces debates.</p>
+      <p class="dep-desc">Opinionated code formatter. Ensures consistent style.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">husky & lint-staged</span> <span class="badge tag-rec">RECOMMENDED</span>
+        <span class="dep-name">husky</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
       </div>
-      <p class="dep-desc">Git hooks to run lint/test automatically before commit.</p>
+      <p class="dep-desc">Modern native Git hooks made easy. Prevents bad git commit/push.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">lint-staged</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
+      </div>
+      <p class="dep-desc">Run linters against staged git files and don't let 💩 slip into your code base.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">nodemon</span> <span class="badge tag-dev">DEV</span>
+      </div>
+      <p class="dep-desc">Simple monitor script for use during development of a Node.js app (auto-restart).</p>
     </div>
   </section>
 
-  <section id="install">
-    <h2>14. Initial Installation</h2>
-    <p>Copy the commands below to install the entire standard stack in one go:</p>
+  <section id="build">
+    <h2>13. Build & Compiler</h2>
 
-    <h3>Production Dependencies</h3>
-    <pre><code>pnpm add express zod dotenv axios uuid \
-helmet cors express-rate-limit hpp cookie-parser \
-jsonwebtoken argon2 \
-@prisma/client ioredis bullmq \
-pino pino-pretty \
-nodemailer \
-socket.io \
-swagger-ui-express swagger-jsdoc</code></pre>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">typescript</span> <span class="badge tag-core">CORE</span> (Dev)
+      </div>
+      <p class="dep-desc">Language for application scale JavaScript.</p>
+    </div>
 
-    <h3>Development Dependencies</h3>
-    <pre><code>pnpm add -D typescript tsx rimraf \
-prisma vitest supertest \
-eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin \
-eslint-config-prettier prettier \
-husky lint-staged cross-env concurrently \
-@types/node @types/express @types/cors @types/cookie-parser \
-@types/swagger-jsdoc @types/swagger-ui-express @types/uuid</code></pre>
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">tsx</span> <span class="badge tag-core">CORE</span> (Dev)
+      </div>
+      <p class="dep-desc">TypeScript Execute (tsx): Node.js enhanced to run TypeScript files (replaced ts-node).</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">tsc-alias</span> <span class="badge tag-rec">RECOMMENDED</span> (Dev)
+      </div>
+      <p class="dep-desc">Replace alias paths with relative paths after typescript compilation (fix for `@/` imports).
+      </p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">rimraf</span> <span class="badge tag-dev">DEV</span>
+      </div>
+      <p class="dep-desc">The UNIX command `rm -rf` for node. Cross-platform folder deletion.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">concurrently</span> <span class="badge tag-dev">DEV</span>
+      </div>
+      <p class="dep-desc">Run multiple commands concurrently. Helpful for starting multiple watchers.</p>
+    </div>
+
+    <div class="dep-item">
+      <div class="dep-header">
+        <span class="dep-name">cross-env</span> <span class="badge tag-dev">DEV</span>
+      </div>
+      <p class="dep-desc">Run scripts that set and use environment variables across platforms.</p>
+    </div>
   </section>
 
   <section id="external">
-    <h2>15. External Tools (Non-NPM)</h2>
-    <p>The following tools are not installed via package.json, but must be present in the environment (Local/CI):</p>
+    <h2>14. External Infra (Non-NPM)</h2>
+    <p>The following tools are required in the environment but not listed in package.json.</p>
 
     <div class="dep-item">
       <div class="dep-header">
         <span class="dep-name">Docker & Docker Compose</span>
       </div>
-      <p class="dep-desc">Runs infrastructure dependencies (PostgreSQL, Redis) in isolation without polluting the host
-        OS.</p>
+      <p class="dep-desc">Containerization platform. Required for spinning up Postgres and Redis locally.</p>
     </div>
 
     <div class="dep-item">
       <div class="dep-header">
-        <span class="dep-name">k6</span>
+        <span class="dep-name">Action Runner</span>
       </div>
-      <p class="dep-desc">Load testing tool (written in Go/JS). Used for API stress tests (see <code>tests/perf</code>
-        folder).
-      </p>
+      <p class="dep-desc">CI/CD Environment (e.g. GitHub Actions) for running automated tests.</p>
     </div>
   </section>
 
