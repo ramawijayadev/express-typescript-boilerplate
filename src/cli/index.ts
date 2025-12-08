@@ -1,7 +1,7 @@
 import { Command } from "commander";
 
-import { helloCommand } from "./commands/hello.command";
-import { jwtGenerateCommand } from "./commands/jwt-generate.command";
+import { helloCommand } from "./hello.command";
+import { jwtGenerateCommand } from "./jwt-generate.command";
 
 const program = new Command();
 
