@@ -19,7 +19,6 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
   }
 
   const token = authHeader.split(" ")[1];
-  // Guard clause against empty tokens (e.g. "Bearer ")
   if (!token) {
     next(new AppError(StatusCodes.UNAUTHORIZED, "Invalid token format"));
     return;
@@ -27,10 +26,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
 
   try {
     const payload = verifyToken(token);
-
-    // Type 'user' is now globally defined in src/shared/types/express.d.ts
     req.user = { id: payload.userId };
-
     next();
   } catch (error) {
     logger.warn({ err: error }, "Authentication failed: Invalid token");

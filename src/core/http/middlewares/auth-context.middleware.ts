@@ -11,6 +11,6 @@ export interface AuthContext {
  * Ensures req.auth is always defined, even if empty.
  */
 export function authContextMiddleware(req: Request, _res: Response, next: NextFunction) {
-  req.auth = undefined; // Initialize as empty/undefined
+  req.auth = undefined;
   next();
 }

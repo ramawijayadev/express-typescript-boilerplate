@@ -14,6 +14,6 @@ export * from "./types";
  * - Test/Development: Uses Console Sender (Mock) to save resources
  */
 export const emailSender: EmailSender =
-  env.NODE_ENV === "production" || env.NODE_ENV === "test" // Use SMTP (Mailpit) for E2E/Integration tests
+  env.NODE_ENV === "production" || env.NODE_ENV === "test"
     ? new SmtpEmailSender()
     : new ConsoleEmailSender();

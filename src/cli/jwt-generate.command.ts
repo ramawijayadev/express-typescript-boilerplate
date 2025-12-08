@@ -29,7 +29,6 @@ export const jwtGenerateCommand = new Command("jwt:generate")
       if (newEnvContent.includes("JWT_SECRET=")) {
         newEnvContent = newEnvContent.replace(/JWT_SECRET=.*/g, `JWT_SECRET=${jwtSecret}`);
       } else {
-        // If not found (unlikely), append it
         newEnvContent += `\nJWT_SECRET=${jwtSecret}`;
       }
 
@@ -39,7 +38,6 @@ export const jwtGenerateCommand = new Command("jwt:generate")
           `JWT_REFRESH_SECRET=${jwtRefreshSecret}`,
         );
       } else {
-        // Find the line with JWT_SECRET and append after it
         newEnvContent = newEnvContent.replace(
           /(JWT_SECRET=.*)/,
           `$1\nJWT_REFRESH_SECRET=${jwtRefreshSecret}`,

@@ -37,7 +37,6 @@ export function initJobs() {
   worker.on("failed", async (job, err) => {
     logger.error({ jobId: job?.id, jobName: job?.name, error: err }, "Job failed");
 
-    // If job has exhausted all retries, move to Dead Letter Queue
     if (job && job.attemptsMade >= (job.opts.attempts ?? 3)) {
       const { jobQueue } = await import("@/core/queue");
       const dlq = jobQueue.getDeadLetterQueue();

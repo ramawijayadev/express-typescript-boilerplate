@@ -16,11 +16,8 @@ export class LocalFileStorage implements FileStorage {
   private readonly baseUrl: string;
 
   constructor() {
-    // Best effort base URL detection. In prod, this should be an env var like ASSET_URL.
     const port = appConfig.port || 3000;
     this.baseUrl = `http://localhost:${port}/${this.uploadDir}`;
-
-    // Ensure upload directory exists
     this.ensureUploadDir();
   }
 
@@ -35,7 +32,6 @@ export class LocalFileStorage implements FileStorage {
   async upload(key: string, body: Buffer, contentType: string): Promise<string> {
     const filePath = path.join(this.uploadDir, key);
 
-    // Ensure parent folder exists (e.g. uploads/users/)
     await fs.mkdir(path.dirname(filePath), { recursive: true });
 
     await fs.writeFile(filePath, body);

@@ -19,8 +19,7 @@ export class BullmqJobQueue implements JobQueue {
     this.connection = new IORedis({
       host: queueConfig.redis.host,
       port: Number(queueConfig.redis.port),
-      maxRetriesPerRequest: null, // Required by BullMQ
-      // Conditional spread to handle optional password strictly
+      maxRetriesPerRequest: null,
       ...(queueConfig.redis.password ? { password: queueConfig.redis.password } : {}),
     });
 
@@ -33,7 +32,7 @@ export class BullmqJobQueue implements JobQueue {
       connection: this.connection,
       defaultJobOptions: {
         removeOnComplete: {
-          age: queueConfig.failedJobRetentionDays * 24 * 60 * 60, // Days to seconds
+          age: queueConfig.failedJobRetentionDays * 24 * 60 * 60,
         },
         removeOnFail: false,
       },

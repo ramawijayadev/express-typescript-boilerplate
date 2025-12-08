@@ -23,8 +23,6 @@ export interface EmailJobData {
 export interface JobQueue {
   enqueueEmailVerification(data: { userId: number; email: string; token: string }): Promise<void>;
   enqueuePasswordReset(data: { userId: number; email: string; token: string }): Promise<void>;
-
-  // Methods to access underlying queues (mainly for production/maintenance)
   getQueue(): Queue;
   getDeadLetterQueue(): Queue;
 }

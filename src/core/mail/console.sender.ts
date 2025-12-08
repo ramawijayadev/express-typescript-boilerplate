@@ -14,7 +14,6 @@ export class ConsoleEmailSender implements EmailSender {
         subject: options.subject,
         payload: {
           text: options.text,
-          // html content is excluded to keep logs clean
         },
       },
       "[Mock Mailer] Email simulation",

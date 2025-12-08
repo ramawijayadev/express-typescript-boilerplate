@@ -8,7 +8,6 @@ import { registerMiddlewares } from "@/core/http/middlewares";
 import { registerRoutes } from "@/core/http/router";
 import { logger } from "@/core/logging/logger";
 
-/** Bootstraps the Express application. */
 export function createApp(configure?: (app: express.Express) => void) {
   const app = express();
 

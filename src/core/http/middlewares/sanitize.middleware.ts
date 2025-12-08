@@ -9,7 +9,6 @@ export function sanitizeInput(req: Request, _res: Response, next: NextFunction) 
     req.body = sanitizeObject(req.body);
   }
 
-  // Use Object.defineProperty to safely overwrite properties that might be getters in Express 5
   if (req.query) {
     Object.defineProperty(req, "query", {
       value: sanitizeObject(req.query),
@@ -40,7 +39,6 @@ function sanitizeObject(obj: unknown): unknown {
   }
 
   if (typeof obj === "string") {
-    // Strip MongoDB operators ($), braces {}, and null bytes
     return obj.replace(/[${}]/g, "").replace(/\0/g, "").trim();
   }
 
@@ -52,12 +50,10 @@ function sanitizeObject(obj: unknown): unknown {
     const sanitized: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(obj)) {
-      // Block keys starting with $ (MongoDB operators)
       if (key.startsWith("$")) {
         continue;
       }
 
-      // Block potential Prototype Pollution vectors
       if (key.includes("__proto__") || key.includes("constructor") || key.includes("prototype")) {
         continue;
       }

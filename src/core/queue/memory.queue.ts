@@ -43,7 +43,6 @@ export class InMemoryJobQueue implements JobQueue {
     }
   }
 
-  // Stub methods to satisfy interface
   getQueue(): Queue {
     throw new Error("Method 'getQueue' is not supported in In-Memory mode. Use Redis driver.");
   }

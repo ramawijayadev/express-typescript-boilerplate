@@ -52,19 +52,18 @@ const zodErrorMapper: ErrorMapper = (err) => {
  */
 const prismaErrorMapper: ErrorMapper = (err) => {
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    // P2025: An operation failed because it depends on one or more records that were required but not found.
     if (err.code === "P2025") {
       return {
         statusCode: StatusCodes.NOT_FOUND,
         message: "Record not found",
       };
     }
+
     // Add other Prisma error codes here if needed (e.g. P2002 for Unique Constraint)
   }
   return null;
 };
 
-// Priority list of mappers
 const mappers = [appErrorMapper, zodErrorMapper, prismaErrorMapper];
 
 /**
@@ -77,7 +76,6 @@ export function mapError(err: unknown): ErrorResponse {
     if (result) return result;
   }
 
-  // Default Fallback
   return {
     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     message: "Internal server error",

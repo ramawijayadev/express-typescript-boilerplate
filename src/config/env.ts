@@ -10,8 +10,6 @@ const envSchema = z.object({
     .default("*")
     .refine(
       (val) => {
-        // In production, CORS_ORIGIN cannot be '*' because we use credentials: true
-        // This would allow any website to make authenticated requests to our API
         if (process.env.NODE_ENV === "production" && val === "*") {
           return false;
         }
@@ -53,7 +51,6 @@ const envSchema = z.object({
     .min(32, "JWT_SECRET must be at least 32 characters")
     .refine(
       (val) => {
-        // In production, require strong secrets (64+ characters recommended)
         if (process.env.NODE_ENV === "production" && val.length < 64) {
           return false;
         }
@@ -94,5 +91,4 @@ const envSchema = z.object({
   TEST_TIMEOUT_MS: z.coerce.number().default(20000),
 });
 
-/** Type-safe environment variable configuration. */
 export const env = envSchema.parse(process.env);
