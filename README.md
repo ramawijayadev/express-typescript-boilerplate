@@ -64,36 +64,51 @@ The easiest way to start. No local Node.js or Database required.
 
 ### 🛠️ Option 2: Manual Setup
 
-For developers who prefer running tools natively.
+For developers who prefer running tools natively without Docker for the application itself.
 
-1.  **Install Dependencies**:
+1.  **Configure Environment**:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    **Important**: Modify `.env` to point to your local services (localhost):
+    - `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/express_boilerplate?schema=public"`
+    - `REDIS_HOST=localhost`
+    - `SMTP_HOST=localhost`
+    - `TEST_MAILPIT_URL=http://localhost:8025`
+
+2.  **Install Dependencies**:
 
     ```bash
     pnpm install
     ```
 
-2.  **Configure Environment**:
+3.  **Fresh Start (Recommended)**:
+    Since you are starting a fresh project, it is best to remove the boilerplate's existing migration history to avoid conflicts.
 
     ```bash
-    cp .env.example .env
-    pnpm cli jwt:generate
-    ```
-
-3.  **Setup Infrastructure**:
-    Ensure PostgreSQL, Mailpit, and Redis are running (or use Docker for infra only):
-
-    ```bash
-    docker-compose up -d postgres mailpit redis
+    rm -rf prisma/migrations
     ```
 
 4.  **Initialize Database**:
+    This sequence ensures a completely clean state (`db:reset`), creates *your* first migration (`db:migrate`), and populates data (`db:seed`).
 
     ```bash
+    pnpm db:reset
     pnpm db:migrate
     pnpm db:seed
     ```
 
-5.  **Run Development Server**:
+5.  **Generate Secrets**:
+
+    ```bash
+    pnpm cli jwt:generate
+    ```
+
+6.  **Run Development Server**:
+    Ensure PostgreSQL, Redis, and Mailpit are running locally before starting.
+
     ```bash
     pnpm dev
     ```
