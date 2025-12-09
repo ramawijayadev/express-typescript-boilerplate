@@ -80,10 +80,10 @@ For developers who prefer running tools natively.
     ```
 
 3.  **Setup Infrastructure**:
-    Ensure PostgreSQL and Redis are running (or use Docker for infra only):
+    Ensure PostgreSQL, Mailpit, and Redis are running (or use Docker for infra only):
 
     ```bash
-    docker-compose up -d postgres redis mailpit
+    docker-compose up -d postgres mailpit redis
     ```
 
 4.  **Initialize Database**:
