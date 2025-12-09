@@ -67,16 +67,25 @@ The easiest way to start. No local Node.js or Database required.
 For developers who prefer running tools natively without Docker for the application itself.
 
 1.  **Configure Environment**:
+    Create configuration files for both development and testing.
 
     ```bash
     cp .env.example .env
+    cp .env.example .env.test
     ```
 
-    **Important**: Modify `.env` to point to your local services (localhost):
+    **Update `.env` (Development):**
+    - `NODE_ENV=development` (Enables Swagger UI)
     - `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/express_boilerplate?schema=public"`
     - `REDIS_HOST=localhost`
     - `SMTP_HOST=localhost`
     - `TEST_MAILPIT_URL=http://localhost:8025`
+
+    **Update `.env.test` (Testing):**
+    - `NODE_ENV=test`
+    - `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/express_boilerplate_test?schema=public"`
+    - `REDIS_HOST=localhost`
+    - `SMTP_HOST=localhost`
 
 2.  **Install Dependencies**:
 
@@ -91,7 +100,7 @@ For developers who prefer running tools natively without Docker for the applicat
     rm -rf prisma/migrations
     ```
 
-4.  **Initialize Database**:
+4.  **Initialize Development Database**:
     This sequence ensures a completely clean state (`db:reset`), creates *your* first migration (`db:migrate`), and populates data (`db:seed`).
 
     ```bash
@@ -100,13 +109,24 @@ For developers who prefer running tools natively without Docker for the applicat
     pnpm db:seed
     ```
 
-5.  **Generate Secrets**:
+5.  **Setup Test Database**:
+    Create a separate database for testing and clone the schema from your main development database.
+
+    ```bash
+    # Create the test database
+    createdb -U postgres express_boilerplate_test
+
+    # Clone the schema (structure only) from the main DB
+    pg_dump -s -U postgres express_boilerplate | psql -U postgres express_boilerplate_test
+    ```
+
+6.  **Generate Secrets**:
 
     ```bash
     pnpm cli jwt:generate
     ```
 
-6.  **Run Development Server**:
+7.  **Run Development Server**:
     Ensure PostgreSQL, Redis, and Mailpit are running locally before starting.
 
     ```bash
