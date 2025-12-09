@@ -101,7 +101,7 @@ For developers who prefer running tools natively without Docker for the applicat
     ```
 
 4.  **Initialize Development Database**:
-    This sequence ensures a completely clean state (`db:reset`), creates *your* first migration (`db:migrate`), and populates data (`db:seed`).
+    This sequence ensures a completely clean state (`db:reset`), creates _your_ first migration (`db:migrate`), and populates data (`db:seed`).
 
     ```bash
     pnpm db:reset

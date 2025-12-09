@@ -1,9 +1,7 @@
 import "dotenv/config";
 import { z } from "zod";
 
-const boolStr = z
-  .string()
-  .transform((s) => s === "true");
+const boolStr = z.string().transform((s) => s === "true");
 
 const envSchema = z.object({
   // Application
