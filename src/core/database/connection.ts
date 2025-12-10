@@ -6,6 +6,14 @@ import { Pool } from "pg";
 import { type DatabaseConnectionName, databaseConfig } from "@/config/database";
 import { AppError } from "@/shared/errors/AppError";
 
+/**
+ * Patch BigInt to be JSON serializable.
+ * Context: Prisma returns BigInt for IDs, which JSON.stringify cannot handle.
+ */
+BigInt.prototype.toJSON = function (): string {
+  return this.toString();
+};
+
 const clients: Partial<Record<DatabaseConnectionName, PrismaClient>> = {};
 
 function createClient(name: DatabaseConnectionName): PrismaClient {
