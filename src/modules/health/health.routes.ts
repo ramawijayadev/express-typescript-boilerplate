@@ -2,6 +2,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { z } from "zod";
 
+import { env } from "@/config/env";
 import { ok } from "@/shared/http/api-response";
 import { createApiResponse } from "@/shared/open-api/openapi-response-builders";
 
@@ -30,21 +31,23 @@ healthRegistry.registerPath({
 healthRouter.get("/health", async (_req, res) => {
   let jobsHealth;
 
-  try {
-    const { jobQueue } = await import("@/core/queue");
-    const { queueConfig } = await import("@/config/queue");
-    const dlq = jobQueue.getDeadLetterQueue();
-    const failedJobs = await dlq.getJobCounts("completed", "failed", "waiting", "active");
-    const totalFailed = Object.values(failedJobs).reduce((sum, count) => sum + count, 0);
+  if (env.ENABLE_BACKGROUND_JOBS) {
+    try {
+      const { jobQueue } = await import("@/core/queue");
+      const { queueConfig } = await import("@/config/queue");
+      const dlq = jobQueue.getDeadLetterQueue();
+      const failedJobs = await dlq.getJobCounts("completed", "failed", "waiting", "active");
+      const totalFailed = Object.values(failedJobs).reduce((sum, count) => sum + count, 0);
 
-    jobsHealth = {
-      failedJobCount: totalFailed,
-      ...(totalFailed >= queueConfig.failedJobAlertThreshold
-        ? { alert: `Failed job count exceeds threshold (${queueConfig.failedJobAlertThreshold})` }
-        : {}),
-    };
-  } catch {
-    jobsHealth = undefined;
+      jobsHealth = {
+        failedJobCount: totalFailed,
+        ...(totalFailed >= queueConfig.failedJobAlertThreshold
+          ? { alert: `Failed job count exceeds threshold (${queueConfig.failedJobAlertThreshold})` }
+          : {}),
+      };
+    } catch {
+      jobsHealth = undefined;
+    }
   }
 
   return ok(res, {
